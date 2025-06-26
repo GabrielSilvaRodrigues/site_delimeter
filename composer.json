@@ -1,0 +1,15 @@
+{
+    "name": "htdocs/src",
+    "autoload": {
+        "psr-4": {
+            "Htdocs\\Src\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ProjetoDelimeter",
+            "email": "projetodelimeter@gmail.com"
+        }
+    ],
+    "require": {}
+}
