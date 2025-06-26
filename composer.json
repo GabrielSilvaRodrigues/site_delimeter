@@ -1,14 +1,14 @@
 {
-    "name": "delimeter/mvc",
+    "name": "htdocs/src",
     "autoload": {
         "psr-4": {
-            "Delimeter\\Mvc\\": "src/"
+            "Htdocs\\Src\\": "src/"
         }
     },
     "authors": [
         {
-            "name": "Gabriel da Silva Rodrigues",
-            "email": "gabriel.rodrigues106@fatec.sp.gov.br"
+            "name": "ProjetoDelimeter",
+            "email": "projetodelimeter@gmail.com"
         }
     ],
     "require": {}

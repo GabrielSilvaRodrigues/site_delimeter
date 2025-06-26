@@ -1,5 +1,5 @@
 <?php
-    namespace src\Models\Entity;
+    namespace Htdocs\Src\Models\Entity;
 
     class Nutricionista {
         private $id_nutricionista;

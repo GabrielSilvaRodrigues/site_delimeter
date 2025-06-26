@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: mysql:8.0
@@ -29,13 +27,24 @@ services:
       dockerfile: Dockerfile
     container_name: php-web
     volumes:
-      - ./public:/var/www/html
+      - .:/var/www/html
+      - ./vendor:/var/www/html/vendor
+      - ./public:/var/www/html/public
+      - ./view:/var/www/html/view
       - ./src:/var/www/html/src
+
       - ./docker/php.ini:/usr/local/etc/php/php.ini
     ports:
-      - "8010:80"
+      - "8000:80"
     depends_on:
       - db
 
 volumes:
   db_data:
+
+# O serviço web está configurado corretamente para usar o volume do vendor.
+# Verifique se o autoload está sendo chamado corretamente no seu código.
+# Se o erro persistir, pode ser necessário verificar a configuração do Xdebug ou o caminho do autoload no seu código.
+
+# Verifique se o Composer foi executado corretamente e se o autoload_real.php existe.
+# Se não existir, rode o comando 'composer install' dentro do container php-web.

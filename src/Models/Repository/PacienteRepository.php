@@ -1,27 +1,48 @@
 <?php
 
-namespace src\Models\Repository;
+namespace Htdocs\Src\Models\Repository;
 
-use src\Config\connection;
-use src\Models\Entity\Paciente;
+use Htdocs\Src\Config\Connection;
+use Htdocs\Src\Models\Entity\Paciente;
 use PDO;
 
 class PacienteRepository {
     public $conn;
 
-    public function __construct() {
-        $database = new connection();
-        $this->conn = $database->getConnection();
+    public function isConnected() {
+        return $this->conn !== null;
     }
 
-    // Salva um novo paciente no banco de dados
+    public function isValid() {
+        return $this->conn !== null;
+    }
+
+    public function isReady() {
+        return $this->isConnected();
+    }
+
+    public function __construct() {
+        $database = new Connection();
+        $this->conn = $database->getConnection();
+        if (!$this->conn) {
+            echo "Erro: Não foi possível conectar ao banco de dados.\n";
+            exit(1);
+        }
+    }
+
     public function save(Paciente $paciente) {
         $query = "INSERT INTO paciente (id_usuario, cpf, nis) VALUES (:id_usuario, :cpf, :nis)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id_usuario', $paciente->getIdUsuario());
-        $stmt->bindParam(':cpf', $paciente->getCpf());
-        $stmt->bindParam(':nis', $paciente->getNis());
+
+        $id_usuario = $paciente->getIdUsuario();
+        $cpf = $paciente->getCpf();
+        $nis = $paciente->getNis();
+
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->bindParam(':cpf', $cpf);
+        $stmt->bindParam(':nis', $nis);
         $stmt->execute();
+        return $this->conn->lastInsertId();
     }
 
     // Retorna todos os pacientes cadastrados

@@ -1,54 +1,54 @@
 <?php
 
-namespace Delimeter\Models\Entity;
+namespace Htdocs\Src\Models\Entity;
 
 class Usuario
 {
-    private int $id;
-    private string $nome;
-    private string $email;
-    private ?string $senha;
+    private int $id_usuario;
+    private string $nome_usuario;
+    private string $email_usuario;
+    private ?string $senha_usuario;
 
-    public function __construct(int $id, string $nome, string $email, ?string $senha = null)
+    public function __construct(?int $id_usuario, string $nome_usuario, string $email_usuario, ?string $senha_usuario = null)
     {
-        $this->id = $id;
-        $this->nome = $nome;
-        $this->email = $email;
-        $this->senha = $senha;
+        $this->id_usuario = $id_usuario ?? 0;
+        $this->nome_usuario = $nome_usuario;
+        $this->email_usuario = $email_usuario;
+        $this->senha_usuario = $senha_usuario;
     }
 
     public function getId(): int
     {
-        return $this->id;
+        return $this->id_usuario;
     }
 
     public function getNome(): string
     {
-        return $this->nome;
+        return $this->nome_usuario;
     }
 
-    public function setNome(string $nome): void
+    public function setNome(string $nome_usuario): void
     {
-        $this->nome = $nome;
+        $this->nome_usuario = $nome_usuario;
     }
 
     public function getEmail(): string
     {
-        return $this->email;
+        return $this->email_usuario;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(string $email_usuario): void
     {
-        $this->email = $email;
+        $this->email_usuario = $email_usuario;
     }
 
     public function getSenha(): ?string
     {
-        return $this->senha;
+        return $this->senha_usuario;
     }
 
-    public function setSenha(?string $senha): void
+    public function setSenha(?string $senha_usuario): void
     {
-        $this->senha = $senha;
+        $this->senha_usuario = $senha_usuario;
     }
 }

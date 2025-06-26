@@ -1,10 +1,10 @@
 <?php
 
-namespace src\Routes;
+namespace Htdocs\Src\Routes;
 
 class Routes {
     private $routes = [];
-
+    
     // Adiciona uma rota ao array de rotas
     public function add(string $method, string $path, callable $handler) {
         $this->routes[] = [
@@ -28,6 +28,16 @@ class Routes {
     public function getRoutes(): array {
         return $this->routes;
     }
+    public function dispatch($method, $path) {
+        foreach ($this->routes as $route) {
+            if ($route['method'] === $method && $route['path'] === $path) {
+                call_user_func($route['handler']);
+                return;
+            }
+        }
+        // Se não encontrar a rota, retorna 404
+        http_response_code(404);
+        echo "404 Not Found";
+    }
 }
-
 ?>

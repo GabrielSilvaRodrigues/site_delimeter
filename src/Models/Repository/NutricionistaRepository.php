@@ -1,72 +1,70 @@
 <?php
 
-namespace src\Models\Repository;
+namespace Htdocs\Src\Models\Repository;
 
-use src\Models\Entity\Nutricionista;
+use Htdocs\Src\Config\Connection;
+use Htdocs\Src\Models\Entity\Nutricionista;
 use PDO;
 
-class NutricionistaRepository
-{
-    private $conn;
+class NutricionistaRepository {
+    public $conn;
 
-    public function __construct(PDO $conn)
-    {
-        $this->conn = $conn;
+    public function isConnected() {
+        return $this->conn !== null;
     }
 
-    public function add(Nutricionista $nutricionista): bool
-    {
-        $sql = "INSERT INTO nutricionista (id_usuario, crm_nutricionista) VALUES (:id_usuario, :crm)";
+    public function __construct() {
+        $database = new Connection();
+        $this->conn = $database->getConnection();
+        if (!$this->conn) {
+            echo "Erro: Não foi possível conectar ao banco de dados.\n";
+            exit(1);
+        }
+    }
+
+    public function save(Nutricionista $nutricionista) {
+        $sql = "INSERT INTO nutricionista (id_usuario, crm_nutricionista) VALUES (:id_usuario, :crm_nutricionista)";
         $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
-            ':id_usuario' => $nutricionista->getIdUsuario(),
-            ':crm' => $nutricionista->getCrmNutricionista()
-        ]);
+        $id_usuario = $nutricionista->getIdUsuario();
+        $crm_nutricionista = $nutricionista->getCrmNutricionista();
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->bindParam(':crm_nutricionista', $crm_nutricionista);
+        $stmt->execute();
+        return $this->conn->lastInsertId();
     }
 
-    public function findById(int $id): ?Nutricionista
-    {
+    public function findById($id) {
         $sql = "SELECT * FROM nutricionista WHERE id_nutricionista = :id";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':id' => $id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row) {
-            $nutricionista = new Nutricionista($row['id_usuario'], $row['crm_nutricionista']);
-            $nutricionista->setIdNutricionista($row['id_nutricionista']);
-            return $nutricionista;
-        }
-        return null;
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function findAll(): array
-    {
+    public function findAll() {
         $sql = "SELECT * FROM nutricionista";
-        $stmt = $this->conn->query($sql);
-        $nutricionistas = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $nutricionista = new Nutricionista($row['id_usuario'], $row['crm_nutricionista']);
-            $nutricionista->setIdNutricionista($row['id_nutricionista']);
-            $nutricionistas[] = $nutricionista;
-        }
-        return $nutricionistas;
-    }
-
-    public function update(Nutricionista $nutricionista): bool
-    {
-        $sql = "UPDATE nutricionista SET id_usuario = :id_usuario, crm_nutricionista = :crm WHERE id_nutricionista = :id";
         $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([
-            ':id_usuario' => $nutricionista->getIdUsuario(),
-            ':crm' => $nutricionista->getCrmNutricionista(),
-            ':id' => $nutricionista->getIdNutricionista()
-        ]);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function removeById(int $id): bool
-    {
+    public function update(Nutricionista $nutricionista) {
+        $sql = "UPDATE nutricionista SET id_usuario = :id_usuario, crm_nutricionista = :crm_nutricionista WHERE id_nutricionista = :id";
+        $stmt = $this->conn->prepare($sql);
+        $id_usuario = $nutricionista->getIdUsuario();
+        $crm_nutricionista = $nutricionista->getCrmNutricionista();
+        $id = $nutricionista->getIdNutricionista();
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->bindParam(':crm_nutricionista', $crm_nutricionista);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
+
+    public function delete($id) {
         $sql = "DELETE FROM nutricionista WHERE id_nutricionista = :id";
         $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([':id' => $id]);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
     }
 }
 ?>

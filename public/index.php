@@ -1,51 +1,46 @@
-<?php include __DIR__ . '/header.php'; ?>
-<main>
-    <section class="container-main">
-        <div class="container-main-image">
-            <img src="assets/images/pexels-fauxels-3184195.jpg" alt="Alimentação saudável">
-            <h1>PRIORIZAMOS A SUA ALIMENTAÇÃO</h1>
-        </div>
-        <div class="caixas">
-            <div class="caixaAlfa caixaRelativa">
-                <h2>Sobre o Delímiter</h2>
-                <p>Uma plataforma nova voltada à alimentação</p>
-                <a href="about.html" class="link">Saiba mais</a>
-            </div>
-            <div class="caixaAlfa caixaRelativa">
-                <h2>Dados métricos</h2>
-                <p>Calcule o seu gasto energético basal</p>
-                <a href="calculo_landpage.html" class="link">Saiba mais</a>
-            </div>
-        </div>
-        <div class="parceiros">
-            <h2>PARCERIAS</h2>
-            <p>Conheça nossos parceiros</p>
-            <div class="logos">
-                <a href="#"><img src="assets/images/sus.jpeg" alt="SUS" class="caixaRelativa"></a>
-                <a href="#"><img src="assets/images/crn3.jpeg" alt="CRN3" class="caixaRelativa"></a>
-                <a href="#"><img src="assets/images/cremesp.jpeg" alt="CREMESP" class="caixaRelativa"></a>
-            </div>
-        </div>
-    </section>
-    <section class="funcionalidades">
-        <h2>FUNCIONALIDADES</h2>
-        <div class="caixas">
-            <div class="caixa">
-                <a href="#"><img src="assets/images/nutricionista.jpg" alt="Nutricionista" class="caixaRelativa"></a>
-                <h3>Marque uma consulta com uma nutricionista</h3>
-                <p>Para acompanhar sua alimentação.</p>
-            </div>
-            <div class="caixa">
-                <a href="#"><img src="assets/images/dieta.jpg" alt="Dieta" class="caixaRelativa"></a>
-                <h3>Dietas focadas no seu perfil</h3>
-                <p>Através do mapeamento de dados.</p>
-            </div>
-            <div class="caixa">
-                <a href="#"><img src="assets/images/crianca.jpg" alt="Criança" class="caixaRelativa"></a>
-                <h3>Plano alimentar junto ao cadúnico</h3>
-                <p>Associar famílias de baixa renda a fornecedores de alimentos.</p>
-            </div>
-        </div>
-    </section>
-</main>
-<?php include __DIR__ . '/footer.php'; ?>
+<?php 
+$autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    include_once $autoloadPath;
+} else {
+    echo "Erro: Autoload do Composer não encontrado em $autoloadPath";
+    exit(1);
+}
+use Htdocs\Src\Routes\Routes;
+use Htdocs\Src\Controllers\DelimeterController;
+
+$route = new Routes();
+$delimeterController = new DelimeterController();
+
+try{
+    $delimeterController->mostrarHeader();
+} catch (Exception $e) {
+    echo "Erro ao incluir o header: " . $e->getMessage();
+    exit(1);
+}
+
+try{
+    if (isset($_SESSION['usuario'])) {
+        include_once dirname(__DIR__) . '/public/' . $_SESSION['usuario']['tipo'] . '.php';
+    } else {
+        include_once dirname(__DIR__) . '/public/delimeter.php';
+    }
+} catch (Exception $e) {
+    echo "Erro ao incluir o usuario: " . $e->getMessage();
+    exit(1);
+}
+
+// Descobre método e path da requisição
+$method = $_SERVER['REQUEST_METHOD'];
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// Faz o dispatch da rota
+$route->dispatch($method, $path);
+
+try{
+    $delimeterController->mostrarFooter();
+} catch (Exception $e) {
+    echo "Erro ao incluir o footer: " . $e->getMessage();
+    exit(1);
+}
+?>
