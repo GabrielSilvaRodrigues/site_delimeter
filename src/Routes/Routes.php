@@ -1,6 +1,11 @@
 <?php
 
 namespace Htdocs\Src\Routes;
+use Htdocs\Src\Routes\DelimeterRoutes;
+use Htdocs\Src\Routes\MedicoRoutes;
+use Htdocs\Src\Routes\NutricionistaRoutes;
+use Htdocs\Src\Routes\PacienteRoutes;
+use Htdocs\Src\Routes\UsuarioRoutes;
 
 class Routes {
     private $routes = [];
@@ -35,9 +40,16 @@ class Routes {
                 return;
             }
         }
-        // Se não encontrar a rota, retorna 404
         http_response_code(404);
         echo "404 Not Found";
+    }
+    public function __construct() {
+        // Carrega todas as rotas do sistema
+        new DelimeterRoutes($this);
+        new UsuarioRoutes($this);
+        new PacienteRoutes($this);
+        new NutricionistaRoutes($this);
+        new MedicoRoutes($this);
     }
 }
 ?>

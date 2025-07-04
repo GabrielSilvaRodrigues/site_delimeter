@@ -5,10 +5,12 @@
         private $id_medico;
         private $id_usuario;
         private $crm_medico;
+        private $cpf;
 
-        public function __construct($id_usuario, $crm_medico) {
+        public function __construct($id_usuario, $crm_medico, $cpf = null) {
             $this->id_usuario = $id_usuario;
             $this->crm_medico = $crm_medico;
+            $this->cpf = $cpf;
         }
 
         public function getIdMedico() {
@@ -33,6 +35,14 @@
 
         public function setCrmMedico($crm_medico) {
             $this->crm_medico = $crm_medico;
+        }
+
+        public function getCpf() {
+            return $this->cpf;
+        }
+
+        public function setCpf($cpf) {
+            $this->cpf = $cpf;
         }
     }
 ?>

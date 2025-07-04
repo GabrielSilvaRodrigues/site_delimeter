@@ -23,20 +23,29 @@ class NutricionistaRepository {
     }
 
     public function save(Nutricionista $nutricionista) {
-        $sql = "INSERT INTO nutricionista (id_usuario, crm_nutricionista) VALUES (:id_usuario, :crm_nutricionista)";
-        $stmt = $this->conn->prepare($sql);
-        $id_usuario = $nutricionista->getIdUsuario();
-        $crm_nutricionista = $nutricionista->getCrmNutricionista();
-        $stmt->bindParam(':id_usuario', $id_usuario);
-        $stmt->bindParam(':crm_nutricionista', $crm_nutricionista);
-        $stmt->execute();
-        return $this->conn->lastInsertId();
+        try {
+            $sql = "INSERT INTO nutricionista (id_usuario, crm_nutricionista, cpf) VALUES (:id_usuario, :crm_nutricionista, :cpf)";
+            $stmt = $this->conn->prepare($sql);
+            $id_usuario = $nutricionista->getIdUsuario();
+            $crm_nutricionista = $nutricionista->getCrmNutricionista();
+            $cpf = $nutricionista->getCpf();
+            $stmt->bindParam(':id_usuario', $id_usuario);
+            $stmt->bindParam(':crm_nutricionista', $crm_nutricionista);
+            $stmt->bindParam(':cpf', $cpf);
+            $stmt->execute();
+            return $this->conn->lastInsertId();
+        } catch (\PDOException $e) {
+            if ($e->getCode() == 23000) {
+                throw new \Exception("Já existe um nutricionista cadastrado com este CRM ou CPF.");
+            }
+            throw $e;
+        }
     }
 
-    public function findById($id) {
-        $sql = "SELECT * FROM nutricionista WHERE id_nutricionista = :id";
+    public function findById($id_usuario) {
+        $sql = "SELECT * FROM nutricionista WHERE id_usuario = :id_usuario";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':id_usuario', $id_usuario);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -49,22 +58,30 @@ class NutricionistaRepository {
     }
 
     public function update(Nutricionista $nutricionista) {
-        $sql = "UPDATE nutricionista SET id_usuario = :id_usuario, crm_nutricionista = :crm_nutricionista WHERE id_nutricionista = :id";
+        $sql = "UPDATE nutricionista SET crm_nutricionista = :crm_nutricionista, cpf = :cpf WHERE id_usuario = :id_usuario";
         $stmt = $this->conn->prepare($sql);
         $id_usuario = $nutricionista->getIdUsuario();
         $crm_nutricionista = $nutricionista->getCrmNutricionista();
-        $id = $nutricionista->getIdNutricionista();
-        $stmt->bindParam(':id_usuario', $id_usuario);
+        $cpf = $nutricionista->getCpf();
         $stmt->bindParam(':crm_nutricionista', $crm_nutricionista);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':cpf', $cpf);
+        $stmt->bindParam(':id_usuario', $id_usuario);
         $stmt->execute();
     }
 
-    public function delete($id) {
-        $sql = "DELETE FROM nutricionista WHERE id_nutricionista = :id";
+    public function delete($id_usuario) {
+        $sql = "DELETE FROM nutricionista WHERE id_usuario = :id_usuario";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':id_usuario', $id_usuario);
         $stmt->execute();
+    }
+
+    public function procurarPorID($id_usuario) {
+        $sql = "SELECT * FROM nutricionista WHERE id_usuario = :id_usuario";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
 ?>
