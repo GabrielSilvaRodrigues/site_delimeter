@@ -54,7 +54,7 @@ class NutricionistaController {
     }
     
     public function mostrarFormulario(){
-        $formPath = dirname(__DIR__, 2) . '/view/nutricionista/form.php';
+        $formPath = dirname(__DIR__, 2) . '/view/nutricionista/FormNutricionista.jsx';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
@@ -74,7 +74,7 @@ class NutricionistaController {
         } else {
             $_SESSION['usuario']['tipo'] = 'nutricionista';
         }
-        $formPath = dirname(__DIR__, 2) . '/view/nutricionista/index.php';
+        $formPath = dirname(__DIR__, 2) . '/view/nutricionista/IndexNutricionista.jsx';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {

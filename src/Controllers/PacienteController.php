@@ -52,7 +52,7 @@ class PacienteController {
     }
 
     public function mostrarFormulario(){
-        $formPath = dirname(__DIR__, 2) . '/view/paciente/form.php';
+        $formPath = dirname(__DIR__, 2) . '/view/paciente/FormPaciente.jsx';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
@@ -73,7 +73,7 @@ class PacienteController {
         } else {
             $_SESSION['usuario']['tipo'] = 'paciente';
         }
-        $formPath = dirname(__DIR__, 2) . '/view/paciente/index.php';
+        $formPath = dirname(__DIR__, 2) . '/view/paciente/IndexPaciente.jsx';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {

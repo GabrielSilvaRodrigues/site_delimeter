@@ -55,7 +55,7 @@ class MedicoController {
     }
 
     public function mostrarFormulario(){
-        $formPath = dirname(__DIR__, 2) . '/view/medico/form.php';
+        $formPath = dirname(__DIR__, 2) . '/view/medico/FormMedico.jsx';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
@@ -76,7 +76,7 @@ class MedicoController {
         }  else {
             $_SESSION['usuario']['tipo'] = 'medico';
         }
-        $formPath = dirname(__DIR__, 2) . '/view/medico/index.php';
+        $formPath = dirname(__DIR__, 2) . '/view/medico/IndexMedico.jsx';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {

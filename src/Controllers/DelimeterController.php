@@ -19,7 +19,7 @@ class DelimeterController {
         }
     }
     public function mostrarCalculo(){
-        $formPath = dirname(__DIR__, 2) . '/view/delimeter/calculoForm.php';
+        $formPath = dirname(__DIR__, 2) . '/view/delimeter/CalculoForm.jsx';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
@@ -35,7 +35,7 @@ class DelimeterController {
         }
     }
     public function mostrarSobre(){
-        $formPath = dirname(__DIR__, 2) . '/view/delimeter/sobre.php';
+        $formPath = dirname(__DIR__, 2) . '/view/delimeter/SobreDelimeter.jsx';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
