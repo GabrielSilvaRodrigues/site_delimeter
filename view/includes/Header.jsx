@@ -6,8 +6,6 @@ function Header({ usuario }) {
   let css = tipo ? `/public/assets/styles/${tipo}.css` : "/public/assets/styles/delimeter.css";
   return (
     <header>
-      <link rel="stylesheet" href={css} />
-      <link rel="stylesheet" href="/public/assets/styles/acessibilidade.css" />
       <div className="logo">
         <a href="/delimeter">
           <img src="/public/assets/images/logo.png" alt="Logo Delímiter" />
