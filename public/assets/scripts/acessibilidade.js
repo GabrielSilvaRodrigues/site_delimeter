@@ -42,3 +42,9 @@ function resetarAcessibilidade() {
     const btn = document.getElementById('contraste-btn');
     if (btn) btn.setAttribute('aria-pressed', 'false');
 }
+
+window.aumentarFonte = aumentarFonte;
+window.diminuirFonte = diminuirFonte;
+window.toggleContraste = toggleContraste;
+window.toggleDaltonismo = toggleDaltonismo;
+window.resetarAcessibilidade = resetarAcessibilidade;

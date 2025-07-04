@@ -1,0 +1,16 @@
+{
+  "name": "site_delimeter",
+  "version": "1.0.0",
+  "description": "Bem-vindo ao **Deliméter** – o seu portal para uma vida mais saudável, inteligente e conectada!   Aqui você gerencia sua alimentação, seu perfil e sua experiência digital com acessibilidade e praticidade.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  }
+}

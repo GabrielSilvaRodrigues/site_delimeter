@@ -14,3 +14,4 @@ COPY ./docker/php.ini /usr/local/etc/php/
 
 # Define o diretório raiz do Apache
 WORKDIR /var/www/html
+COPY . /var/www/html

@@ -3,7 +3,7 @@ namespace Htdocs\Src\Controllers;
 
 class DelimeterController {
     public function mostrarHeader(){
-        $formPath = dirname(__DIR__, 2) . '/view/includes/Header.jsx';
+        $formPath = dirname(__DIR__, 2) . '/view/includes/Header.php';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
@@ -11,7 +11,7 @@ class DelimeterController {
         }
     }
     public function mostrarFooter(){
-        $formPath = dirname(__DIR__, 2) . '/view/includes/Footer.jsx';
+        $formPath = dirname(__DIR__, 2) . '/view/includes/Footer.php';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
@@ -19,7 +19,7 @@ class DelimeterController {
         }
     }
     public function mostrarCalculo(){
-        $formPath = dirname(__DIR__, 2) . '/view/delimeter/CalculoForm.jsx';
+        $formPath = dirname(__DIR__, 2) . '/view/delimeter/CalculoForm.php';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
@@ -27,7 +27,7 @@ class DelimeterController {
         }
     }
     public function mostrarHome(){
-        $formPath = dirname(__DIR__, 2) . '/view/delimeter/IndexDelimeter.jsx';
+        $formPath = dirname(__DIR__, 2) . '/view/delimeter/IndexDelimeter.php';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
@@ -35,7 +35,7 @@ class DelimeterController {
         }
     }
     public function mostrarSobre(){
-        $formPath = dirname(__DIR__, 2) . '/view/delimeter/SobreDelimeter.jsx';
+        $formPath = dirname(__DIR__, 2) . '/view/delimeter/SobreDelimeter.php';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {

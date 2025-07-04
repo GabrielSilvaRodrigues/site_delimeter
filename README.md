@@ -7,7 +7,7 @@ Aqui você gerencia sua alimentação, seu perfil e sua experiência digital com
 
 ## 🚀 O que é o Deliméter?
 
-O Deliméter é um sistema web para gerenciamento de usuários e cálculo nutricional, pensado para ser acessível, bonito e fácil de usar.  
+O **Deliméter** é um sistema web para gerenciamento de usuários e cálculo nutricional, pensado para ser acessível, bonito e fácil de usar.  
 Ideal para quem quer cuidar da saúde, acompanhar dados e ter controle sobre sua experiência.
 
 ---
