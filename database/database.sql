@@ -4,7 +4,8 @@ CREATE TABLE usuario (
     id_usuario BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome_usuario VARCHAR(255) NOT NULL,
     email_usuario VARCHAR(255) UNIQUE,
-    senha_usuario VARCHAR(255) NOT NULL
+    senha_usuario VARCHAR(255) NOT NULL,
+    status_usuario TINYINT DEFAULT 1 -- 1=ativo, 0=inativo
 );
 
 CREATE TABLE endereco_usuario (
@@ -23,21 +24,23 @@ CREATE TABLE telefone_usuario (
 
 CREATE TABLE medico (
     id_medico BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario BIGINT NOT NULL,
+    id_usuario BIGINT NOT NULL UNIQUE,
     crm_medico VARCHAR(50),
+    cpf VARCHAR(20) UNIQUE,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
 );
 
 CREATE TABLE nutricionista (
     id_nutricionista BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario BIGINT NOT NULL,
+    id_usuario BIGINT NOT NULL UNIQUE,
     crm_nutricionista VARCHAR(50),
+    cpf VARCHAR(20) UNIQUE,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
 );
 
 CREATE TABLE paciente (
     id_paciente BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario BIGINT NOT NULL,
+    id_usuario BIGINT NOT NULL UNIQUE,
     cpf VARCHAR(20) UNIQUE,
     nis VARCHAR(20) UNIQUE,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
