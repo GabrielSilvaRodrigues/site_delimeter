@@ -1,13 +1,13 @@
-# 🥗 Deliméter
+# 🥗 Delimeter
 
-Bem-vindo ao **Deliméter** – o seu portal para uma vida mais saudável, inteligente e conectada!  
+Bem-vindo ao **Delimeter** – o seu portal para uma vida mais saudável, inteligente e conectada!  
 Aqui você gerencia sua alimentação, seu perfil e sua experiência digital com acessibilidade e praticidade.
 
 ---
 
-## 🚀 O que é o Deliméter?
+## 🚀 O que é o Delimeter?
 
-O **Deliméter** é um sistema web para gerenciamento de usuários e cálculo nutricional, pensado para ser acessível, bonito e fácil de usar.  
+O **Delimeter** é um sistema web para gerenciamento de usuários e cálculo nutricional, pensado para ser acessível, bonito e fácil de usar.  
 Ideal para quem quer cuidar da saúde, acompanhar dados e ter controle sobre sua experiência.
 
 ---
@@ -95,7 +95,7 @@ Ideal para quem quer cuidar da saúde, acompanhar dados e ter controle sobre sua
 
 ## 📝 Licença
 
-O Deliméter é um projeto open-source sob a licença MIT. Sinta-se à vontade para usar, modificar e distribuir!
+O Delimeter é um projeto open-source sob a licença MIT. Sinta-se à vontade para usar, modificar e distribuir!
 
 ---
 
@@ -117,7 +117,7 @@ O Deliméter é um projeto open-source sob a licença MIT. Sinta-se à vontade p
 
 ## 🎉 Agradecimentos
 
-Agradecemos a todos que contribuíram para o desenvolvimento do Deliméter, especialmente aos nossos beta testers e colaboradores.
+Agradecemos a todos que contribuíram para o desenvolvimento do Delimeter, especialmente aos nossos beta testers e colaboradores.
 
 ---
 
@@ -147,7 +147,7 @@ Este projeto é mantido por voluntários. Qualquer ajuda é bem-vinda! Para rela
 
 ## 📧 Newsletter
 
-Inscreva-se na nossa newsletter para receber novidades, dicas de saúde e atualizações do Deliméter diretamente no seu e-mail!
+Inscreva-se na nossa newsletter para receber novidades, dicas de saúde e atualizações do Delimeter diretamente no seu e-mail!
 
 ---
 
@@ -159,7 +159,7 @@ Levamos a sua privacidade a sério. Leia nossa política de privacidade para ent
 
 ## 📃 Termos de Uso
 
-Ao usar o Deliméter, você concorda com nossos termos de uso. Por favor, leia atentamente antes de utilizar a plataforma.
+Ao usar o Delimeter, você concorda com nossos termos de uso. Por favor, leia atentamente antes de utilizar a plataforma.
 
 ---
 
@@ -171,7 +171,7 @@ Precisa de ajuda? Nossa equipe de suporte está disponível para ajudar com qual
 
 ## 🌟 Depoimentos
 
-"Com o Deliméter, consegui melhorar minha alimentação e saúde de forma simples e prática!" - **Maria Silva**
+"Com o Delimeter, consegui melhorar minha alimentação e saúde de forma simples e prática!" - **Maria Silva**
 
 "O painel do usuário é incrível, consigo acompanhar tudo que preciso em um só lugar." - **João Souza**
 
@@ -239,7 +239,7 @@ Fique atento às nossas promoções e descontos em serviços e produtos relacion
 
 ## 🙏 Agradecimentos Especiais
 
-Agradecemos a todos os nossos usuários, parceiros e colaboradores pelo apoio e confiança no Deliméter. Juntos, estamos fazendo a diferença na saúde e bem-estar de muitas pessoas.
+Agradecemos a todos os nossos usuários, parceiros e colaboradores pelo apoio e confiança no Delimeter. Juntos, estamos fazendo a diferença na saúde e bem-estar de muitas pessoas.
 
 ---
 
