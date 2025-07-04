@@ -1,4 +1,3 @@
-```jsx
 import React from 'react';
 
 function FormNutricionista() {
@@ -25,4 +24,3 @@ function FormNutricionista() {
 }
 
 export default FormNutricionista;
-```

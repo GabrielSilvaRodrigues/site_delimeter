@@ -6,13 +6,13 @@ const Footer = () => {
         <footer className="usuario-footer" style={{ marginTop: '50px' }}>
             <div className="social">
                 <a href="https://www.instagram.com/delim3ter/">
-                    <img src="/assets/images/instagram.png" alt="Instagram" />
+                    <img src="/public/assets/images/instagram.png" alt="Instagram" />
                 </a>
                 <a href="#">
-                    <img src="/assets/images/whatsapp.png" alt="WhatsApp" />
+                    <img src="/public/assets/images/whatsapp.png" alt="WhatsApp" />
                 </a>
                 <a href="#">
-                    <img src="/assets/images/linkedin.png" alt="LinkedIn" />
+                    <img src="/public/assets/images/linkedin.png" alt="LinkedIn" />
                 </a>
             </div>
             <div className="links">

@@ -15,14 +15,14 @@ function IndexDelimeter() {
           <div className="caixaAlfa caixaRelativa">
             <h2>Sobre o Delímiter</h2>
             <p>Uma plataforma nova voltada à alimentação</p>
-            <a href="about.php" className="link">
+            <a href="/delimeter/sobre" className="link">
               Saiba mais
             </a>
           </div>
           <div className="caixaAlfa caixaRelativa">
             <h2>Dados métricos</h2>
             <p>Calcule o seu gasto energético basal</p>
-            <a href="calculo_landpage.php" className="link">
+            <a href="/delimeter/calculo" className="link">
               Saiba mais
             </a>
           </div>
