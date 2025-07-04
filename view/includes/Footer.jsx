@@ -20,7 +20,7 @@ const Footer = () => {
                 <a href="#">Contato</a> |
                 <a href="#">Termos de uso</a>
             </div>
-            <p>&copy; {new Date().getFullYear()} - Deliméter LTDA - Todos os direitos reservados.</p>
+            <p>&copy; {new Date().getFullYear()} Delimeter</p>
         </footer>
     );
 }

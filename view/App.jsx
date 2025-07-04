@@ -1,13 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import IndexDelimeter from "../src/delimeter/IndexDelimeter";
-import SobreDelimeter from "../src/delimeter/SobreDelimeter";
+import SobreDelimeter from "./delimeter/SobreDelimeter";
 import CalculoForm from "./delimeter/CalculoForm";
 import LoginDelimeter from "./delimeter/LoginDelimeter";
-import IndexUsuario from "../src/usuario/IndexUsuario";
-import FormUsuario from "../src/usuario/FormUsuario";
-import LoginUsuario from "../src/usuario/LoginUsuario";
-import ContaUsuario from "../src/usuario/ContaUsuario";
+import IndexUsuario from "./usuario/IndexUsuario";
+import FormUsuario from "./usuario/FormUsuario";
+import LoginUsuario from "./usuario/LoginUsuario";
+import ContaUsuario from "./usuario/ContaUsuario";
 import IndexPaciente from "./paciente/IndexPaciente";
 import FormPaciente from "./paciente/FormPaciente";
 import IndexNutricionista from "./nutricionista/IndexNutricionista";
@@ -16,6 +15,7 @@ import IndexMedico from "./medico/IndexMedico";
 import FormMedico from "./medico/FormMedico";
 import Header from "./includes/Header";
 import Footer from "./includes/Footer";
+import IndexDelimeter from "./delimeter/IndexDelimeter";
 
 function App() {
   // O usuário pode ser obtido via contexto/autenticação
