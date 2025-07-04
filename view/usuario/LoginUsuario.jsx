@@ -4,7 +4,7 @@ function LoginUsuario() {
   return (
     <main>
       <div className="container-calc">
-        <form action="/login/usuario" method="POST" id="formulario">
+        <form action="/usuario/login" method="POST" id="formulario">
           <div className="container">
             <h1>Entrar</h1>
             <div className="form-group">

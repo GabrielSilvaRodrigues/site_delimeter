@@ -4,7 +4,7 @@ function FormNutricionista() {
     return (
         <main>
             <div className="container-calc">
-                <form id="formulario" method="POST" action="/api/nutricionista">
+                <form id="formulario" method="POST" action="/nutricionista/cadastro">
                     <div className="container">
                         <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Cadastro de Nutricionista</h2>
                         <div className="form-group">

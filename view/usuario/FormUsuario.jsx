@@ -4,7 +4,7 @@ function FormUsuario() {
   return (
     <main>
       <div className="container-calc">
-        <form action="/api/usuario" method="POST" id="formulario">
+        <form action="/usuario/cadastro" method="POST" id="formulario">
           <div className="container">
             <h1>Cadastro de Usuário</h1>
             <div className="form-group">

@@ -4,7 +4,7 @@ function FormMedico() {
     return (
         <main>
             <div className="container-calc">
-                <form id="formulario" method="POST" action="/api/medico">
+                <form id="formulario" method="POST" action="/medico/cadastro">
                     <div className="container">
                         <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Cadastro de Médico</h2>
                         <div className="form-group">
