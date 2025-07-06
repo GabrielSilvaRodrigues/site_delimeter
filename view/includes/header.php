@@ -49,7 +49,7 @@
                             <li><a href="/usuario" class="link">Home</a></li>
                         <?php else: ?>
                             <li><a href="/usuario/cadastro" class="link">Cadastrar-se</a></li>
-                            <li><a href="/usuario/login" class="link">Login</a></li>
+                            <li><a href="/delimeter/login" class="link">Login</a></li>
                         <?php endif; ?>
                         <li><p>Modificar tamanho da fonte</p></li>
                         <li><button onclick="aumentarFonte()" id="aumentar-fonte-btn" aria-label="Aumentar tamanho da fonte" accesskey="2" tabindex="2">A+</button></li>

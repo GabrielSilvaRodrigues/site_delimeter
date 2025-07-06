@@ -42,5 +42,14 @@ class DelimeterController {
             echo "Erro: Sobre não encontrado em $formPath";
         }
     }
+    
+    public function mostrarLogin(){
+        $formPath = dirname(__DIR__, 2) . '/view/delimeter/login.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            echo "Erro: Login não encontrado em $formPath";
+        }
+    }
 }
 ?>

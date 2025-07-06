@@ -1,6 +1,6 @@
 <main>
     <div class="container-calc">
-        <form action="select_usuario.php" method="POST" id="formulario">
+        <form action="/login/usuario" method="POST" id="formulario">
             <div class="container">
                 <h1>Entrar</h1>
                 <div class="form-group">
@@ -12,6 +12,7 @@
                     <input type="password" name="senha_usuario" required id="senha_usuario">
                 </div>
                 <button type="submit">Entrar</button>
+                <p><a href="/usuario/cadastro">Não tem conta? Cadastre-se aqui</a></p>
             </div>
         </form>
     </div>

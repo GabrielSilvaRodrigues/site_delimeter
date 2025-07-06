@@ -67,16 +67,20 @@ class UsuarioController {
         }
     }
     public function entrar() {
-        $data = json_decode(file_get_contents("php://input"));
-        if (!$data) $data = (object)$_POST;
+        $email = $_POST['email_usuario'] ?? null;
+        $senha = $_POST['senha_usuario'] ?? null;
 
         // Verifica se os campos esperados estão presentes
-        if (!isset($data->email_usuario) || !isset($data->senha_usuario)) {
-            echo json_encode(['error' => 'Dados incompletos.']);
+        if (!$email || !$senha) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Location: /usuario/login?error=missing_data');
+                exit;
+            }
+            echo json_encode(['error' => 'Por favor, preencha todos os campos.']);
             return;
         }
 
-        $usuario = $this->service->login($data->email_usuario, $data->senha_usuario);
+        $usuario = $this->service->login($email, $senha);
 
         if ($usuario) {
             // Define o tipo do usuário na sessão
@@ -118,16 +122,20 @@ class UsuarioController {
 
             $_SESSION['usuario']['tipo'] = $tipoUsuarioDetectado;
 
-            // Se for requisição POST tradicional (formulário), redireciona para a página inicial
+            // Se for requisição POST tradicional (formulário), redireciona para o painel do usuário
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-                header('Location: /delimeter');
+                header("Location: /$tipoUsuarioDetectado");
                 exit;
             }
 
             // Caso contrário, retorna JSON (para AJAX)
             echo json_encode(['success' => true, 'usuario' => $_SESSION['usuario']]);
         } else {
-            echo json_encode(['error' => 'Credenciais inválidas.']);
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+                header('Location: /usuario/login?error=invalid_credentials');
+                exit;
+            }
+            echo json_encode(['error' => 'Email ou senha incorretos.']);
         }
     }
 
