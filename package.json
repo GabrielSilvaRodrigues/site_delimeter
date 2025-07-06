@@ -5,18 +5,18 @@
   "main": "src/index.js",
   "scripts": {
     "start": "cd frontend && npm start",
-    "build": "cd frontend && npm run build && cp -r frontend/build/* .",
+    "build": "cd frontend && npm run build",
     "test": "cd frontend && npm test",
     "install-frontend": "cd frontend && npm install",
     "dev": "concurrently \"npm run start\" \"php -S localhost:8080 -t .\"",
-    "build-prod": "cd frontend && npm run build && rsync -av --delete frontend/build/ ../build/"
+    "build-prod": "cd frontend && npm run build && mkdir -p ../build && cp -r build/* ../build/",
+    "serve": "php -S localhost:8080 -t .",
+    "deploy": "npm run build-prod && npm run serve"
   },
   "dependencies": {
     "concurrently": "^7.6.0"
   },
-  "devDependencies": {
-    "rsync": "^0.6.1"
-  },
+  "devDependencies": {},
   "browserslist": {
     "production": [
       ">0.2%",

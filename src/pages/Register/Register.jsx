@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { api } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 import './Register.css';
 
 const Register = () => {
@@ -27,30 +26,36 @@ const Register = () => {
     setLoading(true);
     setError('');
 
-    // Validação de senha
+    // Validar senhas
     if (formData.senha_usuario !== formData.confirmar_senha) {
       setError('As senhas não coincidem');
       setLoading(false);
       return;
     }
 
-    if (formData.senha_usuario.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres');
-      setLoading(false);
-      return;
-    }
-
     try {
-      await api.createUser({
-        nome_usuario: formData.nome_usuario,
-        email_usuario: formData.email_usuario,
-        senha_usuario: formData.senha_usuario
+      const response = await fetch('/api/usuario', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nome_usuario: formData.nome_usuario,
+          email_usuario: formData.email_usuario,
+          senha_usuario: formData.senha_usuario
+        })
       });
-      
-      // Redirecionar para login após cadastro bem-sucedido
-      navigate('/login');
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Redirecionar para login
+        navigate('/login');
+      } else {
+        setError(data.error || 'Erro ao criar conta');
+      }
     } catch (error) {
-      setError(error.response?.data?.error || 'Erro ao criar conta');
+      setError('Erro de conexão');
     } finally {
       setLoading(false);
     }
@@ -61,7 +66,7 @@ const Register = () => {
       <div className="container-calc">
         <form onSubmit={handleSubmit} className="register-form">
           <div className="container">
-            <h1>Cadastro de Usuário</h1>
+            <h1>Cadastrar-se</h1>
             
             {error && (
               <div className="error-message">{error}</div>
@@ -126,7 +131,7 @@ const Register = () => {
             <div className="register-links">
               <p>
                 Já tem uma conta? 
-                <Link to="/login" className="link"> Faça login aqui</Link>
+                <a href="/login" className="link"> Faça login aqui</a>
               </p>
             </div>
           </div>

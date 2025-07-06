@@ -6,7 +6,7 @@ const Sobre = () => {
     <main className="sobre-main">
       <section className="container-main">
         <div className="container-main-image">
-          <img src="/public/assets/images/almoço.jpg" alt="Pessoas em uma mesa distribuindo refeições" />
+          <img src="/assets/images/almoço.jpg" alt="Pessoas em uma mesa distribuindo refeições" />
         </div>
       </section>
       
@@ -19,16 +19,14 @@ const Sobre = () => {
               unindo tecnologia e alimentação saudável para combater a insegurança alimentar. 
               Ele visa oferecer soluções inovadoras para facilitar o acesso a alimentos nutritivos, 
               promover educação alimentar e otimizar a distribuição de recursos para comunidades 
-              em situação de vulnerabilidade. O projeto utiliza ferramentas tecnológicas para 
-              coleta e análise de dados, permitindo um planejamento eficiente e um impacto 
-              positivo na qualidade de vida dos beneficiados.
+              em situação de vulnerabilidade.
             </p>
             
             <p className="about-paragrafo">
               O nome <span>Deliméter</span> é inspirado na deusa <span>Deméter</span>, 
-              conhecida como a deusa da agricultura na mitologia grega. A parte "Deli" 
-              do nome faz referência a <span>delimitação</span>, que é o principal objetivo 
-              deste site: delimitar e acompanhar a sua alimentação.
+              conhecida como a deusa da agricultura na mitologia grega. A parte "Deli" do nome 
+              faz referência a <span>delimitação</span>, que é o principal objetivo deste site: 
+              delimitar e acompanhar a sua alimentação.
             </p>
             
             <p>Alguns termos que você pode encontrar pelo site:</p>
@@ -55,7 +53,7 @@ const Sobre = () => {
           </div>
           
           <div className="delimeter-image">
-            <img src="/public/assets/images/delimeter.png" alt="Deusa delimeter" />
+            <img src="/assets/images/delimeter.png" alt="Deusa delimeter" />
           </div>
         </div>
       </section>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './Login.css';
 
 const Login = () => {
@@ -28,16 +28,14 @@ const Login = () => {
 
     try {
       const result = await login(formData);
-      
       if (result.success) {
         // Redirecionar baseado no tipo de usuário
-        const userType = result.user.tipo || 'usuario';
-        navigate(`/${userType}`);
+        navigate(`/${result.user.tipo}`);
       } else {
         setError(result.error || 'Erro ao fazer login');
       }
     } catch (error) {
-      setError('Erro inesperado. Tente novamente.');
+      setError('Erro de conexão');
     } finally {
       setLoading(false);
     }

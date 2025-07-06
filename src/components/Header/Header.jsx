@@ -15,7 +15,7 @@ const Header = () => {
     <header className="app-header">
       <div className="logo">
         <Link to="/">
-          <img src="/public/assets/images/logo.png" alt="Logo Delímiter" />
+          <img src="/assets/images/logo.png" alt="Logo Delímiter" />
         </Link>
       </div>
       

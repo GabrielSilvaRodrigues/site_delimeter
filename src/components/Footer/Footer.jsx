@@ -7,13 +7,13 @@ const Footer = () => {
       <div className="footer-content">
         <div className="social-links">
           <a href="https://www.instagram.com/delim3ter/" target="_blank" rel="noopener noreferrer">
-            <img src="/public/assets/images/instagram.png" alt="Instagram" />
+            <img src="/assets/images/instagram.png" alt="Instagram" />
           </a>
           <a href="#" aria-label="WhatsApp">
-            <img src="/public/assets/images/whatsapp.png" alt="WhatsApp" />
+            <img src="/assets/images/whatsapp.png" alt="WhatsApp" />
           </a>
           <a href="#" aria-label="LinkedIn">
-            <img src="/public/assets/images/linkedin.png" alt="LinkedIn" />
+            <img src="/assets/images/linkedin.png" alt="LinkedIn" />
           </a>
         </div>
         
