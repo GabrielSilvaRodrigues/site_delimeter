@@ -1,0 +1,41 @@
+.patient-container {
+  background: linear-gradient(120deg, #f4f4f4 60%, #fff3e0 100%);
+}
+
+.patient-header {
+  background: linear-gradient(90deg, #ff9800 70%, #f57c00 100%);
+  box-shadow: 0 4px 16px rgba(255,152,0,0.13);
+}
+
+.patient-container .usuario-section h2 {
+  color: #ff9800;
+}
+
+.patient-container .highlight-text {
+  color: #ff9800;
+}
+
+.patient-container .feature-list {
+  color: #ff9800;
+}
+
+.patient-container .user-type {
+  background-color: #fff8e1;
+  color: #ff9800;
+}
+
+.patient-container .user-type:hover {
+  box-shadow: 0 4px 12px rgba(255,152,0,0.15);
+}
+
+.patient-container .service-card {
+  background-color: #fff8e1;
+}
+
+.patient-container .service-card h3 {
+  color: #ff9800;
+}
+
+.patient-container .usuario-section#contact a {
+  color: #ff9800;
+}

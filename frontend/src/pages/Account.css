@@ -1,0 +1,99 @@
+.account-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.account-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #4CAF50;
+  font-size: 2rem;
+}
+
+.message {
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.message.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.message.error {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.profile-form {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.profile-form h2 {
+  color: #4CAF50;
+  margin-bottom: 25px;
+  font-size: 1.5rem;
+}
+
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 30px;
+  justify-content: space-between;
+}
+
+.delete-btn,
+.logout-btn {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 0;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+}
+
+.delete-btn:disabled {
+  background-color: #ef9a9a;
+}
+
+.logout-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.logout-btn:hover {
+  background-color: #388e3c;
+}
+
+.logout-btn:disabled {
+  background-color: #a5d6a7;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #666;
+}
+
+@media (max-width: 576px) {
+  .account-actions {
+    flex-direction: column;
+  }
+}
