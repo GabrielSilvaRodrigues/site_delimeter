@@ -13,30 +13,14 @@ class PacienteRoutes {
         $pacienteController = new PacienteController($pacienteService);
 
         // Painel do paciente
-        $route->add('GET', '/paciente', function() use ($pacienteController) {
-            $pacienteController->mostrarHome();
-        });
-        $route->add('GET', '/paciente/dados-antropometricos', function() use ($pacienteController) {
-            $pacienteController->mostrarDadosAntropometricos();
-        });
-        $route->add('GET', '/paciente/diario-alimentos', function() use ($pacienteController) {
-            $pacienteController->mostrarDiarioAlimentos();
-        });
-        $route->add('POST', '/api/paciente', function() use ($pacienteController) {
-            $pacienteController->criar();
-        });
-        $route->add('GET', '/paciente/cadastro', function() use ($pacienteController) {
-            $pacienteController->mostrarFormulario();
-        });
-        $route->add('POST', '/paciente/conta/atualizar', function() use ($pacienteController) {
-            $pacienteController->atualizarConta();
-        });
-        $route->add('POST', '/paciente/conta/deletar', function() use ($pacienteController) {
-            $pacienteController->deletarConta();
-        });
-        $route->add('GET', '/paciente/conta/sair', function() use ($pacienteController) {
-            $pacienteController->sairConta();
-        });
+        $route->add('GET', '/paciente', [$pacienteController, 'mostrarHome']);
+        $route->add('GET', '/paciente/dados-antropometricos', [$pacienteController, 'mostrarDadosAntropometricos']);
+        $route->add('GET', '/paciente/diario-alimentos', [$pacienteController, 'mostrarDiarioAlimentos']);
+        $route->add('POST', '/api/paciente', [$pacienteController, 'criar']);
+        $route->add('GET', '/paciente/cadastro', [$pacienteController, 'mostrarFormulario']);
+        $route->add('POST', '/paciente/conta/atualizar', [$pacienteController, 'atualizarConta']);
+        $route->add('POST', '/paciente/conta/deletar', [$pacienteController, 'deletarConta']);
+        $route->add('GET', '/paciente/conta/sair', [$pacienteController, 'sairConta']);
     }
 }
 ?>

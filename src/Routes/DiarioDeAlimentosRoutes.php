@@ -2,66 +2,31 @@
 
 namespace Htdocs\Src\Routes;
 
-use Htdocs\Src\Controllers\DiarioDeAlimentosController;
-use Htdocs\Src\Services\DiarioDeAlimentosService;
 use Htdocs\Src\Models\Repository\DiarioDeAlimentosRepository;
+use Htdocs\Src\Services\DiarioDeAlimentosService;
+use Htdocs\Src\Controllers\DiarioDeAlimentosController;
 
 class DiarioDeAlimentosRoutes {
-    public function __construct($router) {
-        $repository = new DiarioDeAlimentosRepository();
-        $service = new DiarioDeAlimentosService($repository);
-        $controller = new DiarioDeAlimentosController($service);
+    public function __construct($route) {
+        $diarioDeAlimentosRepository = new DiarioDeAlimentosRepository();
+        $diarioDeAlimentosService = new DiarioDeAlimentosService($diarioDeAlimentosRepository);
+        $diarioDeAlimentosController = new DiarioDeAlimentosController($diarioDeAlimentosService);
+        $viewsController = new ViewsController();
 
         // API Routes para diário de alimentos
-        $router->add('POST', '/api/diario-alimentos/criar', function() use ($controller) {
-            $controller->criar();
-        });
-
-        $router->add('GET', '/api/diario-alimentos/listar', function() use ($controller) {
-            $controller->listar();
-        });
-
-        $router->add('GET', '/api/diario-alimentos/buscar-por-id', function() use ($controller) {
-            $controller->buscarPorId();
-        });
-
-        $router->add('GET', '/api/diario-alimentos/buscar-por-paciente', function() use ($controller) {
-            $controller->buscarPorPaciente();
-        });
-
-        $router->add('GET', '/api/diario-alimentos/buscar-por-data', function() use ($controller) {
-            $controller->buscarPorPacienteEData();
-        });
-
-        $router->add('GET', '/api/diario-alimentos/buscar-por-periodo', function() use ($controller) {
-            $controller->buscarPorPeriodo();
-        });
-
-        $router->add('PUT', '/api/diario-alimentos/atualizar', function() use ($controller) {
-            $controller->atualizar();
-        });
-
-        $router->add('DELETE', '/api/diario-alimentos/deletar', function() use ($controller) {
-            $controller->deletar();
-        });
-
-        $router->add('POST', '/api/diario-alimentos/associar-alimento', function() use ($controller) {
-            $controller->associarAlimento();
-        });
-
-        $router->add('DELETE', '/api/diario-alimentos/remover-alimento', function() use ($controller) {
-            $controller->removerAlimento();
-        });
+        $route->add('POST', '/api/diario-alimentos/criar', [$diarioDeAlimentosController, 'criar']);
+        $route->add('GET', '/api/diario-alimentos/listar', [$diarioDeAlimentosController, 'listar']);
+        $route->add('GET', '/api/diario-alimentos/buscar-por-id', [$diarioDeAlimentosController, 'buscarPorId']);
+        $route->add('GET', '/api/diario-alimentos/buscar-por-paciente', [$diarioDeAlimentosController, 'buscarPorPaciente']);
+        $route->add('GET', '/api/diario-alimentos/buscar-por-data', [$diarioDeAlimentosController, 'buscarPorPacienteEData']);
+        $route->add('GET', '/api/diario-alimentos/buscar-por-periodo', [$diarioDeAlimentosController, 'buscarPorPeriodo']);
+        $route->add('PUT', '/api/diario-alimentos/atualizar', [$diarioDeAlimentosController, 'atualizar']);
+        $route->add('DELETE', '/api/diario-alimentos/deletar', [$diarioDeAlimentosController, 'deletar']);
+        $route->add('POST', '/api/diario-alimentos/associar-alimento', [$diarioDeAlimentosController, 'associarAlimento']);
+        $route->add('DELETE', '/api/diario-alimentos/remover-alimento', [$diarioDeAlimentosController, 'removerAlimento']);
 
         // View Routes
-        $router->add('GET', '/paciente/diario-alimentos', function() {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-            include __DIR__ . '/../../view/includes/header.php';
-            include __DIR__ . '/../../view/paciente/diario-alimentos.php';
-            include __DIR__ . '/../../view/includes/footer.php';
-        });
+        $route->add('GET', '/paciente/diario-alimentos', [$viewsController, 'mostrarDiarioAlimentos']);
     }
 }
 ?>

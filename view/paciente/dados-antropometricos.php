@@ -24,9 +24,18 @@ if (empty($_SESSION['paciente']['id_paciente'])) {
 }
 
 $id_paciente = (int)$_SESSION['paciente']['id_paciente'];
+
+// Carregar dados antropométricos da sessão (se existirem)
+$dadosAntropometricos = $_SESSION['dados_antropometricos'] ?? [];
+$sexoAtual = $dadosAntropometricos['sexo_paciente'] ?? '';
+$alturaAtual = $dadosAntropometricos['altura_paciente'] ?? '';
+$pesoAtual = $dadosAntropometricos['peso_paciente'] ?? '';
+$imcAtual = $dadosAntropometricos['imc'] ?? '';
+$classificacaoAtual = $dadosAntropometricos['classificacao_imc'] ?? '';
 ?>
 <div class="dados-container" style="background: linear-gradient(120deg, #f4f4f4 60%, #e8f5e8 100%); min-height: 100vh;">
     <main class="dados-main-content" style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+        
         <!-- Header -->
         <div class="dados-header" style="margin-bottom: 30px; background: linear-gradient(90deg, #4caf50 70%, #388e3c 100%); box-shadow: 0 4px 16px rgba(76,175,80,0.15); border-radius: 12px; padding: 25px;">
             <h1 style="font-size:2.2rem; margin-bottom: 8px; color: #fff; text-shadow: 1px 2px 6px rgba(0,0,0,0.2);">
@@ -35,6 +44,25 @@ $id_paciente = (int)$_SESSION['paciente']['id_paciente'];
             <p style="font-size:1.1rem; color:#e8f5e8; margin: 0;">
                 Acompanhe suas medidas corporais e cálculo do IMC
             </p>
+            <?php if (!empty($dadosAntropometricos)): ?>
+                <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                    <h3 style="color: #fff; margin: 0 0 10px 0; font-size: 1.1rem;">📈 Últimos Dados Registrados:</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; color: #e8f5e8;">
+                        <?php if ($sexoAtual !== ''): ?>
+                            <span><strong>Sexo:</strong> <?php echo $sexoAtual == '1' ? 'Masculino' : 'Feminino'; ?></span>
+                        <?php endif; ?>
+                        <?php if ($alturaAtual): ?>
+                            <span><strong>Altura:</strong> <?php echo htmlspecialchars($alturaAtual); ?>m</span>
+                        <?php endif; ?>
+                        <?php if ($pesoAtual): ?>
+                            <span><strong>Peso:</strong> <?php echo htmlspecialchars($pesoAtual); ?>kg</span>
+                        <?php endif; ?>
+                        <?php if ($imcAtual): ?>
+                            <span><strong>IMC:</strong> <?php echo number_format($imcAtual, 2); ?> (<?php echo htmlspecialchars($classificacaoAtual); ?>)</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- Formulário de Nova Medida -->
@@ -47,17 +75,17 @@ $id_paciente = (int)$_SESSION['paciente']['id_paciente'];
                     <label for="sexo_paciente" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Sexo:</label>
                     <select id="sexo_paciente" name="sexo_paciente" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                         <option value="">Selecione</option>
-                        <option value="0">Feminino</option>
-                        <option value="1">Masculino</option>
+                        <option value="0" <?php echo $sexoAtual === '0' ? 'selected' : ''; ?>>Feminino</option>
+                        <option value="1" <?php echo $sexoAtual === '1' ? 'selected' : ''; ?>>Masculino</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="altura_paciente" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Altura (m):</label>
-                    <input type="number" id="altura_paciente" name="altura_paciente" step="0.01" min="0.5" max="2.5" placeholder="Ex: 1.75" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <input type="number" id="altura_paciente" name="altura_paciente" step="0.01" min="0.5" max="2.5" placeholder="Ex: 1.75" value="<?php echo htmlspecialchars($alturaAtual); ?>" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                 </div>
                 <div class="form-group">
                     <label for="peso_paciente" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Peso (kg):</label>
-                    <input type="number" id="peso_paciente" name="peso_paciente" step="0.1" min="20" max="300" placeholder="Ex: 70.5" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    <input type="number" id="peso_paciente" name="peso_paciente" step="0.1" min="20" max="300" placeholder="Ex: 70.5" value="<?php echo htmlspecialchars($pesoAtual); ?>" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                 </div>
                 <div class="form-group">
                     <label for="data_medida" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Data da Medida:</label>

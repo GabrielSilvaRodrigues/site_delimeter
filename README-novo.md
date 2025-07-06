@@ -14,7 +14,7 @@ O sistema utiliza um banco de dados MySQL com as seguintes entidades principais:
 - **medico**, **nutricionista**, **paciente**: Perfis específicos por tipo de usuário
 
 #### Dados Clínicos
-- **dados_antropometricos**: Medidas corporais (altura, peso, IMC) com histórico
+- **dados_antropometricos**: Medidas corporais (altura em metros, peso em kg, IMC) com histórico
 - **dieta**: Planos alimentares criados por nutricionistas
 - **receita**: Prescrições médicas
 - **consulta**: Agendamentos e consultas realizadas

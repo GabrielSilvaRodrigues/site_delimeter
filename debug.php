@@ -6,6 +6,13 @@ echo "<h1>Debug da Sessão e Banco</h1>";
 echo "<h2>Sessão:</h2>";
 echo "<pre>" . print_r($_SESSION, true) . "</pre>";
 
+echo "<h2>Dados Antropométricos na Sessão:</h2>";
+if (isset($_SESSION['dados_antropometricos'])) {
+    echo "<pre>" . print_r($_SESSION['dados_antropometricos'], true) . "</pre>";
+} else {
+    echo "<p style='color: orange;'>Nenhum dado antropométrico na sessão</p>";
+}
+
 echo "<h2>Teste de Conexão com Banco:</h2>";
 try {
     require_once 'vendor/autoload.php';
@@ -40,6 +47,18 @@ try {
             if ($paciente) {
                 echo "<p style='color: green;'>✅ Paciente encontrado no banco:</p>";
                 echo "<pre>" . print_r($paciente, true) . "</pre>";
+                
+                // Verificar dados antropométricos
+                $stmt = $conn->prepare('SELECT * FROM dados_antropometricos WHERE id_paciente = ? ORDER BY data_medida DESC LIMIT 1');
+                $stmt->execute([$paciente['id_paciente']]);
+                $dadosAntropometricos = $stmt->fetch();
+                
+                if ($dadosAntropometricos) {
+                    echo "<p style='color: green;'>✅ Dados antropométricos encontrados no banco:</p>";
+                    echo "<pre>" . print_r($dadosAntropometricos, true) . "</pre>";
+                } else {
+                    echo "<p style='color: orange;'>⚠️ Nenhum dado antropométrico encontrado no banco</p>";
+                }
             } else {
                 echo "<p style='color: red;'>❌ Paciente NÃO encontrado para este usuário</p>";
             }

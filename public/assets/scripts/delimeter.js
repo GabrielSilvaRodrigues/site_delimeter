@@ -33,8 +33,7 @@ function enviarDados() {
     const idade = parseInt(document.getElementById('idade').value);
     const sexo = document.getElementById('sexo').value;
     const peso = parseFloat(document.getElementById('peso').value);
-    const alturaN = parseFloat(document.getElementById('altura').value);
-    const altura = alturaN / 100;
+    const altura = parseFloat(document.getElementById('altura').value);
     const atividade = document.getElementById('atividade').value;
 
     const imc = peso / (altura * altura);

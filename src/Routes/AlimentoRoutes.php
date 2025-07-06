@@ -2,60 +2,30 @@
 
 namespace Htdocs\Src\Routes;
 
-use Htdocs\Src\Controllers\AlimentoController;
-use Htdocs\Src\Services\AlimentoService;
 use Htdocs\Src\Models\Repository\AlimentoRepository;
+use Htdocs\Src\Services\AlimentoService;
+use Htdocs\Src\Controllers\AlimentoController;
 
 class AlimentoRoutes {
-    public function __construct($router) {
-        $repository = new AlimentoRepository();
-        $service = new AlimentoService($repository);
-        $controller = new AlimentoController($service);
+    public function __construct($route) {
+        $alimentoRepository = new AlimentoRepository();
+        $alimentoService = new AlimentoService($alimentoRepository);
+        $alimentoController = new AlimentoController($alimentoService);
+        $viewsController = new ViewsController();
 
         // API Routes para alimentos
-        $router->add('POST', '/api/alimentos/criar', function() use ($controller) {
-            $controller->criar();
-        });
-
-        $router->add('GET', '/api/alimentos/listar', function() use ($controller) {
-            $controller->listar();
-        });
-
-        $router->add('GET', '/api/alimentos/buscar-por-id', function() use ($controller) {
-            $controller->buscarPorId();
-        });
-
-        $router->add('GET', '/api/alimentos/buscar-por-descricao', function() use ($controller) {
-            $controller->buscarPorDescricao();
-        });
-
-        $router->add('GET', '/api/alimentos/buscar-por-dieta', function() use ($controller) {
-            $controller->buscarPorDieta();
-        });
-
-        $router->add('GET', '/api/alimentos/buscar-por-diario', function() use ($controller) {
-            $controller->buscarPorDiario();
-        });
-
-        $router->add('PUT', '/api/alimentos/atualizar', function() use ($controller) {
-            $controller->atualizar();
-        });
-
-        $router->add('DELETE', '/api/alimentos/deletar', function() use ($controller) {
-            $controller->deletar();
-        });
-
-        $router->add('GET', '/api/alimentos/buscar-avancado', function() use ($controller) {
-            $controller->buscarAvancado();
-        });
+        $route->add('POST', '/api/alimentos/criar', [$alimentoController, 'criar']);
+        $route->add('GET', '/api/alimentos/listar', [$alimentoController, 'listar']);
+        $route->add('GET', '/api/alimentos/buscar-por-id', [$alimentoController, 'buscarPorId']);
+        $route->add('GET', '/api/alimentos/buscar-por-descricao', [$alimentoController, 'buscarPorDescricao']);
+        $route->add('GET', '/api/alimentos/buscar-por-dieta', [$alimentoController, 'buscarPorDieta']);
+        $route->add('GET', '/api/alimentos/buscar-por-diario', [$alimentoController, 'buscarPorDiario']);
+        $route->add('PUT', '/api/alimentos/atualizar', [$alimentoController, 'atualizar']);
+        $route->add('DELETE', '/api/alimentos/deletar', [$alimentoController, 'deletar']);
+        $route->add('GET', '/api/alimentos/buscar-avancado', [$alimentoController, 'buscarAvancado']);
 
         // View Routes
-        $router->add('GET', '/nutricionista/alimentos', function() {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-            include __DIR__ . '/../../view/nutricionista/alimentos.php';
-        });
+        $route->add('GET', '/nutricionista/alimentos', [$viewsController, 'mostrarAlimentosNutricionista']);
     }
 }
 ?>

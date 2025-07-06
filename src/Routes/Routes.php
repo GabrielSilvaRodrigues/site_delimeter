@@ -6,10 +6,6 @@ use Htdocs\Src\Routes\MedicoRoutes;
 use Htdocs\Src\Routes\NutricionistaRoutes;
 use Htdocs\Src\Routes\PacienteRoutes;
 use Htdocs\Src\Routes\UsuarioRoutes;
-use Htdocs\Src\Routes\DadosAntropometricosRoutes;
-use Htdocs\Src\Routes\DietaRoutes;
-use Htdocs\Src\Routes\AlimentoRoutes;
-use Htdocs\Src\Routes\DiarioDeAlimentosRoutes;
 
 class Routes {
     private $routes = [];
@@ -38,22 +34,12 @@ class Routes {
         return $this->routes;
     }
     public function dispatch($method, $path) {
-        error_log("Router: Tentando despachar {$method} {$path}");
-        
         foreach ($this->routes as $route) {
             if ($route['method'] === $method && $route['path'] === $path) {
-                error_log("Router: Rota encontrada para {$method} {$path}");
                 call_user_func($route['handler']);
                 return;
             }
         }
-        
-        error_log("Router: Rota não encontrada para {$method} {$path}");
-        error_log("Router: Rotas disponíveis:");
-        foreach ($this->routes as $route) {
-            error_log("  - {$route['method']} {$route['path']}");
-        }
-        
         http_response_code(404);
         echo "404 Not Found";
     }
@@ -64,25 +50,6 @@ class Routes {
         new PacienteRoutes($this);
         new NutricionistaRoutes($this);
         new MedicoRoutes($this);
-        new DadosAntropometricosRoutes($this);
-        new DietaRoutes($this);
-        new AlimentoRoutes($this);
-        new DiarioDeAlimentosRoutes($this);
-        
-        // Rota de debug temporária
-        $this->add('GET', '/debug', function() {
-            include_once dirname(__DIR__, 2) . '/debug.php';
-        });
-        
-        // Rota de teste da API
-        $this->add('GET', '/test-api', function() {
-            include_once dirname(__DIR__, 2) . '/test-api.php';
-        });
-        
-        // Rota de teste JavaScript
-        $this->add('GET', '/test-api-js', function() {
-            include_once dirname(__DIR__, 2) . '/test-api-js.html';
-        });
     }
 }
 ?>

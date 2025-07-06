@@ -209,6 +209,10 @@ class PacienteController {
         // Se já temos os dados na sessão, não precisa buscar novamente
         if (isset($_SESSION['paciente']['id_paciente'])) {
             error_log("PacienteController: Dados do paciente já existem na sessão - ID: " . $_SESSION['paciente']['id_paciente']);
+            
+            // Carregar dados antropométricos se não existirem na sessão
+            $this->carregarDadosAntropometricosNaSessao();
+            
             return true;
         }
         
@@ -221,11 +225,36 @@ class PacienteController {
             $_SESSION['usuario']['tipo'] = 'paciente';
             error_log("PacienteController: Dados do paciente carregados do banco - ID: " . $paciente['id_paciente']);
             error_log("PacienteController: Dados do paciente: " . print_r($paciente, true));
+            
+            // Carregar dados antropométricos
+            $this->carregarDadosAntropometricosNaSessao();
+            
             return true;
         }
         
         error_log("PacienteController: Paciente não encontrado no banco para usuário ID: " . $id_usuario);
         return false;
+    }
+
+    /**
+     * Método auxiliar para carregar dados antropométricos na sessão
+     */
+    private function carregarDadosAntropometricosNaSessao(): void {
+        if (!isset($_SESSION['paciente']['id_paciente'])) {
+            return;
+        }
+
+        $dadosAntropometricosRepo = new \Htdocs\Src\Models\Repository\DadosAntropometricosRepository();
+        $dadosAntropometricosService = new \Htdocs\Src\Services\DadosAntropometricosService($dadosAntropometricosRepo);
+        
+        try {
+            $dadosController = new \Htdocs\Src\Controllers\DadosAntropometricosController(
+                $dadosAntropometricosService
+            );
+            $dadosController->carregarDadosNaSessao();
+        } catch (\Exception $e) {
+            error_log("PacienteController: Erro ao carregar dados antropométricos: " . $e->getMessage());
+        }
     }
 
     /**

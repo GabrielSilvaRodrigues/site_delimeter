@@ -17,7 +17,8 @@ Ideal para quem quer cuidar da saúde, acompanhar dados e ter controle sobre sua
 - 👤 **Cadastro e Login de Usuários**
 - 🏠 **Painel do Usuário** com informações e histórico
 - 🛠️ **Serviços**: atualização de perfil, histórico, suporte
-- 📊 **Cálculo Nutricional** (IMC, GET, macros, etc)
+- 📊 **Cálculo Nutricional** (IMC, GET, macros, etc)  
+  - **Atenção:** Informe a altura em metros (exemplo: 1.75)
 - ♿ **Acessibilidade**: alto contraste, ajuste de fonte, simulação de daltonismo
 - 📱 **Responsivo**: funciona bem no PC, tablet e celular
 - 🔒 **Segurança**: senhas criptografadas e dados protegidos

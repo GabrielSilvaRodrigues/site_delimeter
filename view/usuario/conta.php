@@ -8,6 +8,9 @@ if (!$usuario) {
 
 $tipo = $usuario['tipo'] ?? 'usuario'; // 'usuario', 'paciente', 'nutricionista', 'medico'
 
+// Dados antropométricos para pacientes
+$dadosAntropometricos = $_SESSION['dados_antropometricos'] ?? [];
+
 // Definindo rotas exatamente conforme mapeado em seus Routes e Controllers
 switch ($tipo) {
     case 'paciente':
@@ -76,6 +79,56 @@ switch ($tipo) {
                     </div>
                     <button type="submit">Atualizar Dados do Paciente</button>
                 </form>
+                
+                <?php if (!empty($dadosAntropometricos)): ?>
+                    <div style="margin-top: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <h2>Dados Antropométricos Atuais</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                            <?php if (isset($dadosAntropometricos['sexo_paciente']) && $dadosAntropometricos['sexo_paciente'] !== ''): ?>
+                                <div>
+                                    <strong>Sexo:</strong> 
+                                    <?php echo $dadosAntropometricos['sexo_paciente'] == '1' ? 'Masculino' : 'Feminino'; ?>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($dadosAntropometricos['altura_paciente'])): ?>
+                                <div>
+                                    <strong>Altura:</strong> 
+                                    <?php echo htmlspecialchars($dadosAntropometricos['altura_paciente']); ?>m
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($dadosAntropometricos['peso_paciente'])): ?>
+                                <div>
+                                    <strong>Peso:</strong> 
+                                    <?php echo htmlspecialchars($dadosAntropometricos['peso_paciente']); ?>kg
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($dadosAntropometricos['imc'])): ?>
+                                <div>
+                                    <strong>IMC:</strong> 
+                                    <?php echo number_format($dadosAntropometricos['imc'], 2); ?>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($dadosAntropometricos['classificacao_imc'])): ?>
+                                <div>
+                                    <strong>Classificação:</strong> 
+                                    <?php echo htmlspecialchars($dadosAntropometricos['classificacao_imc']); ?>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($dadosAntropometricos['data_medida'])): ?>
+                                <div>
+                                    <strong>Última Medição:</strong> 
+                                    <?php echo date('d/m/Y', strtotime($dadosAntropometricos['data_medida'])); ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <a href="/paciente/dados-antropometricos" style="display: inline-block; background: #007bff; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 14px;">
+                                📊 Gerenciar Dados Antropométricos
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
                 <form action="/paciente/conta/deletar" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar sua conta? Esta ação não poderá ser desfeita!');" style="margin-top:20px;">
                     <button type="submit" style="background:#c62828;">Deletar Conta</button>
                 </form>

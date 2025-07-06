@@ -1,4 +1,4 @@
-  <main>
+<main>
     <section class="container-main">
       <div class="container-main-image">
         <img src="/public/assets/images/almoço.jpg" alt="Alimentação saudável">
@@ -30,8 +30,8 @@
             <input type="number" name="peso" step="0.01" required id="peso">
           </div>
           <div class="form-group">
-            <label for="altura">Altura (em centímetros)</label>
-            <input type="number" name="altura" step="0.01" required id="altura">
+            <label for="altura">Altura (em metros)</label>
+            <input type="number" name="altura" step="0.01" required id="altura" placeholder="Ex: 1.75">
           </div>
           <div class="form-group">
             <label for="atividade">Nível de atividade física</label>

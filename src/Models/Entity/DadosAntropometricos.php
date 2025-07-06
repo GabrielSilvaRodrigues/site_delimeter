@@ -6,7 +6,7 @@ class DadosAntropometricos
     private ?int $id_medida;
     private int $id_paciente;
     private ?int $sexo_paciente; // 0=feminino, 1=masculino
-    private ?float $altura_paciente;
+    private ?float $altura_paciente; // em metros (ex: 1.75)
     private ?float $peso_paciente;
     private ?int $status_paciente;
     private ?string $data_medida;

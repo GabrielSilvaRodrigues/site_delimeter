@@ -18,7 +18,7 @@ class DadosAntropometricosController {
 
         $id_paciente = $data['id_paciente'] ?? null;
         $sexo_paciente = $data['sexo_paciente'] ?? null;
-        $altura_paciente = $data['altura_paciente'] ?? null;
+        $altura_paciente = $data['altura_paciente'] ?? null; // em metros
         $peso_paciente = $data['peso_paciente'] ?? null;
         $status_paciente = $data['status_paciente'] ?? 1;
         $data_medida = $data['data_medida'] ?? date('Y-m-d');
@@ -41,6 +41,9 @@ class DadosAntropometricosController {
         $result = $this->service->criar($dados);
 
         if ($result) {
+            // Salvar dados antropométricos na sessão
+            $this->salvarDadosNaSessao($sexo_paciente, $altura_paciente, $peso_paciente, $data_medida);
+            
             echo json_encode(['success' => 'Dados antropométricos cadastrados com sucesso.', 'id' => $result]);
         } else {
             echo json_encode(['error' => 'Erro ao cadastrar dados antropométricos.']);
@@ -106,7 +109,7 @@ class DadosAntropometricosController {
         $id_medida = $data['id_medida'] ?? null;
         $id_paciente = $data['id_paciente'] ?? null;
         $sexo_paciente = $data['sexo_paciente'] ?? null;
-        $altura_paciente = $data['altura_paciente'] ?? null;
+        $altura_paciente = $data['altura_paciente'] ?? null; // em metros
         $peso_paciente = $data['peso_paciente'] ?? null;
         $status_paciente = $data['status_paciente'] ?? null;
         $data_medida = $data['data_medida'] ?? null;
@@ -129,6 +132,9 @@ class DadosAntropometricosController {
         $result = $this->service->atualizar($dados);
         
         if ($result !== false) {
+            // Salvar dados antropométricos atualizados na sessão
+            $this->salvarDadosNaSessao($sexo_paciente, $altura_paciente, $peso_paciente, $data_medida);
+            
             echo json_encode(['success' => 'Dados antropométricos atualizados com sucesso.']);
         } else {
             echo json_encode(['error' => 'Erro ao atualizar dados antropométricos.']);
@@ -168,6 +174,80 @@ class DadosAntropometricosController {
             'imc' => $imc,
             'classificacao' => $classificacao
         ]);
+    }
+
+    /**
+     * Método auxiliar para salvar dados antropométricos na sessão
+     */
+    private function salvarDadosNaSessao($sexo, $altura, $peso, $data_medida) {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        // Garantir que existe a estrutura de dados na sessão
+        if (!isset($_SESSION['dados_antropometricos'])) {
+            $_SESSION['dados_antropometricos'] = [];
+        }
+        
+        // Salvar dados mais recentes
+        $_SESSION['dados_antropometricos'] = [
+            'sexo_paciente' => $sexo,
+            'altura_paciente' => $altura,
+            'peso_paciente' => $peso,
+            'data_medida' => $data_medida,
+            'ultima_atualizacao' => date('Y-m-d H:i:s')
+        ];
+        
+        // Calcular e salvar IMC se temos altura e peso
+        if ($altura && $peso) {
+            $imc = $this->service->calcularIMC($altura, $peso);
+            $classificacao = $this->service->classificarIMC($imc);
+            
+            $_SESSION['dados_antropometricos']['imc'] = $imc;
+            $_SESSION['dados_antropometricos']['classificacao_imc'] = $classificacao;
+        }
+        
+        error_log("Dados antropométricos salvos na sessão: " . print_r($_SESSION['dados_antropometricos'], true));
+    }
+
+    /**
+     * Método para carregar dados antropométricos na sessão (se não existirem)
+     */
+    public function carregarDadosNaSessao() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        // Se já temos dados na sessão, não precisa carregar
+        if (isset($_SESSION['dados_antropometricos']) && !empty($_SESSION['dados_antropometricos'])) {
+            return true;
+        }
+        
+        // Buscar dados do paciente na sessão
+        $id_paciente = $_SESSION['paciente']['id_paciente'] ?? null;
+        
+        if (!$id_paciente) {
+            return false;
+        }
+        
+        try {
+            // Buscar última medida do paciente
+            $ultimaMedida = $this->service->buscarUltimaMedida($id_paciente);
+            
+            if ($ultimaMedida) {
+                $this->salvarDadosNaSessao(
+                    $ultimaMedida['sexo_paciente'],
+                    $ultimaMedida['altura_paciente'],
+                    $ultimaMedida['peso_paciente'],
+                    $ultimaMedida['data_medida']
+                );
+                return true;
+            }
+        } catch (\Exception $e) {
+            error_log("Erro ao carregar dados antropométricos na sessão: " . $e->getMessage());
+        }
+        
+        return false;
     }
 }
 ?>
