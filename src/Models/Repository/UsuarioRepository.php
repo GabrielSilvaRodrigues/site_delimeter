@@ -23,14 +23,16 @@ class UsuarioRepository {
     }
 
     public function save(Usuario $usuario) {
-        $sql = "INSERT INTO usuario (nome_usuario, email_usuario, senha_usuario) VALUES (:nome, :email, :senha)";
+        $sql = "INSERT INTO usuario (nome_usuario, email_usuario, senha_usuario, status_usuario) VALUES (:nome, :email, :senha, :status)";
         $stmt = $this->conn->prepare($sql);
         $nome = $usuario->getNome();
         $email = $usuario->getEmail();
         $senha = $usuario->getSenha();
+        $status = $usuario->getStatus();
         $stmt->bindParam(':nome', $nome);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':senha', $senha);
+        $stmt->bindParam(':status', $status);
         $stmt->execute();
         return $this->conn->lastInsertId();
     }
@@ -54,20 +56,23 @@ class UsuarioRepository {
         $nome = $usuario->getNome();
         $email = $usuario->getEmail();
         $senha = $usuario->getSenha();
+        $status = $usuario->getStatus();
         $id = $usuario->getId();
 
         if ($senha) {
-            $sql = "UPDATE usuario SET nome_usuario = :nome, email_usuario = :email, senha_usuario = :senha WHERE id_usuario = :id";
+            $sql = "UPDATE usuario SET nome_usuario = :nome, email_usuario = :email, senha_usuario = :senha, status_usuario = :status WHERE id_usuario = :id";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':nome', $nome);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':senha', $senha);
+            $stmt->bindParam(':status', $status);
             $stmt->bindParam(':id', $id);
         } else {
-            $sql = "UPDATE usuario SET nome_usuario = :nome, email_usuario = :email WHERE id_usuario = :id";
+            $sql = "UPDATE usuario SET nome_usuario = :nome, email_usuario = :email, status_usuario = :status WHERE id_usuario = :id";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':nome', $nome);
             $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':status', $status);
             $stmt->bindParam(':id', $id);
         }
         $stmt->execute();

@@ -6,6 +6,10 @@ use Htdocs\Src\Routes\MedicoRoutes;
 use Htdocs\Src\Routes\NutricionistaRoutes;
 use Htdocs\Src\Routes\PacienteRoutes;
 use Htdocs\Src\Routes\UsuarioRoutes;
+use Htdocs\Src\Routes\DadosAntropometricosRoutes;
+use Htdocs\Src\Routes\DietaRoutes;
+use Htdocs\Src\Routes\AlimentoRoutes;
+use Htdocs\Src\Routes\DiarioDeAlimentosRoutes;
 
 class Routes {
     private $routes = [];
@@ -50,6 +54,10 @@ class Routes {
         new PacienteRoutes($this);
         new NutricionistaRoutes($this);
         new MedicoRoutes($this);
+        new DadosAntropometricosRoutes($this);
+        new DietaRoutes($this);
+        new AlimentoRoutes($this);
+        new DiarioDeAlimentosRoutes($this);
     }
 }
 ?>

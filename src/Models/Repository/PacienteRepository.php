@@ -42,7 +42,15 @@ class PacienteRepository {
         }
     }
 
-    public function findById($id_usuario) {
+    public function findById($id_paciente) {
+        $sql = "SELECT * FROM paciente WHERE id_paciente = :id_paciente";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_paciente', $id_paciente);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function findByUsuarioId($id_usuario) {
         $sql = "SELECT * FROM paciente WHERE id_usuario = :id_usuario";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id_usuario', $id_usuario);
