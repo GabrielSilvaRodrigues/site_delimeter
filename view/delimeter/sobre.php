@@ -1,7 +1,7 @@
 <main>
     <section class="container-main">
         <div class="container-main-image">
-            <img src="assets/images/almoço.jpg" alt="Pessoas em uma mesa distribuindo refeições">
+            <img src="/public/assets/images/almoço.jpg" alt="Pessoas em uma mesa distribuindo refeições">
         </div>
     </section>
     <section class="about">
@@ -21,7 +21,7 @@
                     </ul>
                 </p>
             </div>
-            <img src="assets/images/delimeter.png" alt="Deusa delimeter" style="height: 50%;">
+            <img src="/public/assets/images/delimeter.png" alt="Deusa delimeter" style="height: 50%;">
         </div>
     </section>
 </main>

@@ -8,6 +8,26 @@
                 Gerencie seus dados, visualize informações e aproveite nossos serviços exclusivos.
             </p>
         </div>
+        <!-- Seção de cadastro para diferentes perfis -->
+        <section class="usuario-section" id="cadastro-tipos" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #4caf5022; text-align:center;">
+            <h2 style="font-size:1.4rem; color:#388e3c; margin-bottom: 18px;">
+                <span style="font-size:1.2em;">📝</span> Entrar como:
+            </h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;">
+                <a href="/paciente" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e0f7fa; border-radius:8px; box-shadow:0 1px 6px #4caf5011; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#388e3c; font-weight:bold; transition:box-shadow 0.2s;">
+                    <span style="font-size:2.2em; margin-bottom:8px;">🧑‍🦱</span>
+                    Paciente
+                </a>
+                <a href="/nutricionista" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e8f5e9; border-radius:8px; box-shadow:0 1px 6px #43a04711; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#43a047; font-weight:bold; transition:box-shadow 0.2s;">
+                    <span style="font-size:2.2em; margin-bottom:8px;">🥗</span>
+                    Nutricionista
+                </a>
+                <a href="/medico" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e3f2fd; border-radius:8px; box-shadow:0 1px 6px #1976d211; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#1976d2; font-weight:bold; transition:box-shadow 0.2s;">
+                    <span style="font-size:2.2em; margin-bottom:8px;">🩺</span>
+                    Médico
+                </a>
+            </div>
+        </section>
         <section class="usuario-section" id="home" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #4caf5022;">
             <h2 style="font-size:1.6rem; color:#388e3c; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
                 <span style="font-size:1.3em;">🏠</span> Início

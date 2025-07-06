@@ -1,10 +1,18 @@
-    <h1>Cadastro de Nutricionista</h1>
-    <form action="/api/nutricionista" method="post">
-        <label for="id_usuario">ID Usuário:</label>
-        <input type="number" id="id_usuario" name="id_usuario" required><br><br>
-
-        <label for="crm_nutricionista">CRM Nutricionista:</label>
-        <input type="text" id="crm_nutricionista" name="crm_nutricionista" required><br><br>
-
-        <button type="submit">Salvar</button>
-    </form>
+<main>
+        <div class="container-calc">
+            <form id="formulario" method="POST" action="/api/nutricionista">
+                <div class="container">
+                    <h2 style="text-align:center;margin-bottom:20px;">Cadastro de Nutricionista</h2>
+                    <div class="form-group">
+                        <label for="crm_nutricionista">CRM:</label>
+                        <input type="text" id="crm_nutricionista" name="crm_nutricionista" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpf">CPF:</label>
+                        <input type="text" id="cpf" name="cpf" required>
+                    </div>
+                    <button type="submit" style="margin-top:18px;">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    </main>

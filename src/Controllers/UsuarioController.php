@@ -82,14 +82,45 @@ class UsuarioController {
             // Define o tipo do usuário na sessão
             if (is_array($usuario)) {
                 $_SESSION['usuario'] = $usuario;
-                $_SESSION['usuario']['tipo'] = 'usuario';
             } else {
                 $_SESSION['usuario'] = (array)$usuario;
-                $_SESSION['usuario']['tipo'] = 'usuario';
             }
+
+            // Sempre salva o ID na sessão
+            $_SESSION['usuario']['id'] = $usuario['id_usuario'] ?? $usuario['id'] ?? null;
+            $_SESSION['usuario']['id_usuario'] = $usuario['id_usuario'] ?? $usuario['id'] ?? null;
+
+            // Detecta tipo de usuário (você pode adaptar esta lógica para seu sistema)
+            // Exemplo: checa em cada tabela se existe vínculo com o usuário logado
+            $tipoUsuarioDetectado = 'usuario';
+            $idUsuario = $_SESSION['usuario']['id_usuario'];
+
+            $pacienteRepository = new \Htdocs\Src\Models\Repository\PacienteRepository();
+            $nutricionistaRepository = new \Htdocs\Src\Models\Repository\NutricionistaRepository();
+            $medicoRepository = new \Htdocs\Src\Models\Repository\MedicoRepository();
+
+            $dadosPaciente = $pacienteRepository->findById($idUsuario);
+            if ($dadosPaciente) {
+                $_SESSION['usuario']['cpf'] = $dadosPaciente['cpf'] ?? '';
+                $_SESSION['usuario']['nis'] = $dadosPaciente['nis'] ?? '';
+                $tipoUsuarioDetectado = 'paciente';
+            }
+            $dadosNutricionista = $nutricionistaRepository->findById($idUsuario);
+            if ($dadosNutricionista) {
+                $_SESSION['usuario']['crm_nutricionista'] = $dadosNutricionista['crm_nutricionista'] ?? '';
+                $tipoUsuarioDetectado = 'nutricionista';
+            }
+            $dadosMedico = $medicoRepository->findById($idUsuario);
+            if ($dadosMedico) {
+                $_SESSION['usuario']['crm_medico'] = $dadosMedico['crm_medico'] ?? '';
+                $tipoUsuarioDetectado = 'medico';
+            }
+
+            $_SESSION['usuario']['tipo'] = $tipoUsuarioDetectado;
+
             // Se for requisição POST tradicional (formulário), redireciona para a página inicial
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-                header('Location: /');
+                header('Location: /delimeter');
                 exit;
             }
 
@@ -129,7 +160,8 @@ class UsuarioController {
             // Atualiza sessão
             $_SESSION['usuario']['nome_usuario'] = $nome;
             $_SESSION['usuario']['email_usuario'] = $email;
-            header('Location: /conta?atualizado=1');
+            // Compatível com rota genérica
+            header('Location: /conta');
             exit;
         }
         header('Location: /conta?erro=1');
@@ -145,7 +177,8 @@ class UsuarioController {
         if ($id) {
             $this->service->getUsuarioRepository()->delete($id);
             session_destroy();
-            header('Location: /');
+            // Compatível com rota genérica
+            header('Location: /delimeter');
             exit;
         }
         header('Location: /conta?erro=1');
@@ -154,7 +187,8 @@ class UsuarioController {
 
     public function sairConta() {
         session_destroy();
-        header('Location: /');
+        // Compatível com rota genérica
+        header('Location: /delimeter');
         exit;
     }
 }

@@ -11,16 +11,33 @@ class NutricionistaService {
         $this->nutricionistaRepository = $nutricionistaRepository;
     }
 
+    public function getNutricionistaRepository() {
+        return $this->nutricionistaRepository;
+    }
+
     public function criar(Nutricionista $nutricionista) {
-        return $this->nutricionistaRepository->save($nutricionista);
+        try {
+            return $this->nutricionistaRepository->save($nutricionista);
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
     }
 
     public function listar() {
         return $this->nutricionistaRepository->findAll();
     }
 
-    public function isReady() {
-        return $this->nutricionistaRepository->isConnected();
+    public function atualizarConta($nutricionista) {
+        return $this->nutricionistaRepository->update($nutricionista);
+    }
+
+    public function deletarConta($id_usuario) {
+        $nutricionistaRepository = new \Htdocs\Src\Models\Repository\NutricionistaRepository();
+        $nutricionistaRepository->delete($id_usuario);
+    }
+
+    public function mostrarConta($id_usuario) {
+        return $this->nutricionistaRepository->findById($id_usuario);
     }
 }
 ?>

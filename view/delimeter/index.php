@@ -1,3 +1,11 @@
+<?php
+if (!isset($_SESSION)) session_start();
+$usuario = $_SESSION['usuario'] ?? null;
+if ($usuario) {
+    header('Location: /'. $_SESSION['usuario']['tipo'] .'');
+    exit;
+}
+?>  
     <main>
         <section class="container-main">
             <div class="container-main-image">

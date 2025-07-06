@@ -1,6 +1,3 @@
-<?php
-    session_start();
-?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -26,7 +23,7 @@
 <body>
     <header>
         <div class="logo">
-            <a href="/"><img src="/public/assets/images/logo.png" alt="Logo Delímiter"></a>
+            <a href="/delimeter"><img src="/public/assets/images/logo.png" alt="Logo Delímiter"></a>
         </div>
         <div class="menu-hamburguer">
             <input type="checkbox" id="menu-toggle">
@@ -41,7 +38,15 @@
                         <li><a href="/delimeter/sobre" class="link">Sobre Nós</a></li>
                         <li><a href="/delimeter/calculo" class="link">Cálculo nutricional</a></li>
                         <?php if (isset($_SESSION['usuario'])): ?>
+                            <?php if ($_SESSION['usuario']['tipo'] === 'paciente'): ?>
+                                <li><a href="/paciente" class="link">Painel</a></li>
+                            <?php elseif ($_SESSION['usuario']['tipo'] === 'nutricionista'): ?>
+                                <li><a href="/nutricionista" class="link">Painel</a></li>
+                            <?php elseif ($_SESSION['usuario']['tipo'] === 'medico'): ?>
+                                <li><a href="/medico" class="link">Painel</a></li>
+                            <?php endif; ?>
                             <li><a href="/conta" class="link">Conta</a></li>
+                            <li><a href="/usuario" class="link">Home</a></li>
                         <?php else: ?>
                             <li><a href="/usuario/cadastro" class="link">Cadastrar-se</a></li>
                             <li><a href="/usuario/login" class="link">Login</a></li>

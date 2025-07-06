@@ -5,10 +5,12 @@
         private $id_nutricionista;
         private $id_usuario;
         private $crm_nutricionista;
+        private $cpf;
 
-        public function __construct($id_usuario, $crm_nutricionista) {
+        public function __construct($id_usuario, $crm_nutricionista, $cpf = null) {
             $this->id_usuario = $id_usuario;
             $this->crm_nutricionista = $crm_nutricionista;
+            $this->cpf = $cpf;
         }
 
         public function getIdNutricionista() {
@@ -33,6 +35,14 @@
 
         public function setCrmNutricionista($crm_nutricionista) {
             $this->crm_nutricionista = $crm_nutricionista;
+        }
+
+        public function getCpf() {
+            return $this->cpf;
+        }
+
+        public function setCpf($cpf) {
+            $this->cpf = $cpf;
         }
     }
 ?>

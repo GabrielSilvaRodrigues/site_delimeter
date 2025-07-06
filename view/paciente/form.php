@@ -1,13 +1,18 @@
-    <h1>Cadastro de Paciente</h1>
-    <form action="/api/paciente" method="post">
-        <label for="id_usuario">ID Usuário:</label>
-        <input type="number" id="id_usuario" name="id_usuario" required><br><br>
-
-        <label for="cpf">CPF:</label>
-        <input type="text" id="cpf" name="cpf" required pattern="\d{11}" maxlength="11"><br><br>
-
-        <label for="nis">NIS:</label>
-        <input type="text" id="nis" name="nis" required pattern="\d{11}" maxlength="11"><br><br>
-
-        <button type="submit">Salvar</button>
-    </form>
+    <main>
+        <div class="container-calc">
+            <form id="formulario" method="POST" action="/api/paciente">
+                <div class="container">
+                    <h2 style="text-align:center;margin-bottom:20px;">Cadastro de Paciente</h2>
+                    <div class="form-group">
+                        <label for="cpf">CPF:</label>
+                        <input type="text" id="cpf" name="cpf" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nis">NIS:</label>
+                        <input type="text" id="nis" name="nis">
+                    </div>
+                    <button type="submit" style="margin-top:18px;">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    </main>
