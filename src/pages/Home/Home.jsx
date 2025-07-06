@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import WelcomeTour from '../../components/WelcomeTour/WelcomeTour';
+import WelcomeTour from '../../components/WelcomeTour';
 import './Home.css';
 
 const Home = () => {

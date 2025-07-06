@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header/Header';
-import Footer from './components/Footer/Footer';
-import Home from './pages/Home/Home';
-import Sobre from './pages/Sobre/Sobre';
-import Calculo from './pages/Calculo/Calculo';
-import Login from './pages/Login/Login';
-import Cadastro from './pages/Cadastro/Cadastro';
-import Usuario from './pages/Usuario/Usuario';
-import Paciente from './pages/Paciente/Paciente';
-import Nutricionista from './pages/Nutricionista/Nutricionista';
-import Medico from './pages/Medico/Medico';
-import Conta from './pages/Conta/Conta';
-import PacienteForm from './pages/Paciente/PacienteForm';
-import NutricionistaForm from './pages/Nutricionista/NutricionistaForm';
-import MedicoForm from './pages/Medico/MedicoForm';
-import { AuthProvider } from './contexts/AuthContext';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+import { AuthProvider } from './contexts/AuthContext';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import UserPanel from './pages/UserPanel';
+import PacientePanel from './pages/PacientePanel';
+import NutricionistaPanel from './pages/NutricionistaPanel';
+import MedicoPanel from './pages/MedicoPanel';
+import DelimiterTool from './pages/DelimiterTool';
+import About from './pages/About';
+import Calculo from './pages/Calculo';
 
 function App() {
   return (
@@ -28,18 +25,17 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/delimeter" element={<Home />} />
-              <Route path="/delimeter/sobre" element={<Sobre />} />
-              <Route path="/delimeter/calculo" element={<Calculo />} />
-              <Route path="/usuario/login" element={<Login />} />
-              <Route path="/usuario/cadastro" element={<Cadastro />} />
-              <Route path="/usuario" element={<Usuario />} />
-              <Route path="/paciente" element={<Paciente />} />
-              <Route path="/paciente/cadastro" element={<PacienteForm />} />
-              <Route path="/nutricionista" element={<Nutricionista />} />
-              <Route path="/nutricionista/cadastro" element={<NutricionistaForm />} />
-              <Route path="/medico" element={<Medico />} />
-              <Route path="/medico/cadastro" element={<MedicoForm />} />
-              <Route path="/conta" element={<Conta />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/calculo" element={<Calculo />} />
+              <Route path="/delimiter-tool" element={<DelimiterTool />} />
+              
+              {/* Rotas protegidas */}
+              <Route path="/usuario" element={<UserPanel />} />
+              <Route path="/paciente" element={<PacientePanel />} />
+              <Route path="/nutricionista" element={<NutricionistaPanel />} />
+              <Route path="/medico" element={<MedicoPanel />} />
             </Routes>
           </main>
           <Footer />

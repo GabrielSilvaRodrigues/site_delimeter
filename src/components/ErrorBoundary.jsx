@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './ErrorBoundary.css';
 
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -18,10 +18,28 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="error-boundary">
-          <h2>Oops! Algo deu errado.</h2>
-          <p>Ocorreu um erro inesperado. Tente recarregar a página.</p>
-          <button onClick={() => window.location.reload()}>
+        <div style={{
+          padding: '20px',
+          textAlign: 'center',
+          backgroundColor: '#fee',
+          color: '#c33',
+          border: '1px solid #fcc',
+          borderRadius: '8px',
+          margin: '20px'
+        }}>
+          <h2>Algo deu errado!</h2>
+          <p>Ocorreu um erro inesperado. Por favor, recarregue a página.</p>
+          <button 
+            onClick={() => window.location.reload()}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#c33',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
             Recarregar Página
           </button>
         </div>

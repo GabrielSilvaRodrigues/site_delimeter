@@ -1,31 +1,46 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email_usuario: '',
+    senha_usuario: ''
+  });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    const result = await login(email, senha);
-    
-    if (result.success) {
-      navigate(`/${result.user.tipo}`);
-    } else {
-      setError(result.error);
+    try {
+      const result = await login(formData);
+      
+      if (result.success) {
+        // Redirecionar baseado no tipo de usuário
+        const userType = result.user.tipo || 'usuario';
+        navigate(`/${userType}`);
+      } else {
+        setError(result.error || 'Erro ao fazer login');
+      }
+    } catch (error) {
+      setError('Erro inesperado. Tente novamente.');
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (
@@ -36,18 +51,17 @@ const Login = () => {
             <h1>Entrar</h1>
             
             {error && (
-              <div className="error-message">
-                {error}
-              </div>
+              <div className="error-message">{error}</div>
             )}
             
             <div className="form-group">
               <label htmlFor="email_usuario">Email:</label>
               <input
                 type="email"
+                name="email_usuario"
                 id="email_usuario"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email_usuario}
+                onChange={handleChange}
                 required
                 disabled={loading}
               />
@@ -57,9 +71,10 @@ const Login = () => {
               <label htmlFor="senha_usuario">Senha:</label>
               <input
                 type="password"
+                name="senha_usuario"
                 id="senha_usuario"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
+                value={formData.senha_usuario}
+                onChange={handleChange}
                 required
                 disabled={loading}
               />
@@ -71,8 +86,8 @@ const Login = () => {
             
             <div className="login-links">
               <p>
-                Ainda não tem conta? 
-                <Link to="/usuario/cadastro"> Cadastre-se aqui</Link>
+                Não tem uma conta? 
+                <a href="/register" className="link"> Cadastre-se aqui</a>
               </p>
             </div>
           </div>

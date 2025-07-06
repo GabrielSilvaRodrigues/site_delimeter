@@ -19,12 +19,25 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} ^/(login|usuario|paciente|nutricionista|medico|conta|delimeter)
 RewriteRule ^(.*)$ public/index.php [L,QSA]
 
-# Static assets (images, css, js from public folder)
-RewriteCond %{REQUEST_URI} ^/public/
+# Static assets (images, css, js from build and public folders)
+RewriteCond %{REQUEST_URI} ^/(public|build)/
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule . - [L]
 
-# React Router - Send all other requests to React
+# React build assets
+RewriteCond %{REQUEST_URI} ^/static/
+RewriteCond %{DOCUMENT_ROOT}/build$1 -f
+RewriteRule ^static/(.*)$ /build/static/$1 [L]
+
+# React Router - Send all other requests to React build
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{DOCUMENT_ROOT}/build/index.html -f
+RewriteRule . /build/index.html [L]
+
+# Fallback to PHP if React build doesn't exist
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/api/

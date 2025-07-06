@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import AccessibilityMenu from '../AccessibilityMenu/AccessibilityMenu';
 import './Header.css';
 
 const Header = () => {
@@ -12,63 +11,47 @@ const Header = () => {
     setMenuOpen(!menuOpen);
   };
 
-  const handleLogout = () => {
-    logout();
-    setMenuOpen(false);
-  };
-
   return (
-    <header className="header">
+    <header className="app-header">
       <div className="logo">
-        <Link to="/delimeter">
+        <Link to="/">
           <img src="/public/assets/images/logo.png" alt="Logo Delímiter" />
         </Link>
       </div>
       
-      <div className="menu-hamburguer">
-        <input 
-          type="checkbox" 
-          id="menu-toggle" 
-          checked={menuOpen}
-          onChange={handleMenuToggle}
-        />
-        <label htmlFor="menu-toggle" className="menu-icon">
-          <div className="linha"></div>
-          <div className="linha"></div>
-          <div className="linha"></div>
-        </label>
-        
-        <div className={`overlay ${menuOpen ? 'open' : ''}`}>
-          <nav>
-            <ul>
-              <li><Link to="/delimeter/sobre" onClick={() => setMenuOpen(false)}>Sobre Nós</Link></li>
-              <li><Link to="/delimeter/calculo" onClick={() => setMenuOpen(false)}>Cálculo nutricional</Link></li>
-              
-              {user ? (
-                <>
-                  {user.tipo === 'paciente' && (
-                    <li><Link to="/paciente" onClick={() => setMenuOpen(false)}>Painel</Link></li>
-                  )}
-                  {user.tipo === 'nutricionista' && (
-                    <li><Link to="/nutricionista" onClick={() => setMenuOpen(false)}>Painel</Link></li>
-                  )}
-                  {user.tipo === 'medico' && (
-                    <li><Link to="/medico" onClick={() => setMenuOpen(false)}>Painel</Link></li>
-                  )}
-                  <li><Link to="/conta" onClick={() => setMenuOpen(false)}>Conta</Link></li>
-                  <li><Link to="/usuario" onClick={() => setMenuOpen(false)}>Home</Link></li>
-                  <li><button onClick={handleLogout} className="logout-btn">Sair</button></li>
-                </>
-              ) : (
-                <>
-                  <li><Link to="/usuario/cadastro" onClick={() => setMenuOpen(false)}>Cadastrar-se</Link></li>
-                  <li><Link to="/usuario/login" onClick={() => setMenuOpen(false)}>Login</Link></li>
-                </>
-              )}
-            </ul>
-            
-            <AccessibilityMenu />
-          </nav>
+      <nav className="main-nav">
+        <ul>
+          <li><Link to="/about">Sobre Nós</Link></li>
+          <li><Link to="/calculo">Cálculo Nutricional</Link></li>
+          {user ? (
+            <>
+              <li><Link to={`/${user.tipo}`}>Painel</Link></li>
+              <li><Link to="/conta">Conta</Link></li>
+              <li>
+                <button onClick={logout} className="logout-btn">
+                  Sair
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li><Link to="/register">Cadastrar-se</Link></li>
+              <li><Link to="/login">Login</Link></li>
+            </>
+          )}
+        </ul>
+      </nav>
+
+      <div className="accessibility-menu">
+        <button className="accessibility-toggle" aria-label="Menu de Acessibilidade">
+          ♿
+        </button>
+        <div className="accessibility-dropdown">
+          <button onClick={() => document.body.style.fontSize = '18px'}>A+</button>
+          <button onClick={() => document.body.style.fontSize = '14px'}>A-</button>
+          <button onClick={() => document.body.classList.toggle('high-contrast')}>
+            Alto Contraste
+          </button>
         </div>
       </div>
     </header>

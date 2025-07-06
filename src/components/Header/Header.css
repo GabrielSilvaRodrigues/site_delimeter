@@ -1,12 +1,13 @@
-.header {
+.app-header {
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
-  padding: 10px 20px;
-  height: auto;
-  position: relative;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .logo img {
@@ -14,147 +15,94 @@
   width: auto;
 }
 
-.menu-hamburguer {
-  position: relative;
-}
-
-#menu-toggle {
-  display: none;
-}
-
-.menu-icon {
-  position: relative;
-  z-index: 10001;
-  width: 35px;
-  height: 30px;
+.main-nav ul {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-}
-
-.linha {
-  height: 4px;
-  background-color: #26a65b;
-  border: solid 0.5px white;
-  border-radius: 2px;
-  transition: 0.3s;
-}
-
-#menu-toggle:checked + .menu-icon .linha:nth-child(1) {
-  transform: rotate(45deg) translate(13px, 13px);
-}
-
-#menu-toggle:checked + .menu-icon .linha:nth-child(2) {
-  opacity: 0;
-}
-
-#menu-toggle:checked + .menu-icon .linha:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 300px;
-  height: 100%;
-  background-color: #fff;
-  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
-  z-index: 998;
-  padding-top: 80px;
-  overflow-y: auto;
-}
-
-.overlay.open {
-  transform: translateX(0);
-}
-
-#menu-toggle:checked ~ .overlay {
-  transform: translateX(0);
-}
-
-nav ul {
   list-style: none;
-  padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 0;
+  gap: 2rem;
+  align-items: center;
 }
 
-nav a, nav button {
-  display: block;
-  padding: 12px 20px;
+.main-nav a {
   color: #333;
   text-decoration: none;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-nav a:hover, nav button:hover {
-  color: #26a65b;
-  background-color: #f5f5f5;
+.main-nav a:hover {
+  color: #667eea;
 }
 
 .logout-btn {
-  background: #dc3545 !important;
-  color: white !important;
-  margin-top: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
   border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 .logout-btn:hover {
-  background: #c82333 !important;
+  transform: translateY(-1px);
+}
+
+.accessibility-menu {
+  position: relative;
+}
+
+.accessibility-toggle {
+  background: #f5f5f5;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.accessibility-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  padding: 1rem;
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 150px;
+}
+
+.accessibility-menu:hover .accessibility-dropdown {
+  display: flex;
+}
+
+.accessibility-dropdown button {
+  background: #f5f5f5;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.accessibility-dropdown button:hover {
+  background: #e0e0e0;
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    padding: 10px;
+  .app-header {
+    padding: 1rem;
+    flex-wrap: wrap;
   }
-
-  .logo {
-    margin-bottom: 10px;
-  }
-
-  .logo img {
-    width: 80px;
-    height: 80px;
-  }
-
-  .overlay {
-    width: 180px;
-    top: 80px;
-    height: auto;
-    border-radius: 8px 0 0 8px;
-    padding: 20px 0;
-    background-color: #f8f8f8;
-    border: 1px solid #e0e0e0;
-  }
-
-  nav a {
-    padding: 10px 20px;
-    font-size: 0.9rem;
-  }
-
-  .menu-hamburguer {
-    top: 20px;
-    right: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .logo img {
-    width: 60px;
-    height: 60px;
+  
+  .main-nav ul {
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 }

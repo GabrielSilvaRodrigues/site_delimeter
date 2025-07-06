@@ -13,15 +13,28 @@
 }
 
 .welcome-tour-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.welcome-tour-content {
   background: white;
-  border-radius: 16px;
-  max-width: 500px;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 600px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
-  position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.4s ease-out;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .close-tour {
@@ -86,62 +99,51 @@
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 25px;
+  margin: 1.5rem 0;
 }
 
 .indicator {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #ddd;
-  cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .indicator.active {
-  background: #26a65b;
+  background: #4CAF50;
 }
 
 .indicator:hover {
   background: #66bb6a;
 }
 
-.tour-navigation {
+.tour-buttons {
   display: flex;
-  justify-content: space-between;
-  gap: 15px;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
-.nav-btn {
-  background: #26a65b;
+.tour-prev,
+.tour-next {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
   font-weight: 600;
-  transition: all 0.3s ease;
-  flex: 1;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.nav-btn:hover:not(:disabled) {
-  background: #1e8b4f;
-  transform: translateY(-1px);
+.tour-prev {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
 }
 
-.nav-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.nav-btn.prev {
-  background: #6c757d;
-}
-
-.nav-btn.prev:hover:not(:disabled) {
-  background: #545b62;
+.tour-prev:hover,
+.tour-next:hover {
+  transform: translateY(-2px);
 }
 
 @keyframes fadeIn {
@@ -166,25 +168,26 @@
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .welcome-tour-modal {
+  .welcome-tour-content {
+    padding: 1.5rem;
     width: 95%;
-    margin: 10px;
   }
   
-  .tour-content {
-    padding: 30px 20px 20px;
+  .welcome-tour-content h2 {
+    font-size: 1.5rem;
   }
   
-  .tour-content h2 {
-    font-size: 1.6rem;
+  .welcome-tour-content p {
+    font-size: 1rem;
   }
   
-  .tour-image {
-    min-height: 150px;
+  .tour-buttons {
+    flex-direction: column;
   }
   
-  .tour-image img {
-    max-height: 150px;
+  .tour-prev,
+  .tour-next {
+    width: 100%;
   }
 }
 

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { api } from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -15,85 +16,45 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verifica se há usuário logado
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    try {
-      const response = await fetch('/api/auth/status', {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
+    // Verificar se há usuário logado no localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Erro ao carregar usuário do localStorage:', error);
+        localStorage.removeItem('user');
       }
-    } catch (error) {
-      console.error('Erro ao verificar status de autenticação:', error);
     }
     setLoading(false);
-  };
+  }, []);
 
-  const login = async (email, senha) => {
+  const login = async (credentials) => {
     try {
-      const response = await fetch('/login/usuario', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email_usuario: email,
-          senha_usuario: senha
-        }),
-        credentials: 'include'
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData.usuario);
-        return { success: true, user: userData.usuario };
-      } else {
-        const error = await response.json();
-        return { success: false, error: error.error || 'Erro no login' };
-      }
+      const response = await api.login(credentials);
+      const userData = response.data.usuario;
+      
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      return { success: true, user: userData };
     } catch (error) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro no login:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.error || 'Erro ao fazer login' 
+      };
     }
   };
 
   const logout = async () => {
     try {
-      await fetch('/conta/sair', {
-        credentials: 'include'
-      });
+      await api.logout();
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    }
-    setUser(null);
-  };
-
-  const register = async (nome, email, senha) => {
-    try {
-      const response = await fetch('/api/usuario', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nome_usuario: nome,
-          email_usuario: email,
-          senha_usuario: senha
-        })
-      });
-
-      if (response.ok) {
-        return { success: true };
-      } else {
-        const error = await response.json();
-        return { success: false, error: error.error || 'Erro no cadastro' };
-      }
-    } catch (error) {
-      return { success: false, error: 'Erro de conexão' };
+      console.error('Erro no logout:', error);
+    } finally {
+      setUser(null);
+      localStorage.removeItem('user');
     }
   };
 
@@ -101,8 +62,8 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
-    register,
-    loading
+    loading,
+    setUser
   };
 
   return (
@@ -111,3 +72,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export default AuthContext;
