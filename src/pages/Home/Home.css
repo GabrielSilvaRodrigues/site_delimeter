@@ -1,0 +1,30 @@
+.parceiros {
+  margin: 40px 0;
+}
+
+.parceiros h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.parceiros p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #26a65b;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #228c4c;
+}

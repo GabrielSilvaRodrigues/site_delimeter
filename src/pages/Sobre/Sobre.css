@@ -1,0 +1,24 @@
+.delimeter-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 300px;
+}
+
+.delimeter-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .about .caixas {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .delimeter-image {
+    margin-top: 20px;
+    max-width: 250px;
+  }
+}

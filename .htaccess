@@ -1,6 +1,15 @@
 RewriteEngine On
 
-# Se o arquivo ou diretório não existir, redireciona para index.php
+# Redireciona todas as requisições da API para a pasta api
+RewriteRule ^api/(.*)$ api/$1 [L]
+
+# Para o React Router - todas as outras requisições vão para index.html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule . /index.html [L]
+
+# Headers para CORS
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type"
