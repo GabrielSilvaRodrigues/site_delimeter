@@ -5,7 +5,25 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
-$id_paciente = $_SESSION['paciente']['id_paciente'] ?? null;
+// Garantir que temos os dados do paciente
+if (!isset($_SESSION['paciente']['id_paciente'])) {
+    // Se não temos na sessão, tentar buscar no banco
+    if (isset($_SESSION['usuario']['id_usuario'])) {
+        $pacienteRepo = new \Htdocs\Src\Models\Repository\PacienteRepository();
+        $pacienteData = $pacienteRepo->findByUsuarioId($_SESSION['usuario']['id_usuario']);
+        if ($pacienteData) {
+            $_SESSION['paciente'] = $pacienteData;
+        } else {
+            header('Location: /paciente/cadastro');
+            exit;
+        }
+    } else {
+        header('Location: /paciente');
+        exit;
+    }
+}
+
+$id_paciente = $_SESSION['paciente']['id_paciente'];
 ?>
 
 <div class="dados-container" style="background: linear-gradient(120deg, #f4f4f4 60%, #e8f5e8 100%); min-height: 100vh;">
@@ -86,16 +104,11 @@ $id_paciente = $_SESSION['paciente']['id_paciente'] ?? null;
 <script>
 // Configuração global
 const API_BASE = '/api/dados-antropometricos';
-const ID_PACIENTE = <?php echo $id_paciente ? $id_paciente : 'null'; ?>;
+const ID_PACIENTE = <?php echo $id_paciente; ?>;
 
 // Formulário de dados
 document.getElementById('dadosForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    
-    if (!ID_PACIENTE) {
-        alert('Erro: ID do paciente não encontrado.');
-        return;
-    }
     
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
@@ -156,11 +169,6 @@ async function calcularIMC() {
 
 // Função para carregar histórico
 async function carregarHistorico() {
-    if (!ID_PACIENTE) {
-        document.getElementById('historicoContainer').innerHTML = '<p style="color: red; text-align: center;">Erro: ID do paciente não encontrado.</p>';
-        return;
-    }
-    
     try {
         const response = await fetch(`${API_BASE}/buscar-por-paciente?id_paciente=${ID_PACIENTE}`);
         const dados = await response.json();

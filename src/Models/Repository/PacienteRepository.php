@@ -36,7 +36,15 @@ class PacienteRepository {
             return $this->conn->lastInsertId();
         } catch (\PDOException $e) {
             if ($e->getCode() == 23000) { // Código de violação de integridade (duplicidade) MySQL
-                throw new \Exception("Já existe um paciente cadastrado com este CPF.");
+                // Verificar qual campo está causando a duplicidade
+                $errorMessage = $e->getMessage();
+                if (strpos($errorMessage, 'cpf') !== false) {
+                    throw new \Exception("Já existe um paciente cadastrado com este CPF.");
+                } elseif (strpos($errorMessage, 'id_usuario') !== false) {
+                    throw new \Exception("Este usuário já possui um cadastro de paciente.");
+                } else {
+                    throw new \Exception("Violação de integridade: dados duplicados.");
+                }
             }
             throw $e;
         }
@@ -66,15 +74,27 @@ class PacienteRepository {
     }
 
     public function update(Paciente $paciente) {
-        $sql = "UPDATE paciente SET cpf = :cpf, nis = :nis WHERE id_usuario = :id_usuario";
-        $stmt = $this->conn->prepare($sql);
-        $id_usuario = $paciente->getIdUsuario();
-        $cpf = $paciente->getCpf();
-        $nis = $paciente->getNis();
-        $stmt->bindParam(':cpf', $cpf);
-        $stmt->bindParam(':nis', $nis);
-        $stmt->bindParam(':id_usuario', $id_usuario);
-        $stmt->execute();
+        try {
+            $sql = "UPDATE paciente SET cpf = :cpf, nis = :nis WHERE id_usuario = :id_usuario";
+            $stmt = $this->conn->prepare($sql);
+            $id_usuario = $paciente->getIdUsuario();
+            $cpf = $paciente->getCpf();
+            $nis = $paciente->getNis();
+            $stmt->bindParam(':cpf', $cpf);
+            $stmt->bindParam(':nis', $nis);
+            $stmt->bindParam(':id_usuario', $id_usuario);
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            if ($e->getCode() == 23000) { // Código de violação de integridade (duplicidade) MySQL
+                $errorMessage = $e->getMessage();
+                if (strpos($errorMessage, 'cpf') !== false) {
+                    throw new \Exception("Já existe um paciente cadastrado com este CPF.");
+                } else {
+                    throw new \Exception("Violação de integridade: dados duplicados.");
+                }
+            }
+            throw $e;
+        }
     }
 
     public function delete($id_usuario) {

@@ -58,15 +58,29 @@ class MedicoRepository {
     }
 
     public function update(Medico $medico) {
-        $sql = "UPDATE medico SET crm_medico = :crm_medico, cpf = :cpf WHERE id_usuario = :id_usuario";
-        $stmt = $this->conn->prepare($sql);
-        $id_usuario = $medico->getIdUsuario();
-        $crm_medico = $medico->getCrmMedico();
-        $cpf = $medico->getCpf();
-        $stmt->bindParam(':crm_medico', $crm_medico);
-        $stmt->bindParam(':cpf', $cpf);
-        $stmt->bindParam(':id_usuario', $id_usuario);
-        $stmt->execute();
+        try {
+            $sql = "UPDATE medico SET crm_medico = :crm_medico, cpf = :cpf WHERE id_usuario = :id_usuario";
+            $stmt = $this->conn->prepare($sql);
+            $id_usuario = $medico->getIdUsuario();
+            $crm_medico = $medico->getCrmMedico();
+            $cpf = $medico->getCpf();
+            $stmt->bindParam(':crm_medico', $crm_medico);
+            $stmt->bindParam(':cpf', $cpf);
+            $stmt->bindParam(':id_usuario', $id_usuario);
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            if ($e->getCode() == 23000) { // Código de violação de integridade (duplicidade) MySQL
+                $errorMessage = $e->getMessage();
+                if (strpos($errorMessage, 'crm_medico') !== false) {
+                    throw new \Exception("Já existe um médico cadastrado com este CRM.");
+                } elseif (strpos($errorMessage, 'cpf') !== false) {
+                    throw new \Exception("Já existe um médico cadastrado com este CPF.");
+                } else {
+                    throw new \Exception("Violação de integridade: dados duplicados.");
+                }
+            }
+            throw $e;
+        }
     }
 
     public function delete($id_usuario) {

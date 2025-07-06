@@ -8,10 +8,10 @@ class Paciente
     private string $cpf;
     private ?string $nis;
 
-    public function __construct(?int $id_paciente, int $id_usuario, string $cpf, ?string $nis = null)
+    public function __construct(?int $id_paciente, $id_usuario, string $cpf, ?string $nis = null)
     {
         $this->id_paciente = $id_paciente;
-        $this->id_usuario = $id_usuario;
+        $this->id_usuario = is_string($id_usuario) ? (int)$id_usuario : $id_usuario;
         $this->cpf = $cpf;
         $this->nis = $nis;
     }

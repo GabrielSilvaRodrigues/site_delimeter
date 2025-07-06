@@ -41,13 +41,8 @@ class DadosAntropometricosRoutes {
             $controller->calcularIMC();
         });
 
-        // View Routes
-        $router->add('GET', '/paciente/dados-antropometricos', function() {
-            session_start();
-            include __DIR__ . '/../../view/includes/header.php';
-            include __DIR__ . '/../../view/paciente/dados-antropometricos.php';
-            include __DIR__ . '/../../view/includes/footer.php';
-        });
+        // Nota: A rota '/paciente/dados-antropometricos' está definida em PacienteRoutes.php
+        // para garantir que os dados do paciente estejam carregados na sessão
     }
 }
 ?>

@@ -51,14 +51,18 @@ class DietaRoutes {
 
         // View Routes
         $router->add('GET', '/nutricionista/dietas', function() {
-            session_start();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
             include __DIR__ . '/../../view/includes/header.php';
             include __DIR__ . '/../../view/nutricionista/dietas.php';
             include __DIR__ . '/../../view/includes/footer.php';
         });
 
         $router->add('GET', '/paciente/dietas', function() {
-            session_start();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
             include __DIR__ . '/../../view/includes/header.php';
             include __DIR__ . '/../../view/paciente/dietas.php';
             include __DIR__ . '/../../view/includes/footer.php';

@@ -5,7 +5,25 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
-$id_paciente = $_SESSION['paciente']['id_paciente'] ?? null;
+// Garantir que temos os dados do paciente
+if (!isset($_SESSION['paciente']['id_paciente'])) {
+    // Se não temos na sessão, tentar buscar no banco
+    if (isset($_SESSION['usuario']['id_usuario'])) {
+        $pacienteRepo = new \Htdocs\Src\Models\Repository\PacienteRepository();
+        $pacienteData = $pacienteRepo->findByUsuarioId($_SESSION['usuario']['id_usuario']);
+        if ($pacienteData) {
+            $_SESSION['paciente'] = $pacienteData;
+        } else {
+            header('Location: /paciente/cadastro');
+            exit;
+        }
+    } else {
+        header('Location: /paciente');
+        exit;
+    }
+}
+
+$id_paciente = $_SESSION['paciente']['id_paciente'];
 ?>
 
 <div class="diario-container" style="background: linear-gradient(120deg, #f4f4f4 60%, #fff3e0 100%); min-height: 100vh;">
@@ -103,18 +121,13 @@ $id_paciente = $_SESSION['paciente']['id_paciente'] ?? null;
 // Configuração global
 const API_DIARIO = '/api/diario-alimentos';
 const API_ALIMENTOS = '/api/alimentos';
-const ID_PACIENTE = <?php echo $id_paciente ? $id_paciente : 'null'; ?>;
+const ID_PACIENTE = <?php echo $id_paciente; ?>;
 
 let alimentosSelecionados = [];
 
 // Formulário de diário
 document.getElementById('diarioForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    
-    if (!ID_PACIENTE) {
-        alert('Erro: ID do paciente não encontrado.');
-        return;
-    }
     
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());

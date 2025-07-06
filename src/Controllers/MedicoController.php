@@ -24,15 +24,16 @@ class MedicoController {
         }
 
         $medico = new \Htdocs\Src\Models\Entity\Medico(
-            $id_usuario,
+            null, // id_medico será gerado pelo banco
+            (int)$id_usuario,
             $crm,
             $cpf
         );
 
-        try {
-            $this->service->criar($medico);
-        } catch (\Exception $e) {
-            echo json_encode(['error' => $e->getMessage()]);
+        $result = $this->service->criar($medico);
+
+        if (is_array($result) && isset($result['error'])) {
+            echo json_encode(['error' => $result['error']]);
             return;
         }
 
@@ -115,11 +116,17 @@ class MedicoController {
         }
 
         $medico = new \Htdocs\Src\Models\Entity\Medico(
-            $id_usuario,
+            null, // id_medico será usado para update
+            (int)$id_usuario,
             $crm,
             $cpf
         );
-        $this->service->atualizarConta($medico);
+        $result = $this->service->atualizarConta($medico);
+
+        if (is_array($result) && isset($result['error'])) {
+            echo json_encode(['error' => $result['error']]);
+            return;
+        }
 
         // Atualiza sessão com o novo CRM
         $_SESSION['usuario']['crm_medico'] = $crm;

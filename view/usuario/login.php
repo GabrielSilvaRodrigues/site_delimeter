@@ -1,5 +1,8 @@
 <?php
-session_start();
+// Iniciar sessão apenas se não estiver ativa
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Se já estiver logado, redirecionar para o painel apropriado
 if (isset($_SESSION['usuario'])) {

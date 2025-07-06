@@ -16,7 +16,11 @@ class MedicoService {
     }
 
     public function criar(Medico $medico) {
-        return $this->medicoRepository->save($medico);
+        try {
+            return $this->medicoRepository->save($medico);
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
     }
 
     public function listar() {
@@ -33,7 +37,15 @@ class MedicoService {
     }
 
     public function atualizarConta(Medico $medico) {
-        return $this->medicoRepository->update($medico);
+        try {
+            return $this->medicoRepository->update($medico);
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    public function mostrarConta($id_usuario) {
+        return $this->medicoRepository->findById($id_usuario);
     }
 
     public function deletarConta($id_usuario) {

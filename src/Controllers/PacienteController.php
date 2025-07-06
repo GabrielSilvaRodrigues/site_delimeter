@@ -24,6 +24,7 @@ class PacienteController {
         }
 
         $paciente = new \Htdocs\Src\Models\Entity\Paciente(
+            null, // id_paciente será gerado pelo banco
             $id_usuario,
             $cpf,
             $nis
@@ -40,8 +41,12 @@ class PacienteController {
         $_SESSION['usuario']['tipo'] = 'paciente';
         $_SESSION['usuario']['cpf'] = $cpf;
         $_SESSION['usuario']['nis'] = $nis;
-        // Carregar os dados completos do paciente e salvar na sessão, se quiser
-        // $_SESSION['paciente'] = $this->service->getPacienteRepository()->findById($id_usuario);
+        
+        // Carregar os dados completos do paciente e salvar na sessão
+        $pacienteData = $this->service->getPacienteRepository()->findByUsuarioId($id_usuario);
+        if ($pacienteData) {
+            $_SESSION['paciente'] = $pacienteData;
+        }
 
         // Redireciona para painel do paciente
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
@@ -66,12 +71,14 @@ class PacienteController {
             header('Location: /usuario/login');
             exit;
         }
-        $paciente = $this->service->getPacienteRepository()->findById($id_usuario);
+        $paciente = $this->service->getPacienteRepository()->findByUsuarioId($id_usuario);
         if (!$paciente) {
+            echo json_encode(['error' => 'Paciente não encontrado.']);
             header('Location: /paciente/cadastro');
             exit;
         } else {
             $_SESSION['usuario']['tipo'] = 'paciente';
+            $_SESSION['paciente'] = $paciente; // Salvar dados do paciente na sessão
         }
         $formPath = dirname(__DIR__, 2) . '/view/paciente/index.php';
         if (file_exists($formPath)) {
@@ -114,12 +121,18 @@ class PacienteController {
         }
 
         $paciente = new \Htdocs\Src\Models\Entity\Paciente(
-            $id_usuario,
+            null, // id_paciente será usado para update
+            (int)$id_usuario,
             $cpf,
             $nis
         );
 
-        $this->service->atualizarConta($paciente);
+        $result = $this->service->atualizarConta($paciente);
+
+        if (is_array($result) && isset($result['error'])) {
+            echo json_encode(['error' => $result['error']]);
+            return;
+        }
 
         // Atualiza sessão com os novos dados
         $_SESSION['usuario']['cpf'] = $cpf;
@@ -166,15 +179,80 @@ class PacienteController {
             echo json_encode(['error' => 'Usuário não está logado.']);
             return;
         }
-        $paciente = $this->service->getPacienteRepository()->findById($id_usuario);
+        $paciente = $this->service->getPacienteRepository()->findByUsuarioId($id_usuario);
         if ($paciente) {
             echo json_encode($paciente);
             $_SESSION['usuario']['tipo'] = 'paciente';
+            $_SESSION['paciente'] = $paciente; // Salvar dados do paciente na sessão
             header('Location: /paciente');
             exit;
         } else {
             header('Location: /paciente/cadastro');
             exit;
+        }
+    }
+
+    /**
+     * Método auxiliar para garantir que os dados do paciente estejam na sessão
+     */
+    private function garantirDadosPacienteNaSessao() {
+        $id_usuario = $_SESSION['usuario']['id_usuario'] ?? $_SESSION['usuario']['id'] ?? null;
+        
+        if (!$id_usuario) {
+            error_log("PacienteController: ID do usuário não encontrado na sessão");
+            return false;
+        }
+        
+        // Se já temos os dados na sessão, não precisa buscar novamente
+        if (isset($_SESSION['paciente']['id_paciente'])) {
+            error_log("PacienteController: Dados do paciente já existem na sessão - ID: " . $_SESSION['paciente']['id_paciente']);
+            return true;
+        }
+        
+        // Buscar dados do paciente no banco
+        $paciente = $this->service->getPacienteRepository()->findByUsuarioId($id_usuario);
+        if ($paciente) {
+            $_SESSION['paciente'] = $paciente;
+            $_SESSION['usuario']['tipo'] = 'paciente';
+            error_log("PacienteController: Dados do paciente carregados do banco - ID: " . $paciente['id_paciente']);
+            return true;
+        }
+        
+        error_log("PacienteController: Paciente não encontrado no banco para usuário ID: " . $id_usuario);
+        return false;
+    }
+
+    /**
+     * Método para servir a página de dados antropométricos
+     */
+    public function mostrarDadosAntropometricos() {
+        if (!$this->garantirDadosPacienteNaSessao()) {
+            header('Location: /paciente/cadastro');
+            exit;
+        }
+        
+        $formPath = dirname(__DIR__, 2) . '/view/paciente/dados-antropometricos.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            echo "Erro: Página não encontrada em $formPath";
+        }
+    }
+
+    /**
+     * Método para servir a página de diário de alimentos
+     */
+    public function mostrarDiarioAlimentos() {
+        if (!$this->garantirDadosPacienteNaSessao()) {
+            header('Location: /paciente/cadastro');
+            exit;
+        }
+        
+        $formPath = dirname(__DIR__, 2) . '/view/paciente/diario-alimentos.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            echo "Erro: Página não encontrada em $formPath";
         }
     }
 }

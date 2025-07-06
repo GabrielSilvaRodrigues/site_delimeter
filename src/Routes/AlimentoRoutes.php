@@ -51,10 +51,10 @@ class AlimentoRoutes {
 
         // View Routes
         $router->add('GET', '/nutricionista/alimentos', function() {
-            session_start();
-            include __DIR__ . '/../../view/includes/header.php';
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
             include __DIR__ . '/../../view/nutricionista/alimentos.php';
-            include __DIR__ . '/../../view/includes/footer.php';
         });
     }
 }

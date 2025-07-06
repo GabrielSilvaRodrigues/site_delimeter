@@ -24,7 +24,8 @@ class NutricionistaController {
         }
 
         $nutricionista = new \Htdocs\Src\Models\Entity\Nutricionista(
-            $id_usuario,
+            null, // id_nutricionista será gerado pelo banco
+            (int)$id_usuario,
             $crm,
             $cpf
         );
@@ -114,11 +115,17 @@ class NutricionistaController {
         }
 
         $nutricionista = new \Htdocs\Src\Models\Entity\Nutricionista(
-            $id_usuario,
+            null, // id_nutricionista será usado para update
+            (int)$id_usuario,
             $crm,
             $cpf
         );
-        $this->service->atualizarConta($nutricionista);
+        $result = $this->service->atualizarConta($nutricionista);
+
+        if (is_array($result) && isset($result['error'])) {
+            echo json_encode(['error' => $result['error']]);
+            return;
+        }
 
         // Atualiza sessão com o novo CRM
         $_SESSION['usuario']['crm_nutricionista'] = $crm;

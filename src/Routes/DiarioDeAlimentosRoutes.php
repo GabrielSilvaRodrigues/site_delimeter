@@ -55,7 +55,9 @@ class DiarioDeAlimentosRoutes {
 
         // View Routes
         $router->add('GET', '/paciente/diario-alimentos', function() {
-            session_start();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
             include __DIR__ . '/../../view/includes/header.php';
             include __DIR__ . '/../../view/paciente/diario-alimentos.php';
             include __DIR__ . '/../../view/includes/footer.php';
