@@ -1,6 +1,6 @@
 <main>
         <div class="container-calc">
-            <form id="formulario" method="POST" action="/api/nutricionista">
+            <form id="formulario" method="POST" action="api/nutricionista">
                 <div class="container">
                     <h2 style="text-align:center;margin-bottom:20px;">Cadastro de Nutricionista</h2>
                     <div class="form-group">

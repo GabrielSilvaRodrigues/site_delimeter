@@ -42,7 +42,7 @@ class NutricionistaController {
         $_SESSION['usuario']['cpf'] = $cpf;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Location: /nutricionista');
+            header('Location: nutricionista');
             exit;
         }
 
@@ -64,12 +64,12 @@ class NutricionistaController {
     public function mostrarHome(){
         $id_usuario = $_SESSION['usuario']['id_usuario'] ?? $_SESSION['usuario']['id'] ?? $_SESSION['usuario_id'] ?? null;
         if (!$id_usuario) {
-            header('Location: /usuario/login');
+            header('Location: usuario/login');
             exit;
         }
         $nutricionista = $this->service->getNutricionistaRepository()->findById($id_usuario);
         if (!$nutricionista) {
-            header('Location: /nutricionista/cadastro');
+            header('Location: nutricionista/cadastro');
             exit;
         } else {
             $_SESSION['usuario']['tipo'] = 'nutricionista';
@@ -84,7 +84,7 @@ class NutricionistaController {
 
     public function mostrarLogin(){
        try {
-            header('Location: /usuario');
+            header('Location: usuario');
             exit;
         } catch (\Exception $e) {
             echo "Erro: " . $e->getMessage();
@@ -124,7 +124,7 @@ class NutricionistaController {
         $_SESSION['usuario']['crm_nutricionista'] = $crm;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Location: /conta');
+            header('Location: conta');
             exit;
         }
 
@@ -138,7 +138,7 @@ class NutricionistaController {
             $_SESSION['usuario']['tipo'] = 'usuario'; // Redefine tipo para usuário padrão
             // Compatível com rota exclusiva, não redireciona para /
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-                header('Location: /usuario');
+                header('Location: usuario');
                 exit;
             }
             echo json_encode(['success' => true]);
@@ -151,7 +151,7 @@ class NutricionistaController {
         $_SESSION['usuario']['tipo'] = 'usuario';
         // Compatível com rota exclusiva, não redireciona para /
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Location: /usuario');
+            header('Location: usuario');
             exit;
         }
         echo json_encode(["success" => "Usuário deslogado com sucesso."]);

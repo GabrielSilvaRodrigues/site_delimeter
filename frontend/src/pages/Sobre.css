@@ -1,0 +1,183 @@
+.sobre {
+  padding: 40px 0;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.page-header h1 {
+  font-size: 3rem;
+  color: #28a745;
+  margin-bottom: 20px;
+}
+
+.page-description {
+  font-size: 1.2rem;
+  color: #6c757d;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Mission Section */
+.mission {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+  margin-bottom: 80px;
+  padding: 40px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.mission h2 {
+  font-size: 2.5rem;
+  color: #28a745;
+  margin-bottom: 20px;
+}
+
+.mission p {
+  font-size: 1.1rem;
+  color: #6c757d;
+  line-height: 1.8;
+}
+
+.mission-image img {
+  width: 100%;
+  border-radius: 15px;
+}
+
+/* Technologies Section */
+.technologies {
+  margin-bottom: 80px;
+}
+
+.technologies h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #28a745;
+  margin-bottom: 40px;
+}
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.tech-card {
+  background-color: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.tech-card:hover {
+  transform: translateY(-5px);
+}
+
+.tech-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.tech-card h3 {
+  color: #28a745;
+  margin-bottom: 10px;
+}
+
+/* Accessibility Section */
+.accessibility {
+  background-color: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom: 80px;
+}
+
+.accessibility h2 {
+  font-size: 2.5rem;
+  color: #28a745;
+  margin-bottom: 30px;
+}
+
+.accessibility-content p {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.accessibility-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.accessibility-content li {
+  padding: 10px 0;
+  border-bottom: 1px solid #e9ecef;
+  color: #495057;
+}
+
+.accessibility-content li:before {
+  content: '✓';
+  color: #28a745;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* Team Section */
+.team {
+  background-color: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.team h2 {
+  font-size: 2.5rem;
+  color: #28a745;
+  margin-bottom: 30px;
+}
+
+.team-content p {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 30px;
+}
+
+.contact-info {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.contact-info h3 {
+  color: #28a745;
+  margin-bottom: 10px;
+}
+
+.contact-info p {
+  margin: 0;
+  color: #495057;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .mission {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .tech-grid {
+    grid-template-columns: 1fr;
+  }
+}

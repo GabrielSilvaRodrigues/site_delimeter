@@ -2,7 +2,7 @@
 if (!isset($_SESSION)) session_start();
 $usuario = $_SESSION['usuario'] ?? null;
 if (!$usuario) {
-    header('Location: /usuario/login');
+    header('Location: usuario/login');
     exit;
 }
 
@@ -11,25 +11,25 @@ $tipo = $usuario['tipo'] ?? 'usuario'; // 'usuario', 'paciente', 'nutricionista'
 // Definindo rotas exatamente conforme mapeado em seus Routes e Controllers
 switch ($tipo) {
     case 'paciente':
-        $rotaAtualizar = '/paciente/conta/atualizar';
-        $rotaDeletar   = '/paciente/conta/deletar';
-        $rotaSair      = '/paciente/conta/sair';
+        $rotaAtualizar = 'paciente/conta/atualizar';
+        $rotaDeletar   = 'paciente/conta/deletar';
+        $rotaSair      = 'paciente/conta/sair';
         break;
     case 'nutricionista':
-        $rotaAtualizar = '/nutricionista/conta/atualizar';
-        $rotaDeletar   = '/nutricionista/conta/deletar';
-        $rotaSair      = '/nutricionista/conta/sair';
+        $rotaAtualizar = 'nutricionista/conta/atualizar';
+        $rotaDeletar   = 'nutricionista/conta/deletar';
+        $rotaSair      = 'nutricionista/conta/sair';
         break;
     case 'medico':
-        $rotaAtualizar = '/medico/conta/atualizar';
-        $rotaDeletar   = '/medico/conta/deletar';
-        $rotaSair      = '/medico/conta/sair';
+        $rotaAtualizar = 'medico/conta/atualizar';
+        $rotaDeletar   = 'medico/conta/deletar';
+        $rotaSair      = 'medico/conta/sair';
         break;
     case 'usuario':
     default:
-        $rotaAtualizar = '/conta/atualizar';
-        $rotaDeletar   = '/conta/deletar';
-        $rotaSair      = '/conta/sair';
+        $rotaAtualizar = 'conta/atualizar';
+        $rotaDeletar   = 'conta/deletar';
+        $rotaSair      = 'conta/sair';
 }
 ?>
 
@@ -42,7 +42,7 @@ switch ($tipo) {
             <?php elseif (isset($_GET['erro'])): ?>
                 <div style="color:red; margin-bottom:10px;">Erro ao atualizar dados.</div>
             <?php endif; ?>
-            <form action="/conta/atualizar" method="POST" id="formulario-conta">
+            <form action="conta/atualizar" method="POST" id="formulario-conta">
                 <input type="hidden" name="tipo_form" value="usuario">
                 <div class="form-group">
                     <label for="nome_usuario">Nome:</label>
@@ -58,10 +58,10 @@ switch ($tipo) {
                 </div>
                 <button type="submit">Atualizar Dados</button>
             </form>
-            <form action="/conta/deletar" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar sua conta? Esta ação não poderá ser desfeita!');" style="margin-top:20px;">
+            <form action="conta/deletar" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar sua conta? Esta ação não poderá ser desfeita!');" style="margin-top:20px;">
                 <button type="submit" style="background:#c62828;">Deletar Conta</button>
             </form>
-            <a href="/conta/sair" style="display:inline-block; margin-top:20px; color:#fff; background:#388e3c; padding:10px 24px; border-radius:4px; text-decoration:none;">Sair</a>
+            <a href="conta/sair" style="display:inline-block; margin-top:20px; color:#fff; background:#388e3c; padding:10px 24px; border-radius:4px; text-decoration:none;">Sair</a>
             <?php if ($tipo === 'paciente'): ?>
                 <form action="<?php echo $rotaAtualizar; ?>" method="POST" id="formulario-paciente" style="margin-top: 24px;">
                     <input type="hidden" name="tipo_form" value="paciente">

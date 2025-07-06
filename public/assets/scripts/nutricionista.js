@@ -188,17 +188,17 @@ document.addEventListener('DOMContentLoaded', function() {
             {
                 title: "Bem-vindo ao Delimeter!",
                 text: "Sua plataforma completa para saúde nutricional inteligente.",
-                image: "/public/assets/images/persefone-feliz.png"
+                image: "public/assets/images/persefone-feliz.png"
             },
             {
                 title: "Soluções Integradas",
                 text: "Desde cálculo nutricional até conexão com nutricionistas - tudo em um só lugar.",
-                image: "/public/assets/images/nutricionista.jpg"
+                image: "public/assets/images/nutricionista.jpg"
             },
             {
                 title: "Parcerias de Confiança",
                 text: "Trabalhamos com SUS, CRN3 e CREMESP para oferecer o melhor serviço.",
-                image: "/public/assets/images/sus.jpeg"
+                image: "public/assets/images/sus.jpeg"
             }
         ];
 

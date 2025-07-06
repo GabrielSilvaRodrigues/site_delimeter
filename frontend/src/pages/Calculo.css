@@ -1,0 +1,223 @@
+.calculo {
+  padding: 40px 0;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.page-header h1 {
+  font-size: 3rem;
+  color: #28a745;
+  margin-bottom: 20px;
+}
+
+.page-header p {
+  font-size: 1.2rem;
+  color: #6c757d;
+}
+
+.calculo-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: start;
+}
+
+/* Form Section */
+.form-section {
+  background-color: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.calculo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #28a745;
+}
+
+/* Result Section */
+.resultado-section {
+  background-color: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.resultado-section h2 {
+  color: #28a745;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.resultado-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.resultado-card {
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+}
+
+.resultado-card.imc {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.resultado-card.tmb {
+  background: linear-gradient(135deg, #28a745, #1e7e34);
+}
+
+.resultado-card.get {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #333;
+}
+
+.resultado-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  opacity: 0.9;
+}
+
+.resultado-card .valor {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.resultado-card .classificacao,
+.resultado-card p {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* Macronutrientes */
+.macronutrientes {
+  margin-bottom: 30px;
+}
+
+.macronutrientes h3 {
+  color: #28a745;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.macro-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.macro-card {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  border-left: 4px solid transparent;
+}
+
+.macro-card.proteinas {
+  border-left-color: #dc3545;
+}
+
+.macro-card.lipidios {
+  border-left-color: #ffc107;
+}
+
+.macro-card.carboidratos {
+  border-left-color: #28a745;
+}
+
+.macro-card h4 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.macro-card .valor {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #28a745;
+  margin-bottom: 5px;
+}
+
+.macro-card .porcentagem {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* Observações */
+.observacoes {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #28a745;
+}
+
+.observacoes h4 {
+  color: #28a745;
+  margin-bottom: 15px;
+}
+
+.observacoes ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.observacoes li {
+  margin-bottom: 8px;
+  color: #6c757d;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .calculo-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .macro-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .resultado-card .valor {
+    font-size: 2rem;
+  }
+}

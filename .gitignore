@@ -1,0 +1,65 @@
+# Dependencies
+frontend/node_modules/
+backend/vendor/
+
+# Production builds
+frontend/build/
+frontend/dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+
+# Database
+*.sql.backup
+*.sqlite
+*.db
+
+# Composer
+composer.phar
+
+# PHP
+*.php~
+.php_cs.cache
+
+# React
+frontend/.eslintcache
+
+# Build files
+backend/storage/
+backend/cache/
+
+# Temporary files
+tmp/
+temp/

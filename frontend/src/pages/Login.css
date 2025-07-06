@@ -1,0 +1,152 @@
+.login {
+  padding: 40px 0;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+.login-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Form Section */
+.login-form-section {
+  background-color: white;
+  padding: 50px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.login-form-section h1 {
+  font-size: 2.5rem;
+  color: #28a745;
+  margin-bottom: 15px;
+}
+
+.login-form-section p {
+  color: #6c757d;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-group input {
+  padding: 15px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #28a745;
+}
+
+.login-switch {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #28a745;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+}
+
+.link-button:hover {
+  color: #218838;
+}
+
+/* Info Section */
+.login-info-section {
+  padding: 40px;
+}
+
+.login-info-section h2 {
+  font-size: 2.5rem;
+  color: #28a745;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.info-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.info-card {
+  background-color: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+}
+
+.info-card .icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.info-card h3 {
+  color: #28a745;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.info-card p {
+  color: #6c757d;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .login-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .login-form-section {
+    padding: 30px;
+  }
+  
+  .login-form-section h1 {
+    font-size: 2rem;
+  }
+  
+  .login-info-section h2 {
+    font-size: 2rem;
+  }
+}

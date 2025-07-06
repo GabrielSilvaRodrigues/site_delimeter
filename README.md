@@ -1,37 +1,70 @@
-# 🥗 Deliméter
+# 🥗 Deliméter - Versão React + PHP
 
-Bem-vindo ao **Deliméter** – o seu portal para uma vida mais saudável, inteligente e conectada!  
-Aqui você gerencia sua alimentação, seu perfil e sua experiência digital com acessibilidade e praticidade.
+Bem-vindo ao **Deliméter** renovado – o seu portal para uma vida mais saudável, inteligente e conectada!  
+Agora com frontend React e backend PHP com API RESTful.
 
 ---
 
-## 🚀 O que é o Deliméter?
+## 🚀 Arquitetura do Projeto
 
-O Deliméter é um sistema web para gerenciamento de usuários e cálculo nutricional, pensado para ser acessível, bonito e fácil de usar.  
-Ideal para quem quer cuidar da saúde, acompanhar dados e ter controle sobre sua experiência.
+### Frontend (React + TypeScript)
+- **React 18** com TypeScript
+- **React Router** para navegação
+- **Axios** para comunicação com API
+- Design responsivo e acessível
+- Componentes modernos e reutilizáveis
+
+### Backend (PHP + Composer)
+- **PHP 8.1** com Composer
+- API RESTful
+- **PDO** para acesso ao banco
+- CORS configurado para React
+- Estrutura MVC organizada
+
+### Banco de Dados
+- **MySQL 8.0**
+- Estrutura otimizada para usuários e cálculos
+- phpMyAdmin para administração
 
 ---
 
 ## ✨ Funcionalidades
 
-- 👤 **Cadastro e Login de Usuários**
-- 🏠 **Painel do Usuário** com informações e histórico
-- 🛠️ **Serviços**: atualização de perfil, histórico, suporte
-- 📊 **Cálculo Nutricional** (IMC, GET, macros, etc)
-- ♿ **Acessibilidade**: alto contraste, ajuste de fonte, simulação de daltonismo
-- 📱 **Responsivo**: funciona bem no PC, tablet e celular
-- 🔒 **Segurança**: senhas criptografadas e dados protegidos
+- 👤 **Sistema de Usuários** (em desenvolvimento)
+- 🧮 **Calculadora Nutricional** 
+  - Cálculo de IMC (Índice de Massa Corporal)
+  - Cálculo de TMB (Taxa Metabólica Basal)
+  - Cálculo de GET (Gasto Energético Total)
+  - Distribuição de Macronutrientes
+- � **Design Responsivo** para todos os dispositivos
+- ♿ **Recursos de Acessibilidade**
+  - Alto contraste
+  - Ajuste de tamanho da fonte
+  - Navegação por teclado
+- 🎨 **Interface Moderna** com React
 
 ---
 
-## 🖥️ Tecnologias
+## �️ Tecnologias
 
-- **PHP** (MVC simples)
-- **HTML5 + CSS3** (com muito carinho no visual)
-- **JavaScript** (interatividade e acessibilidade)
-- **MySQL** (armazenamento dos dados)
-- **SweetAlert2** (alertas bonitos)
-- **PDO** (acesso seguro ao banco)
+### Frontend
+- React 18 + TypeScript
+- React Router DOM
+- Axios
+- CSS3 com Grid e Flexbox
+- Design responsivo
+
+### Backend
+- PHP 8.1 + Composer
+- API RESTful
+- MySQL 8.0
+- Apache
+- Docker
+
+### DevOps
+- Docker Compose
+- Multi-container setup
+- Hot reload para desenvolvimento
 
 ---
 
@@ -39,15 +72,53 @@ Ideal para quem quer cuidar da saúde, acompanhar dados e ter controle sobre sua
 
 ```
 .
-├── README.md
-├── index.php
-├── sobre.php
-├── contato.php
-├── cadastro.php
-├── login.php
-├── painel.php
-├── perfil.php
-├── historico.php
+├── frontend/                 # Aplicação React
+│   ├── src/
+│   │   ├── components/      # Componentes reutilizáveis
+│   │   ├── pages/          # Páginas da aplicação
+│   │   ├── services/       # Serviços para API
+│   │   └── ...
+│   ├── public/             # Assets estáticos
+│   └── Dockerfile
+│
+├── backend/                 # API PHP
+│   ├── src/
+│   │   ├── Controllers/    # Controladores da API
+│   │   ├── Models/         # Modelos e entidades
+│   │   ├── Routes/         # Definição de rotas
+│   │   └── Services/       # Lógica de negócio
+│   ├── database/           # Scripts SQL
+│   └── Dockerfile
+│
+├── docker-compose.yml      # Orquestração dos containers
+└── README.md
+```
+
+---
+
+## 🚀 Como Executar
+
+### Pré-requisitos
+- Docker e Docker Compose
+- Git
+
+### Executando com Docker (Recomendado)
+
+1. **Clone o repositório**
+```bash
+git clone <repository-url>
+cd site_delimeter
+```
+
+2. **Execute com Docker Compose**
+```bash
+docker-compose up --build
+```
+
+3. **Acesse as aplicações**
+- Frontend React: http://localhost:3000
+- Backend API: http://localhost:8000
+- phpMyAdmin: http://localhost:8080
 ├── servicos.php
 ├── imc.php
 ├── macros.php

@@ -1,6 +1,6 @@
-    <main>
+<main>
         <div class="container-calc">
-            <form id="formulario" method="POST" action="/api/paciente">
+            <form id="formulario" method="POST" action="api/paciente">
                 <div class="container">
                     <h2 style="text-align:center;margin-bottom:20px;">Cadastro de Paciente</h2>
                     <div class="form-group">
