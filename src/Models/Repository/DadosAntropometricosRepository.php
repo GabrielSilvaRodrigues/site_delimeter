@@ -17,8 +17,10 @@ class DadosAntropometricosRepository {
         $database = new Connection();
         $this->conn = $database->getConnection();
         if (!$this->conn) {
-            echo "Erro: Não foi possível conectar ao banco de dados.\n";
-            exit(1);
+            error_log("DadosAntropometricosRepository: Erro ao conectar ao banco");
+            throw new \Exception("Não foi possível conectar ao banco de dados");
+        } else {
+            error_log("DadosAntropometricosRepository: Conectado ao banco com sucesso");
         }
     }
 
@@ -54,11 +56,14 @@ class DadosAntropometricosRepository {
     }
 
     public function findByPacienteId($id_paciente) {
+        error_log("DadosAntropometricosRepository: Buscando dados para paciente ID: " . $id_paciente);
         $sql = "SELECT * FROM dados_antropometricos WHERE id_paciente = :id_paciente ORDER BY data_medida DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id_paciente', $id_paciente);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        error_log("DadosAntropometricosRepository: Encontrados " . count($result) . " registros");
+        return $result;
     }
 
     public function findLatestByPacienteId($id_paciente) {
@@ -70,10 +75,13 @@ class DadosAntropometricosRepository {
     }
 
     public function findAll() {
+        error_log("DadosAntropometricosRepository: findAll() chamado");
         $sql = "SELECT * FROM dados_antropometricos ORDER BY data_medida DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        error_log("DadosAntropometricosRepository: findAll() retornou " . count($result) . " registros");
+        return $result;
     }
 
     public function update(DadosAntropometricos $dados) {

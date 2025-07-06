@@ -59,11 +59,14 @@ class PacienteRepository {
     }
 
     public function findByUsuarioId($id_usuario) {
+        error_log("PacienteRepository: Buscando paciente por id_usuario: " . $id_usuario);
         $sql = "SELECT * FROM paciente WHERE id_usuario = :id_usuario";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id_usuario', $id_usuario);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        error_log("PacienteRepository: Resultado da busca: " . print_r($result, true));
+        return $result;
     }
 
     public function findAll() {

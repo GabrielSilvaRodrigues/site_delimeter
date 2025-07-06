@@ -9,6 +9,7 @@ class DadosAntropometricosController {
 
     public function __construct(DadosAntropometricosService $service) {
         $this->service = $service;
+        error_log("DadosAntropometricosController: Controller inicializado");
     }
 
     public function criar() {
@@ -47,20 +48,36 @@ class DadosAntropometricosController {
     }
 
     public function listar() {
-        $dados = $this->service->listar();
-        echo json_encode($dados);
+        error_log("DadosAntropometricosController: listar() chamado");
+        try {
+            $dados = $this->service->listar();
+            error_log("DadosAntropometricosController: listar() retornou " . count($dados) . " registros");
+            echo json_encode($dados);
+        } catch (\Exception $e) {
+            error_log("DadosAntropometricosController: Erro em listar(): " . $e->getMessage());
+            echo json_encode(['error' => 'Erro ao listar dados: ' . $e->getMessage()]);
+        }
     }
 
     public function buscarPorPaciente() {
         $id_paciente = $_GET['id_paciente'] ?? null;
         
+        error_log("DadosAntropometricosController: buscarPorPaciente chamado com ID: " . ($id_paciente ?? 'null'));
+        
         if (!$id_paciente) {
+            error_log("DadosAntropometricosController: ID do paciente não fornecido");
             echo json_encode(['error' => 'ID do paciente é obrigatório.']);
             return;
         }
 
-        $dados = $this->service->buscarPorPaciente($id_paciente);
-        echo json_encode($dados);
+        try {
+            $dados = $this->service->buscarPorPaciente($id_paciente);
+            error_log("DadosAntropometricosController: Dados encontrados: " . print_r($dados, true));
+            echo json_encode($dados);
+        } catch (\Exception $e) {
+            error_log("DadosAntropometricosController: Erro ao buscar dados: " . $e->getMessage());
+            echo json_encode(['error' => 'Erro ao buscar dados: ' . $e->getMessage()]);
+        }
     }
 
     public function buscarUltimaMedida() {

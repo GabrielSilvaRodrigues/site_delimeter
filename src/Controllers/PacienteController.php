@@ -200,8 +200,11 @@ class PacienteController {
         
         if (!$id_usuario) {
             error_log("PacienteController: ID do usuário não encontrado na sessão");
+            error_log("PacienteController: Conteúdo da sessão: " . print_r($_SESSION, true));
             return false;
         }
+        
+        error_log("PacienteController: ID do usuário na sessão: " . $id_usuario);
         
         // Se já temos os dados na sessão, não precisa buscar novamente
         if (isset($_SESSION['paciente']['id_paciente'])) {
@@ -209,12 +212,15 @@ class PacienteController {
             return true;
         }
         
+        error_log("PacienteController: Buscando dados do paciente no banco para usuário ID: " . $id_usuario);
+        
         // Buscar dados do paciente no banco
         $paciente = $this->service->getPacienteRepository()->findByUsuarioId($id_usuario);
         if ($paciente) {
             $_SESSION['paciente'] = $paciente;
             $_SESSION['usuario']['tipo'] = 'paciente';
             error_log("PacienteController: Dados do paciente carregados do banco - ID: " . $paciente['id_paciente']);
+            error_log("PacienteController: Dados do paciente: " . print_r($paciente, true));
             return true;
         }
         
