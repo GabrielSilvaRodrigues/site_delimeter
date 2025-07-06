@@ -105,51 +105,223 @@ As chamadas para login/cadastro/etc devem ser feitas via fetch para as rotas de 
 
 ---
 
-# Site Delimeter
+# Site Delimeter - React + PHP
 
-Site para delimitar texto com React frontend e PHP backend.
+Plataforma completa para cálculos nutricionais e gestão de saúde alimentar, com frontend React moderno e backend PHP robusto.
 
-## Estrutura do Projeto
+## 🚀 Tecnologias
+
+### Frontend (React)
+- **React 18** - Library para interfaces de usuário
+- **React Router 6** - Roteamento SPA
+- **Axios** - Cliente HTTP para APIs
+- **CSS3** - Estilos modernos com animações
+- **JSX** - Sintaxe JavaScript estendida
+
+### Backend (PHP)
+- **PHP 7.4+** - Linguagem servidor
+- **MySQL** - Banco de dados
+- **Composer** - Gerenciador de dependências PHP
+- **PDO** - Camada de abstração do banco
+
+## 📁 Estrutura do Projeto
 
 ```
 /workspaces/site_delimeter/
-├── public/
-│   ├── index.html
-│   └── favicon.ico
-├── src/
-│   ├── components/
-│   │   ├── DelimiterForm.jsx
-│   │   ├── DelimiterForm.css
-│   │   ├── ResultDisplay.jsx
-│   │   └── ResultDisplay.css
-│   ├── App.jsx
-│   ├── App.css
-│   ├── index.js
-│   └── index.css
-├── api/
-│   └── delimiter.php
-├── package.json
-├── .htaccess
-└── README.md
+├── public/                     # Arquivos públicos
+│   ├── index.html             # HTML principal do React
+│   ├── assets/                # Imagens, ícones, etc.
+│   └── index.php              # Entry point PHP
+├── src/                       # Código fonte React
+│   ├── components/            # Componentes reutilizáveis
+│   │   ├── Header/           # Cabeçalho da aplicação
+│   │   ├── Footer/           # Rodapé da aplicação
+│   │   ├── DelimiterForm/    # Formulário delimitador
+│   │   ├── NutritionalCalculator/ # Calculadora nutricional
+│   │   ├── AccessibilityMenu/ # Menu de acessibilidade
+│   │   └── WelcomeTour/       # Tour de boas-vindas
+│   ├── pages/                 # Páginas da aplicação
+│   │   ├── Home/             # Página inicial
+│   │   ├── Login/            # Login de usuários
+│   │   ├── Cadastro/         # Cadastro de usuários
+│   │   ├── Calculo/          # Página de cálculos
+│   │   ├── Sobre/            # Sobre o projeto
+│   │   ├── Usuario/          # Painel usuário
+│   │   ├── Paciente/         # Painel paciente
+│   │   ├── Nutricionista/    # Painel nutricionista
+│   │   ├── Medico/           # Painel médico
+│   │   └── Conta/            # Gestão de conta
+│   ├── contexts/             # Contexts da aplicação
+│   │   └── AuthContext.jsx   # Contexto de autenticação
+│   ├── utils/                # Utilitários
+│   │   └── api.js            # Configuração de APIs
+│   ├── App.jsx               # Componente principal
+│   ├── App.css               # Estilos globais
+│   └── index.js              # Entry point React
+├── api/                       # APIs PHP
+│   └── delimiter.php         # API delimitador de texto
+├── src/                      # Backend PHP (MVC)
+│   ├── Controllers/          # Controladores
+│   ├── Models/              # Modelos e entidades
+│   ├── Services/            # Camada de serviços
+│   ├── Routes/              # Definição de rotas
+│   └── Config/              # Configurações
+├── view/                     # Views PHP (legacy)
+├── package.json              # Dependências React
+├── composer.json             # Dependências PHP
+└── .htaccess                 # Configuração Apache
 ```
 
-## Como usar
+## 🛠️ Instalação e Configuração
 
-### Desenvolvimento
-1. Instalar dependências: `npm install`
-2. Iniciar servidor de desenvolvimento: `npm start`
+### 1. Clone o Repositório
+```bash
+git clone <repository-url>
+cd site_delimeter
+```
 
-### Produção
-1. Build do projeto: `npm run build`
-2. Os arquivos gerados estarão na pasta `build/`
+### 2. Configure o Backend PHP
+```bash
+# Instale dependências PHP
+composer install
 
-## Funcionalidades
+# Configure o banco de dados
+# Edite src/Config/Connection.php com suas credenciais
+```
 
-- Interface React moderna e responsiva
-- Backend PHP para processamento
-- Múltiplas opções de delimitadores
-- Cópia automática para área de transferência
-- Design com gradientes e animações
+### 3. Configure o Frontend React
+```bash
+# Instale dependências Node.js
+npm install
+
+# Para desenvolvimento
+npm start
+
+# Para produção
+npm run build
+```
+
+### 4. Configuração do Servidor
+
+#### Desenvolvimento
+- **Frontend**: `http://localhost:3000` (React Dev Server)
+- **Backend**: `http://localhost:8080` (PHP)
+
+#### Produção
+- Configure Apache/Nginx para servir `/build` (React) e APIs PHP
+- O `.htaccess` já está configurado para roteamento híbrido
+
+## 🎯 Funcionalidades
+
+### Frontend React
+- ✅ **Interface moderna** - Design responsivo e acessível
+- ✅ **SPA completa** - Navegação sem recarregamento
+- ✅ **Calculadora nutricional** - Cálculos completos de GEB/GET
+- ✅ **Sistema de autenticação** - Login/logout com contexto
+- ✅ **Multi-perfil** - Usuário, Paciente, Nutricionista, Médico
+- ✅ **Tour interativo** - Boas-vindas para novos usuários
+- ✅ **Acessibilidade** - Alto contraste, tamanho de fonte, daltonismo
+- ✅ **Responsivo** - Funciona em desktop, tablet e mobile
+
+### Backend PHP
+- ✅ **API REST** - Endpoints para todas operações
+- ✅ **Arquitetura MVC** - Código organizado e manutenível
+- ✅ **Múltiplos usuários** - Sistema completo de perfis
+- ✅ **Validação robusta** - Validação de dados no servidor
+- ✅ **Segurança** - Sessões, validação, sanitização
+
+## 🔗 Principais Rotas
+
+### Frontend (React Router)
+- `/` - Página inicial
+- `/delimeter/sobre` - Sobre o projeto
+- `/delimeter/calculo` - Calculadora nutricional
+- `/usuario/login` - Login
+- `/usuario/cadastro` - Cadastro
+- `/usuario` - Painel usuário
+- `/paciente` - Painel paciente
+- `/nutricionista` - Painel nutricionista
+- `/medico` - Painel médico
+- `/conta` - Gestão de conta
+
+### Backend (PHP APIs)
+- `POST /api/usuario` - Criar usuário
+- `POST /login/usuario` - Login
+- `GET /conta/sair` - Logout
+- `POST /api/paciente` - Criar paciente
+- `POST /api/nutricionista` - Criar nutricionista
+- `POST /api/medico` - Criar médico
+- `POST /api/delimiter` - Processar delimitador
+
+## 🎨 Temas e Personalização
+
+### Cores Principais
+- **Verde**: `#26a65b` (Primária)
+- **Azul**: `#667eea` (Secundária)
+- **Gradientes**: Múltiplos gradientes para visual moderno
+
+### Responsividade
+- **Mobile First**: Design otimizado para dispositivos móveis
+- **Breakpoints**: 480px, 768px, 1024px
+- **Grid Flexível**: Layout adaptativo
+
+## 🚀 Deploy
+
+### Produção com Apache
+1. Execute `npm run build`
+2. Copie `/build` para diretório web
+3. Configure `.htaccess` para roteamento
+4. Configure PHP com Composer
+5. Configure banco de dados
+
+### Docker (Opcional)
+```dockerfile
+# Dockerfile exemplo para produção
+FROM node:16 AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM php:7.4-apache
+COPY --from=build /app/build /var/www/html
+COPY . /var/www/html
+RUN composer install
+```
+
+## 🧪 Testes
+
+```bash
+# Testes React
+npm test
+
+# Linting
+npm run lint
+```
+
+## 📝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 👥 Time
+
+- **Frontend**: React com componentes modernos
+- **Backend**: PHP com arquitetura MVC
+- **Design**: Interface responsiva e acessível
+- **UX**: Tour interativo e experiência otimizada
+
+---
+
+**Delimeter** - Priorizando sua alimentação com tecnologia! 🥗⚡
 
 ---
 

@@ -12,202 +12,174 @@ const NutritionalCalculator = () => {
   });
   const [resultado, setResultado] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Remove error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const validarFormulario = () => {
-    const { nome, idade, sexo, peso, altura, atividade } = formData;
+    const newErrors = {};
     
-    if (!nome || !idade || !sexo || !peso || !altura || !atividade) {
-      alert('Por favor, preencha todos os campos.');
-      return false;
+    if (!formData.nome.trim()) newErrors.nome = 'Nome é obrigatório';
+    if (!formData.idade || formData.idade < 1 || formData.idade > 120) {
+      newErrors.idade = 'Idade deve ser entre 1 e 120 anos';
     }
-
-    if (idade < 1 || idade > 120) {
-      alert('Idade deve estar entre 1 e 120 anos.');
-      return false;
+    if (!formData.sexo) newErrors.sexo = 'Sexo é obrigatório';
+    if (!formData.peso || formData.peso < 1 || formData.peso > 500) {
+      newErrors.peso = 'Peso deve ser entre 1 e 500 kg';
     }
-
-    if (peso < 1 || peso > 500) {
-      alert('Peso deve estar entre 1 e 500 kg.');
-      return false;
+    if (!formData.altura || formData.altura < 50 || formData.altura > 250) {
+      newErrors.altura = 'Altura deve ser entre 50 e 250 cm';
     }
+    if (!formData.atividade) newErrors.atividade = 'Nível de atividade é obrigatório';
 
-    if (altura < 50 || altura > 250) {
-      alert('Altura deve estar entre 50 e 250 cm.');
-      return false;
-    }
-
-    return true;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const calcularDados = () => {
-    if (!validarFormulario()) return;
+    const idade = parseInt(formData.idade);
+    const peso = parseFloat(formData.peso);
+    const altura = parseFloat(formData.altura) / 100; // Convert to meters
+    const { sexo, atividade } = formData;
 
-    setLoading(true);
-    
-    const { nome, idade, sexo, peso, altura, atividade } = formData;
-    const idadeNum = parseInt(idade);
-    const pesoNum = parseFloat(peso);
-    const alturaN = parseFloat(altura);
-    const alturaM = alturaN / 100;
+    // Calculate BMI
+    const imc = peso / (altura * altura);
+    const pesoIdeal = ((altura ** 2) * 21.7).toFixed(1);
 
-    // Cálculo do IMC
-    const imc = pesoNum / (alturaM * alturaM);
-    const pesoIdeal = ((alturaM ** 2) * 21.7).toFixed(1);
-    
+    // BMI Classification
     let classificado = '';
     let corIMC = '';
-    
-    if (imc < 18.5) { 
-      classificado = "Baixo peso"; 
-      corIMC = "blue"; 
-    } else if (imc <= 24.99) { 
-      classificado = "Eutrofia"; 
-      corIMC = "green"; 
-    } else if (imc <= 29.99) { 
-      classificado = "Sobrepeso"; 
-      corIMC = "yellow"; 
-    } else { 
-      classificado = "Obesidade"; 
-      corIMC = "red"; 
-    }
 
-    // Fator de atividade
-    const fatoresAtividade = { 
-      'sedentário': 1.55, 
-      'moderadamente ativo': 1.85, 
-      'ativo': 2.20 
-    };
-    const fatorAtividade = fatoresAtividade[atividade] || 1.55;
-
-    // Cálculo do GEB (Gasto Energético Basal)
-    let geb, gebIdeal;
-    
-    if (sexo === 'masculino') {
-      if (idadeNum <= 3) { 
-        geb = (59.512 * pesoNum) - 30.4; 
-        gebIdeal = (59.512 * pesoIdeal) - 30.4; 
-      } else if (idadeNum <= 10) { 
-        geb = (22.706 * pesoNum) + 504.3; 
-        gebIdeal = (22.706 * pesoIdeal) + 504.3; 
-      } else if (idadeNum <= 18) { 
-        geb = (17.686 * pesoNum) + 658.2; 
-        gebIdeal = (17.686 * pesoIdeal) + 658.2; 
-      } else if (idadeNum <= 30) { 
-        geb = (15.057 * pesoNum) + 692.2; 
-        gebIdeal = (15.057 * pesoIdeal) + 692.2; 
-      } else if (idadeNum <= 60) { 
-        geb = (11.472 * pesoNum) + 873.1; 
-        gebIdeal = (11.472 * pesoIdeal) + 873.1; 
-      } else { 
-        geb = (11.711 * pesoNum) + 587.7; 
-        gebIdeal = (11.711 * pesoIdeal) + 587.7; 
-      }
+    if (imc < 18.5) {
+      classificado = 'Abaixo do peso';
+      corIMC = 'blue';
+    } else if (imc < 25) {
+      classificado = 'Peso normal';
+      corIMC = 'green';
+    } else if (imc < 30) {
+      classificado = 'Sobrepeso';
+      corIMC = 'orange';
     } else {
-      if (idadeNum <= 3) { 
-        geb = (58.31 * pesoNum) - 31.1; 
-        gebIdeal = (58.31 * pesoIdeal) - 31.1; 
-      } else if (idadeNum <= 10) { 
-        geb = (20.315 * pesoNum) + 485.9; 
-        gebIdeal = (20.315 * pesoIdeal) + 485.9; 
-      } else if (idadeNum <= 18) { 
-        geb = (13.384 * pesoNum) + 692.6; 
-        gebIdeal = (13.384 * pesoIdeal) + 692.6; 
-      } else if (idadeNum <= 30) { 
-        geb = (14.818 * pesoNum) + 486.6; 
-        gebIdeal = (14.818 * pesoIdeal) + 486.6; 
-      } else if (idadeNum <= 60) { 
-        geb = (8.126 * pesoNum) + 845.6; 
-        gebIdeal = (8.126 * pesoIdeal) + 845.6; 
-      } else { 
-        geb = (9.082 * pesoNum) + 658.5; 
-        gebIdeal = (9.082 * pesoIdeal) + 658.5; 
-      }
+      classificado = 'Obesidade';
+      corIMC = 'red';
     }
 
+    // Activity factor
+    const fatorAtividade = {
+      'sedentário': 1.55,
+      'moderadamente ativo': 1.85,
+      'ativo': 2.20
+    }[atividade] || 1.55;
+
+    // Calculate GEB (Basal Energy Expenditure)
+    let geb, gebIdeal;
+    if (sexo === 'masculino') {
+      geb = (10 * peso) + (6.25 * (altura * 100)) - (5 * idade) + 5;
+      gebIdeal = (10 * parseFloat(pesoIdeal)) + (6.25 * (altura * 100)) - (5 * idade) + 5;
+    } else {
+      geb = (10 * peso) + (6.25 * (altura * 100)) - (5 * idade) - 161;
+      gebIdeal = (10 * parseFloat(pesoIdeal)) + (6.25 * (altura * 100)) - (5 * idade) - 161;
+    }
+
+    // Calculate GET (Total Energy Expenditure)
     const get = geb * fatorAtividade;
     const getIdeal = gebIdeal * fatorAtividade;
 
-    // Cálculo dos macronutrientes
+    // Calculate macronutrients (based on ideal weight)
     const proteinaMin = getIdeal * 0.10;
     const proteinaMax = getIdeal * 0.15;
-    const gramagemProteinaMin = proteinaMin / 4;
-    const gramagemProteinaMax = proteinaMax / 4;
+    const gramagemProteinaMin = (proteinaMin / 4).toFixed(1);
+    const gramagemProteinaMax = (proteinaMax / 4).toFixed(1);
 
     const carboidratosMin = getIdeal * 0.15;
     const carboidratosMax = getIdeal * 0.30;
-    const gramagemCarboidratoMin = carboidratosMin / 4;
-    const gramagemCarboidratoMax = carboidratosMax / 4;
+    const gramagemCarboidratoMin = (carboidratosMin / 4).toFixed(1);
+    const gramagemCarboidratoMax = (carboidratosMax / 4).toFixed(1);
 
     const lipidiosMin = getIdeal * 0.55;
     const lipidiosMax = getIdeal * 0.75;
-    const gramagemLipidioMin = lipidiosMin / 9;
-    const gramagemLipidioMax = lipidiosMax / 9;
+    const gramagemLipidioMin = (lipidiosMin / 9).toFixed(1);
+    const gramagemLipidioMax = (lipidiosMax / 9).toFixed(1);
 
-    // Distribuição das refeições
+    // Meal distribution
     const refeicoes = {
-      '🍞 Café da manhã': getIdeal * 0.25,
-      '🍎 Lanche da manhã': getIdeal * 0.05,
-      '🍛 Almoço': getIdeal * 0.35,
-      '☕ Lanche da tarde': getIdeal * 0.10,
-      '🍽️ Jantar': getIdeal * 0.15,
-      '🥛 Lanche da noite': getIdeal * 0.05,
+      '🍞 Café da manhã': (getIdeal * 0.25).toFixed(0),
+      '🍎 Lanche da manhã': (getIdeal * 0.05).toFixed(0),
+      '🍛 Almoço': (getIdeal * 0.35).toFixed(0),
+      '☕ Lanche da tarde': (getIdeal * 0.10).toFixed(0),
+      '🍽️ Jantar': (getIdeal * 0.15).toFixed(0),
+      '🥛 Lanche da noite': (getIdeal * 0.05).toFixed(0)
     };
 
     const macroNutrientes = {
       '🍚 Carboidratos': {
         min: carboidratosMin.toFixed(1),
         max: carboidratosMax.toFixed(1),
-        gramasMin: gramagemCarboidratoMin.toFixed(1),
-        gramasMax: gramagemCarboidratoMax.toFixed(1),
-        cor: 'green',
+        gramasMin: gramagemCarboidratoMin,
+        gramasMax: gramagemCarboidratoMax,
+        cor: 'green'
       },
       '🍗 Proteínas': {
         min: proteinaMin.toFixed(1),
         max: proteinaMax.toFixed(1),
-        gramasMin: gramagemProteinaMin.toFixed(1),
-        gramasMax: gramagemProteinaMax.toFixed(1),
-        cor: 'red',
+        gramasMin: gramagemProteinaMin,
+        gramasMax: gramagemProteinaMax,
+        cor: 'red'
       },
       '🥑 Lipídios': {
         min: lipidiosMin.toFixed(1),
         max: lipidiosMax.toFixed(1),
-        gramasMin: gramagemLipidioMin.toFixed(1),
-        gramasMax: gramagemLipidioMax.toFixed(1),
-        cor: 'orange',
-      },
+        gramasMin: gramagemLipidioMin,
+        gramasMax: gramagemLipidioMax,
+        cor: 'orange'
+      }
     };
 
-    setResultado({
-      nome,
-      idade: idadeNum,
-      sexo,
-      peso: pesoNum,
-      altura: alturaM,
-      atividade,
-      imc: imc.toFixed(1),
-      corIMC,
+    return {
+      imc: imc.toFixed(2),
       classificado,
+      corIMC,
       pesoIdeal,
-      geb: geb.toFixed(1),
-      get: get.toFixed(1),
-      getIdeal: getIdeal.toFixed(1),
+      geb: geb.toFixed(0),
+      gebIdeal: gebIdeal.toFixed(0),
+      get: get.toFixed(0),
+      getIdeal: getIdeal.toFixed(0),
       refeicoes,
       macroNutrientes
-    });
-
-    setLoading(false);
+    };
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    calcularDados();
+    setLoading(true);
+
+    if (!validarFormulario()) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const resultadoCalculado = calcularDados();
+      setResultado(resultadoCalculado);
+    } catch (error) {
+      console.error('Erro no cálculo:', error);
+      setErrors({ submit: 'Erro ao calcular. Verifique os dados inseridos.' });
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -220,74 +192,90 @@ const NutritionalCalculator = () => {
             <label htmlFor="nome">Nome</label>
             <input
               type="text"
-              name="nome"
               id="nome"
+              name="nome"
               value={formData.nome}
               onChange={handleChange}
+              className={errors.nome ? 'error' : ''}
               required
             />
+            {errors.nome && <span className="error">{errors.nome}</span>}
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="idade">Idade</label>
             <input
               type="number"
-              name="idade"
               id="idade"
+              name="idade"
               value={formData.idade}
               onChange={handleChange}
+              className={errors.idade ? 'error' : ''}
+              min="1"
+              max="120"
               required
             />
+            {errors.idade && <span className="error">{errors.idade}</span>}
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="sexo">Sexo</label>
             <select
-              name="sexo"
               id="sexo"
+              name="sexo"
               value={formData.sexo}
               onChange={handleChange}
+              className={errors.sexo ? 'error' : ''}
               required
             >
               <option value="">Selecione</option>
-              <option value="masculino">MASCULINO</option>
-              <option value="feminino">FEMININO</option>
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
             </select>
+            {errors.sexo && <span className="error">{errors.sexo}</span>}
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="peso">Peso (kg)</label>
             <input
               type="number"
-              name="peso"
               id="peso"
-              step="0.01"
+              name="peso"
               value={formData.peso}
               onChange={handleChange}
+              className={errors.peso ? 'error' : ''}
+              step="0.1"
+              min="1"
+              max="500"
               required
             />
+            {errors.peso && <span className="error">{errors.peso}</span>}
           </div>
-          
+
           <div className="form-group">
-            <label htmlFor="altura">Altura (em centímetros)</label>
+            <label htmlFor="altura">Altura (cm)</label>
             <input
               type="number"
-              name="altura"
               id="altura"
-              step="0.01"
+              name="altura"
               value={formData.altura}
               onChange={handleChange}
+              className={errors.altura ? 'error' : ''}
+              min="50"
+              max="250"
               required
             />
+            {errors.altura && <span className="error">{errors.altura}</span>}
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="atividade">Nível de atividade física</label>
             <select
-              name="atividade"
               id="atividade"
+              name="atividade"
               value={formData.atividade}
               onChange={handleChange}
+              className={errors.atividade ? 'error' : ''}
               required
             >
               <option value="">Selecione</option>
@@ -295,64 +283,58 @@ const NutritionalCalculator = () => {
               <option value="moderadamente ativo">Moderadamente ativo</option>
               <option value="ativo">Ativo</option>
             </select>
+            {errors.atividade && <span className="error">{errors.atividade}</span>}
           </div>
-          
+
+          {errors.submit && <div className="error-message">{errors.submit}</div>}
+
           <button type="submit" disabled={loading}>
             {loading ? 'Calculando...' : 'Calcular'}
           </button>
         </form>
-      </div>
-      
-      {resultado && (
-        <div className="container resultado" id="resultado">
-          <h2>Resultados</h2>
-          <div className="resultado-content">
-            <p><strong>Nome:</strong> {resultado.nome}</p>
-            <p><strong>Idade:</strong> {resultado.idade}</p>
-            <p><strong>Sexo:</strong> {resultado.sexo}</p>
-            <p><strong>Peso:</strong> {resultado.peso} kg</p>
-            <p><strong>Altura:</strong> {resultado.altura.toFixed(2)} m</p>
-            <p><strong>Atividade Física:</strong> {resultado.atividade}</p>
-            <p>
-              <strong>IMC:</strong> 
-              <span style={{backgroundColor: resultado.corIMC, padding: '2px 6px', borderRadius: '3px'}}>
-                {resultado.imc}
-              </span>
-            </p>
-            <p><strong>Classificação corporal:</strong> {resultado.classificado}</p>
-            <p><strong>Peso Ideal:</strong> {resultado.pesoIdeal} kg</p>
-            <p><strong>Gasto Energético Basal:</strong> {resultado.geb} Kcal</p>
-            <p><strong>Gasto Energético Total:</strong> {resultado.get} Kcal</p>
-            <p><strong>Gasto Energético Total Ideal:</strong> {resultado.getIdeal} Kcal</p>
+
+        {resultado && (
+          <div className="resultado" id="resultado">
+            <h2>Resultado para {formData.nome}</h2>
             
-            <hr />
-            
-            <h3>Distribuição energética</h3>
-            {Object.entries(resultado.refeicoes).map(([refeicao, valor]) => (
-              <p key={refeicao}>
-                <strong>{refeicao}:</strong> {valor.toFixed(1)} Kcal
+            <div className="resultado-section">
+              <h3>📊 Índice de Massa Corporal (IMC)</h3>
+              <p>
+                <strong>IMC:</strong> <span style={{color: resultado.corIMC}}>{resultado.imc}</span> - {resultado.classificado}
               </p>
-            ))}
-            
-            <hr />
-            
-            <h3>Macro nutrientes</h3>
-            {Object.entries(resultado.macroNutrientes).map(([nutriente, dados]) => (
-              <p key={nutriente}>
-                <strong>{nutriente}:</strong> Mínimo 
-                <span style={{backgroundColor: dados.cor, padding: '2px 6px', borderRadius: '3px', margin: '0 4px'}}>
-                  {dados.min}
-                </span> 
-                Kcal ({dados.gramasMin} gramas) e máximo 
-                <span style={{backgroundColor: dados.cor, padding: '2px 6px', borderRadius: '3px', margin: '0 4px'}}>
-                  {dados.max}
-                </span> 
-                Kcal ({dados.gramasMax} gramas)
-              </p>
-            ))}
+              <p><strong>Peso Ideal:</strong> {resultado.pesoIdeal} kg</p>
+            </div>
+
+            <div className="resultado-section">
+              <h3>🔥 Gasto Energético</h3>
+              <p><strong>GEB (Atual):</strong> {resultado.geb} kcal/dia</p>
+              <p><strong>GEB (Ideal):</strong> {resultado.gebIdeal} kcal/dia</p>
+              <p><strong>GET (Atual):</strong> {resultado.get} kcal/dia</p>
+              <p><strong>GET (Ideal):</strong> {resultado.getIdeal} kcal/dia</p>
+            </div>
+
+            <div className="resultado-section">
+              <h3>🍽️ Distribuição de Refeições (baseado no GET ideal)</h3>
+              {Object.entries(resultado.refeicoes).map(([refeicao, calorias]) => (
+                <p key={refeicao}><strong>{refeicao}:</strong> {calorias} kcal</p>
+              ))}
+            </div>
+
+            <div className="resultado-section">
+              <h3>🥗 Macronutrientes (baseado no GET ideal)</h3>
+              {Object.entries(resultado.macroNutrientes).map(([macro, dados]) => (
+                <div key={macro} style={{marginBottom: '10px'}}>
+                  <p><strong>{macro}:</strong></p>
+                  <p style={{marginLeft: '20px', color: dados.cor}}>
+                    Calorias: {dados.min} - {dados.max} kcal/dia<br/>
+                    Gramas: {dados.gramasMin} - {dados.gramasMax} g/dia
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
