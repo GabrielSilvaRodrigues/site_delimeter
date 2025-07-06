@@ -1,4 +1,4 @@
-    <main>
+<main>
         <div class="container-calc">
             <form action="/api/usuario" method="POST" id="formulario">
                 <div class="container">
@@ -20,7 +20,7 @@
                         <input type="password" name="confirmar_senha" required id="confirmar_senha">
                     </div>
                     <button type="submit">Cadastrar</button>
-                    <p><a href="/delimeter/login">Já tem conta? Faça login aqui</a></p>
+                    <p><a href="/usuario/login">Já tem conta? Faça login aqui</a></p>
                 </div>
             </form>
         </div>

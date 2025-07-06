@@ -11,8 +11,7 @@ class AlimentoRoutes {
         $alimentoRepository = new AlimentoRepository();
         $alimentoService = new AlimentoService($alimentoRepository);
         $alimentoController = new AlimentoController($alimentoService);
-        $viewsController = new ViewsController();
-
+        
         // API Routes para alimentos
         $route->add('POST', '/api/alimentos/criar', [$alimentoController, 'criar']);
         $route->add('GET', '/api/alimentos/listar', [$alimentoController, 'listar']);
@@ -21,11 +20,11 @@ class AlimentoRoutes {
         $route->add('GET', '/api/alimentos/buscar-por-dieta', [$alimentoController, 'buscarPorDieta']);
         $route->add('GET', '/api/alimentos/buscar-por-diario', [$alimentoController, 'buscarPorDiario']);
         $route->add('PUT', '/api/alimentos/atualizar', [$alimentoController, 'atualizar']);
-        $route->add('DELETE', '/api/alimentos/deletar', [$alimentoController, 'deletar']);
+        $route->add('POST', '/api/alimentos/deletar', [$alimentoController, 'deletar']);
         $route->add('GET', '/api/alimentos/buscar-avancado', [$alimentoController, 'buscarAvancado']);
 
         // View Routes
-        $route->add('GET', '/nutricionista/alimentos', [$viewsController, 'mostrarAlimentosNutricionista']);
+        $route->add('GET', '/nutricionista/alimentos', [$alimentoController, 'mostrarAlimentosNutricionista']);
     }
 }
 ?>

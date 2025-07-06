@@ -11,7 +11,6 @@ class DietaRoutes {
         $dietaRepository = new DietaRepository();
         $dietaService = new DietaService($dietaRepository);
         $dietaController = new DietaController($dietaService);
-        $viewsController = new ViewsController();
 
         // API Routes para dietas
         $route->add('POST', '/api/dietas/criar', [$dietaController, 'criar']);
@@ -20,13 +19,13 @@ class DietaRoutes {
         $route->add('GET', '/api/dietas/buscar-por-paciente', [$dietaController, 'buscarPorPaciente']);
         $route->add('GET', '/api/dietas/buscar-por-nutricionista', [$dietaController, 'buscarPorNutricionista']);
         $route->add('PUT', '/api/dietas/atualizar', [$dietaController, 'atualizar']);
-        $route->add('DELETE', '/api/dietas/deletar', [$dietaController, 'deletar']);
+        $route->add('POST', '/api/dietas/deletar', [$dietaController, 'deletar']);
         $route->add('POST', '/api/dietas/associar-paciente', [$dietaController, 'associarPaciente']);
         $route->add('POST', '/api/dietas/associar-nutricionista', [$dietaController, 'associarNutricionista']);
 
         // View Routes
-        $route->add('GET', '/nutricionista/dietas', [$viewsController, 'mostrarDietasNutricionista']);
-        $route->add('GET', '/paciente/dietas', [$viewsController, 'mostrarDietasPaciente']);
+        $route->add('GET', '/nutricionista/dietas', [$dietaController, 'mostrarDietasNutricionista']);
+        $route->add('GET', '/paciente/dietas', [$dietaController, 'mostrarDietasPaciente']);
     }
 }
 ?>

@@ -125,7 +125,7 @@ if ($incluirHeader) {
                 Ainda não tem uma conta?
             </p>
             <a 
-                href="/usuario/form" 
+                href="/usuario/cadastro" 
                 style="display: inline-block; background: transparent; color: #667eea; border: 2px solid #667eea; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem;"
                 onMouseOver="this.style.background='#667eea'; this.style.color='white'"
                 onMouseOut="this.style.background='transparent'; this.style.color='#667eea'"

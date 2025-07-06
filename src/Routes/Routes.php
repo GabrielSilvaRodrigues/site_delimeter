@@ -6,12 +6,16 @@ use Htdocs\Src\Routes\MedicoRoutes;
 use Htdocs\Src\Routes\NutricionistaRoutes;
 use Htdocs\Src\Routes\PacienteRoutes;
 use Htdocs\Src\Routes\UsuarioRoutes;
+use Htdocs\Src\Routes\DadosAntropometricosRoutes;
+use Htdocs\Src\Routes\DietaRoutes;
+use Htdocs\Src\Routes\DiarioDeAlimentosRoutes;
+use Htdocs\Src\Routes\AlimentoRoutes;
 
 class Routes {
     private $routes = [];
     
     // Adiciona uma rota ao array de rotas
-    public function add(string $method, string $path, callable $handler) {
+    public function add(string $method, string $path, $handler) {
         $this->routes[] = [
             'method' => strtoupper($method),
             'path' => $path,
@@ -50,6 +54,10 @@ class Routes {
         new PacienteRoutes($this);
         new NutricionistaRoutes($this);
         new MedicoRoutes($this);
+        new DadosAntropometricosRoutes($this);
+        new DietaRoutes($this);
+        new DiarioDeAlimentosRoutes($this);
+        new AlimentoRoutes($this);
     }
 }
 ?>
