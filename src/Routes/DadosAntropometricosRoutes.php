@@ -18,7 +18,7 @@ class DadosAntropometricosRoutes {
         $route->add('GET', '/api/dados-antropometricos/buscar/{id}', [$dadosAntropometricosController, 'buscarPorId']);
         $route->add('GET', '/api/dados-antropometricos/ultima-medida', [$dadosAntropometricosController, 'buscarUltimaMedida']);
         $route->add('PUT', '/api/dados-antropometricos/atualizar', [$dadosAntropometricosController, 'atualizar']);
-        $route->add('DELETE', '/api/dados-antropometricos/deletar', [$dadosAntropometricosController, 'deletar']);
+        $route->add('POST', '/api/dados-antropometricos/deletar', [$dadosAntropometricosController, 'deletar']);
         $route->add('GET', '/api/dados-antropometricos/calcular-imc', [$dadosAntropometricosController, 'calcularIMC']);
     }
 }

@@ -11,7 +11,6 @@ class DiarioDeAlimentosRoutes {
         $diarioDeAlimentosRepository = new DiarioDeAlimentosRepository();
         $diarioDeAlimentosService = new DiarioDeAlimentosService($diarioDeAlimentosRepository);
         $diarioDeAlimentosController = new DiarioDeAlimentosController($diarioDeAlimentosService);
-        $viewsController = new ViewsController();
 
         // API Routes para diário de alimentos
         $route->add('POST', '/api/diario-alimentos/criar', [$diarioDeAlimentosController, 'criar']);
@@ -21,12 +20,12 @@ class DiarioDeAlimentosRoutes {
         $route->add('GET', '/api/diario-alimentos/buscar-por-data', [$diarioDeAlimentosController, 'buscarPorPacienteEData']);
         $route->add('GET', '/api/diario-alimentos/buscar-por-periodo', [$diarioDeAlimentosController, 'buscarPorPeriodo']);
         $route->add('PUT', '/api/diario-alimentos/atualizar', [$diarioDeAlimentosController, 'atualizar']);
-        $route->add('DELETE', '/api/diario-alimentos/deletar', [$diarioDeAlimentosController, 'deletar']);
+        $route->add('POST', '/api/diario-alimentos/deletar', [$diarioDeAlimentosController, 'deletar']);
         $route->add('POST', '/api/diario-alimentos/associar-alimento', [$diarioDeAlimentosController, 'associarAlimento']);
-        $route->add('DELETE', '/api/diario-alimentos/remover-alimento', [$diarioDeAlimentosController, 'removerAlimento']);
+        $route->add('POST', '/api/diario-alimentos/remover-alimento', [$diarioDeAlimentosController, 'removerAlimento']);
 
         // View Routes
-        $route->add('GET', '/paciente/diario-alimentos', [$viewsController, 'mostrarDiarioAlimentos']);
+        $route->add('GET', '/paciente/diario-alimentos', [$diarioDeAlimentosController, 'mostrarDiarioAlimentos']);
     }
 }
 ?>
