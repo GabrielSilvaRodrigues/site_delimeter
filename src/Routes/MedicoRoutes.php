@@ -19,6 +19,7 @@ class MedicoRoutes {
         $route->add('POST', '/medico/conta/deletar', [$medicoController, 'deletarConta']);
         $route->add('GET', '/medico/conta/sair', [$medicoController, 'sairConta']);
         $route->add('GET', '/medico', [$medicoController, 'mostrarHome']);
+        $route->add('GET', '/medico/conta/entrar', [$medicoController, 'procurarPorId']);
     }
 }
 ?>
