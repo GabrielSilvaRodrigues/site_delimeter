@@ -284,17 +284,46 @@ async function carregarHistorico() {
     }
     
     try {
-        const response = await fetch(`${API_DIARIO}/buscar-por-paciente?id_paciente=${ID_PACIENTE}`);
-        const registros = await response.json();
+        const response = await fetch(`${API_DIARIO}/buscar-por-paciente?id_paciente=${ID_PACIENTE}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
         
-        if (Array.isArray(registros) && registros.length > 0) {
-            mostrarHistorico(registros);
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Resposta não é JSON:', text.substring(0, 500));
+            throw new Error('API retornou HTML em vez de JSON');
+        }
+        
+        const registros = await response.json();
+        const dados = registros.data || registros;
+        
+        if (Array.isArray(dados) && dados.length > 0) {
+            mostrarHistorico(dados);
         } else {
             document.getElementById('historicoContainer').innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Nenhum registro encontrado. Crie seu primeiro registro acima!</p>';
         }
     } catch (error) {
         console.error('Erro:', error);
-        document.getElementById('historicoContainer').innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar histórico. Tente recarregar a página.</p>';
+        document.getElementById('historicoContainer').innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <p style="color: red;">Erro ao carregar histórico: ${error.message}</p>
+                <button onclick="carregarHistorico()" style="background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                    🔄 Tentar Novamente
+                </button>
+            </div>
+        `;
     }
 }
 

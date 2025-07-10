@@ -21,6 +21,7 @@ class DiarioDeAlimentosRoutes {
         $route->add('GET', '/api/diario-alimentos/buscar-por-periodo', [$diarioDeAlimentosController, 'buscarPorPeriodo']);
         $route->add('PUT', '/api/diario-alimentos/atualizar', [$diarioDeAlimentosController, 'atualizar']);
         $route->add('POST', '/api/diario-alimentos/deletar', [$diarioDeAlimentosController, 'deletar']);
+        $route->add('DELETE', '/api/diario-alimentos/deletar', [$diarioDeAlimentosController, 'deletar']);
         $route->add('POST', '/api/diario-alimentos/associar-alimento', [$diarioDeAlimentosController, 'associarAlimento']);
         $route->add('POST', '/api/diario-alimentos/remover-alimento', [$diarioDeAlimentosController, 'removerAlimento']);
 

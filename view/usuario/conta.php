@@ -1,175 +1,120 @@
 <?php
-if (!isset($_SESSION)) session_start();
-$usuario = $_SESSION['usuario'] ?? null;
-if (!$usuario) {
+// Inicializar sessão se não estiver ativa
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificar se usuário está logado
+if (!isset($_SESSION['usuario'])) {
     header('Location: /usuario/login');
     exit;
 }
-
-$tipo = $usuario['tipo'] ?? 'usuario'; // 'usuario', 'paciente', 'nutricionista', 'medico'
-
-// Dados antropométricos para pacientes
-$dadosAntropometricos = $_SESSION['dados_antropometricos'] ?? [];
-
-// Definindo rotas exatamente conforme mapeado em seus Routes e Controllers
-switch ($tipo) {
-    case 'paciente':
-        $rotaAtualizar = '/paciente/conta/atualizar';
-        $rotaDeletar   = '/paciente/conta/deletar';
-        $rotaSair      = '/paciente/conta/sair';
-        break;
-    case 'nutricionista':
-        $rotaAtualizar = '/nutricionista/conta/atualizar';
-        $rotaDeletar   = '/nutricionista/conta/deletar';
-        $rotaSair      = '/nutricionista/conta/sair';
-        break;
-    case 'medico':
-        $rotaAtualizar = '/medico/conta/atualizar';
-        $rotaDeletar   = '/medico/conta/deletar';
-        $rotaSair      = '/medico/conta/sair';
-        break;
-    case 'usuario':
-    default:
-        $rotaAtualizar = '/conta/atualizar';
-        $rotaDeletar   = '/conta/deletar';
-        $rotaSair      = '/conta/sair';
-}
 ?>
 
-<main>
-    <div class="container-calc">
-        <div class="container">
-            <h1>Minha Conta</h1>
-            <?php if (isset($_GET['atualizado'])): ?>
-                <div style="color:green; margin-bottom:10px;">Dados atualizados com sucesso!</div>
-            <?php elseif (isset($_GET['erro'])): ?>
-                <div style="color:red; margin-bottom:10px;">Erro ao atualizar dados.</div>
-            <?php endif; ?>
-            <form action="/conta/atualizar" method="POST" id="formulario-conta">
-                <input type="hidden" name="tipo_form" value="usuario">
-                <div class="form-group">
-                    <label for="nome_usuario">Nome:</label>
-                    <input type="text" name="nome_usuario" required id="nome_usuario" value="<?php echo htmlspecialchars($usuario['nome_usuario'] ?? $usuario['nome'] ?? ''); ?>">
-                </div>
-                <div class="form-group">
-                    <label for="email_usuario">Email:</label>
-                    <input type="email" name="email_usuario" required id="email_usuario" value="<?php echo htmlspecialchars($usuario['email_usuario'] ?? $usuario['email'] ?? ''); ?>">
-                </div>
-                <div class="form-group">
-                    <label for="senha_usuario">Nova Senha:</label>
-                    <input type="password" name="senha_usuario" id="senha_usuario" placeholder="Deixe em branco para não alterar">
-                </div>
-                <button type="submit">Atualizar Dados</button>
-            </form>
-            <form action="/conta/deletar" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar sua conta? Esta ação não poderá ser desfeita!');" style="margin-top:20px;">
-                <button type="submit" style="background:#c62828;">Deletar Conta</button>
-            </form>
-            <a href="/conta/sair" style="display:inline-block; margin-top:20px; color:#fff; background:#388e3c; padding:10px 24px; border-radius:4px; text-decoration:none;">Sair</a>
-            <?php if ($tipo === 'paciente'): ?>
-                <form action="<?php echo $rotaAtualizar; ?>" method="POST" id="formulario-paciente" style="margin-top: 24px;">
-                    <input type="hidden" name="tipo_form" value="paciente">
-                    <h2>Dados do Paciente</h2>
-                    <div class="form-group">
-                        <label for="cpf">CPF:</label>
-                        <input type="text" name="cpf" id="cpf" required value="<?php echo htmlspecialchars($usuario['cpf'] ?? $usuario['cpf_paciente'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="nis">NIS:</label>
-                        <input type="text" name="nis" id="nis" value="<?php echo htmlspecialchars($usuario['nis'] ?? $usuario['nis_paciente'] ?? ''); ?>">
-                    </div>
-                    <button type="submit">Atualizar Dados do Paciente</button>
-                </form>
-                
-                <?php if (!empty($dadosAntropometricos)): ?>
-                    <div style="margin-top: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                        <h2>Dados Antropométricos Atuais</h2>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                            <?php if (isset($dadosAntropometricos['sexo_paciente']) && $dadosAntropometricos['sexo_paciente'] !== ''): ?>
-                                <div>
-                                    <strong>Sexo:</strong> 
-                                    <?php echo $dadosAntropometricos['sexo_paciente'] == '1' ? 'Masculino' : 'Feminino'; ?>
-                                </div>
-                            <?php endif; ?>
-                            <?php if (!empty($dadosAntropometricos['altura_paciente'])): ?>
-                                <div>
-                                    <strong>Altura:</strong> 
-                                    <?php echo htmlspecialchars($dadosAntropometricos['altura_paciente']); ?>m
-                                </div>
-                            <?php endif; ?>
-                            <?php if (!empty($dadosAntropometricos['peso_paciente'])): ?>
-                                <div>
-                                    <strong>Peso:</strong> 
-                                    <?php echo htmlspecialchars($dadosAntropometricos['peso_paciente']); ?>kg
-                                </div>
-                            <?php endif; ?>
-                            <?php if (!empty($dadosAntropometricos['imc'])): ?>
-                                <div>
-                                    <strong>IMC:</strong> 
-                                    <?php echo number_format($dadosAntropometricos['imc'], 2); ?>
-                                </div>
-                            <?php endif; ?>
-                            <?php if (!empty($dadosAntropometricos['classificacao_imc'])): ?>
-                                <div>
-                                    <strong>Classificação:</strong> 
-                                    <?php echo htmlspecialchars($dadosAntropometricos['classificacao_imc']); ?>
-                                </div>
-                            <?php endif; ?>
-                            <?php if (!empty($dadosAntropometricos['data_medida'])): ?>
-                                <div>
-                                    <strong>Última Medição:</strong> 
-                                    <?php echo date('d/m/Y', strtotime($dadosAntropometricos['data_medida'])); ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <a href="/paciente/dados-antropometricos" style="display: inline-block; background: #007bff; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 14px;">
-                                📊 Gerenciar Dados Antropométricos
-                            </a>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                
-                <form action="/paciente/conta/deletar" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar sua conta? Esta ação não poderá ser desfeita!');" style="margin-top:20px;">
-                    <button type="submit" style="background:#c62828;">Deletar Conta</button>
-                </form>
-                <a href="/paciente/conta/sair" style="display:inline-block; margin-top:20px; color:#fff; background:#388e3c; padding:10px 24px; border-radius:4px; text-decoration:none;">Sair</a>
-            <?php elseif ($tipo === 'nutricionista'): ?>
-                <form action="<?php echo $rotaAtualizar; ?>" method="POST" id="formulario-nutricionista" style="margin-top: 24px;">
-                    <input type="hidden" name="tipo_form" value="nutricionista">
-                    <h2>Dados do Nutricionista</h2>
-                    <div class="form-group">
-                        <label for="crm_nutricionista">CRN:</label>
-                        <input type="text" name="crm_nutricionista" id="crm_nutricionista" required value="<?php echo htmlspecialchars($usuario['crm_nutricionista'] ?? $usuario['crm'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="cpf_nutricionista">CPF:</label>
-                        <input type="text" name="cpf" id="cpf_nutricionista" required value="<?php echo htmlspecialchars($usuario['cpf'] ?? ''); ?>">
-                    </div>
-                    <button type="submit">Atualizar Dados do Nutricionista</button>
-                </form>
-                <form action="/nutricionista/conta/deletar" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar sua conta? Esta ação não poderá ser desfeita!');" style="margin-top:20px;">
-                    <button type="submit" style="background:#c62828;">Deletar Conta</button>
-                </form>
-                <a href="/nutricionista/conta/sair" style="display:inline-block; margin-top:20px; color:#fff; background:#388e3c; padding:10px 24px; border-radius:4px; text-decoration:none;">Sair</a>
-            <?php elseif ($tipo === 'medico'): ?>
-                <form action="<?php echo $rotaAtualizar; ?>" method="POST" id="formulario-medico" style="margin-top: 24px;">
-                    <input type="hidden" name="tipo_form" value="medico">
-                    <h2>Dados do Médico</h2>
-                    <div class="form-group">
-                        <label for="crm_medico">CRM:</label>
-                        <input type="text" name="crm_medico" id="crm_medico" required value="<?php echo htmlspecialchars($usuario['crm_medico'] ?? $usuario['crm'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="cpf_medico">CPF:</label>
-                        <input type="text" name="cpf" id="cpf_medico" required value="<?php echo htmlspecialchars($usuario['cpf'] ?? ''); ?>">
-                    </div>
-                    <button type="submit">Atualizar Dados do Médico</button>
-                </form>
-                <form action="/medico/conta/deletar" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar sua conta? Esta ação não poderá ser desfeita!');" style="margin-top:20px;">
-                    <button type="submit" style="background:#c62828;">Deletar Conta</button>
-                </form>
-                <a href="/medico/conta/sair" style="display:inline-block; margin-top:20px; color:#fff; background:#388e3c; padding:10px 24px; border-radius:4px; text-decoration:none;">Sair</a>
-            <?php endif; ?>
+<div class="conta-container" style="background: linear-gradient(120deg, #f4f4f4 60%, #e0f7fa 100%); min-height: 100vh;">
+    <main class="conta-main-content" style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div class="conta-header" style="margin-bottom: 30px; background: linear-gradient(90deg, #4CAF50 70%, #388e3c 100%); box-shadow: 0 4px 16px rgba(76,175,80,0.15); border-radius: 12px; padding: 25px;">
+            <h1 style="color: #fff; margin: 0; font-size: 2rem;">
+                ⚙️ Configurações da Conta
+            </h1>
         </div>
-    </div>
-</main>
+
+        <div class="conta-form-container" style="background: #fff; border-radius: 10px; padding: 30px; box-shadow: 0 4px 16px rgba(76,175,80,0.15);">
+            <div id="message" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 5px;"></div>
+            
+            <form id="contaForm" method="POST" action="/conta/atualizar">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="nome_usuario" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Nome completo:</label>
+                    <input type="text" id="nome_usuario" name="nome_usuario" required 
+                           value="<?php echo htmlspecialchars($_SESSION['usuario']['nome_usuario']); ?>"
+                           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="email_usuario" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Email:</label>
+                    <input type="email" id="email_usuario" name="email_usuario" required 
+                           value="<?php echo htmlspecialchars($_SESSION['usuario']['email_usuario']); ?>"
+                           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="senha_usuario" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Nova senha (deixe em branco para manter a atual):</label>
+                    <input type="password" id="senha_usuario" name="senha_usuario" 
+                           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 30px;">
+                    <button type="submit" style="flex: 1; padding: 12px; background: #4caf50; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                        💾 Salvar Alterações
+                    </button>
+                    <button type="button" onclick="confirmarExclusao()" style="flex: 1; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                        🗑️ Excluir Conta
+                    </button>
+                </div>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/usuario" style="color: #4caf50; text-decoration: none; font-weight: bold;">
+                    ← Voltar ao painel
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+document.getElementById('contaForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('/conta/atualizar', {
+        method: 'POST',
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('Dados atualizados com sucesso!', 'success');
+        } else {
+            showMessage(data.error || 'Erro ao atualizar dados.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showMessage('Erro de conexão. Tente novamente.', 'error');
+    });
+});
+
+function confirmarExclusao() {
+    if (confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
+        fetch('/conta/deletar', {
+            method: 'POST',
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Conta excluída com sucesso.');
+                window.location.href = '/delimeter';
+            } else {
+                showMessage(data.error || 'Erro ao excluir conta.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            showMessage('Erro de conexão. Tente novamente.', 'error');
+        });
+    }
+}
+
+function showMessage(message, type) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = message;
+    messageDiv.style.display = 'block';
+    messageDiv.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
+    messageDiv.style.color = type === 'success' ? '#155724' : '#721c24';
+    messageDiv.style.border = type === 'success' ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+}
+</script>

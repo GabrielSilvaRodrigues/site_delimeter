@@ -1,66 +1,125 @@
-<div class="usuario-container" style="background: linear-gradient(120deg, #f4f4f4 60%, #e0f7fa 100%); min-height: 100vh;">
-    <main class="usuario-main-content" style="max-width: 900px; margin: 0 auto; padding-bottom: 40px;">
-        <div class="usuario-header" style="margin-bottom: 40px; background: linear-gradient(90deg, #ff9800 70%, #f57c00 100%); box-shadow: 0 4px 16px rgba(255,152,0,0.13); border-radius: 14px;">
-            <h1 style="font-size:2.5rem; margin-bottom: 10px; letter-spacing: 1px; color: #fff; text-shadow: 1px 2px 8px #f57c0033;">
-                🧑‍🦱 Bem-vindo ao Painel do Paciente
+<?php
+// Inicializar sessão se não estiver ativa
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificar se usuário está logado
+if (!isset($_SESSION['usuario'])) {
+    header('Location: /usuario/login');
+    exit;
+}
+
+// Verificar se é paciente
+if (!isset($_SESSION['paciente'])) {
+    header('Location: /paciente/cadastro');
+    exit;
+}
+?>
+
+<div class="paciente-container" style="background: linear-gradient(120deg, #f4f4f4 60%, #e8f5e8 100%); min-height: 100vh;">
+    <main class="paciente-main-content" style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+        <div class="paciente-header" style="margin-bottom: 30px; background: linear-gradient(90deg, #4caf50 70%, #388e3c 100%); box-shadow: 0 4px 16px rgba(76,175,80,0.15); border-radius: 12px; padding: 25px;">
+            <h1 style="color: #fff; margin: 0 0 10px 0; font-size: 2.2rem;">
+                🧑‍🦱 Painel do Paciente
             </h1>
-            <p style="font-size:1.18rem; color:#fff3e0; margin-bottom: 0;">
-                Acompanhe sua saúde, visualize orientações e mantenha seus dados atualizados.
+            <p style="color: #e8f5e8; margin: 0; font-size: 1.1rem;">
+                Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome_usuario']); ?>! Gerencie sua saúde aqui.
             </p>
         </div>
-        <section class="usuario-section" id="home" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #ff980022;">
-            <h2 style="font-size:1.6rem; color:#ff9800; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size:1.3em;">🏠</span> Início
-            </h2>
-            <p style="font-size:1.08rem; color:#444;">
-                Bem-vindo ao seu <strong>painel do paciente</strong>! Aqui você pode acompanhar sua saúde, acessar orientações e atualizar seus dados.<br>
-                <span style="color:#ff9800;">Use o menu lateral para navegar.</span>
-            </p>
-        </section>
-        <section class="usuario-section" id="about" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #ff980022;">
-            <h2 style="font-size:1.6rem; color:#ff9800; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size:1.3em;">ℹ️</span> Sobre
-            </h2>
-            <p style="font-size:1.08rem; color:#444;">
-                Este sistema foi desenvolvido para facilitar o <strong>acompanhamento da sua saúde</strong>, centralizando informações e orientações.
-            </p>
-            <ul style="margin: 15px 0 0 20px; color:#ff9800; font-size:1.05rem; line-height:1.7;">
-                <li>Visualize orientações dos profissionais</li>
-                <li>Acompanhe seu histórico de saúde</li>
-                <li>Mantenha seus dados sempre atualizados</li>
-            </ul>
-        </section>
-        <section class="usuario-section" id="services" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #ff980022;">
-            <h2 style="font-size:1.6rem; color:#ff9800; margin-bottom: 18px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size:1.3em;">🛠️</span> Serviços
-            </h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between;">
-                <div style="flex:1 1 220px; min-width:220px; background:#fff8e1; border-radius:8px; box-shadow:0 1px 6px #ff980011; padding:18px 14px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center;">
-                    <div style="font-size:2.1em; margin-bottom:8px;">🧑‍🦱</div>
-                    <h3 style="margin-bottom: 6px; color:#ff9800; font-size:1.18rem;">Meu Perfil</h3>
-                    <p style="margin:0; color:#555; text-align:center;">Atualize suas informações pessoais e preferências.</p>
+
+        <div class="funcionalidades-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <!-- Dados Antropométricos -->
+            <div class="funcionalidade-card" style="background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                <h3 style="color: #4caf50; margin: 0 0 15px 0; font-size: 1.2rem;">
+                    📊 Dados Antropométricos
+                </h3>
+                <p style="color: #666; margin: 0 0 15px 0; font-size: 0.95rem;">
+                    Registre e acompanhe suas medidas corporais, peso, altura e IMC.
+                </p>
+                <a href="/paciente/dados-antropometricos" style="background: #4caf50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block;">
+                    Acessar
+                </a>
+            </div>
+
+            <!-- Diário de Alimentos -->
+            <div class="funcionalidade-card" style="background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                <h3 style="color: #4caf50; margin: 0 0 15px 0; font-size: 1.2rem;">
+                    🍎 Diário de Alimentos
+                </h3>
+                <p style="color: #666; margin: 0 0 15px 0; font-size: 0.95rem;">
+                    Registre sua alimentação diária e monitore sua nutrição.
+                </p>
+                <a href="/paciente/diario-alimentos" style="background: #4caf50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block;">
+                    Acessar
+                </a>
+            </div>
+
+            <!-- Consultas -->
+            <div class="funcionalidade-card" style="background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                <h3 style="color: #4caf50; margin: 0 0 15px 0; font-size: 1.2rem;">
+                    📅 Consultas
+                </h3>
+                <p style="color: #666; margin: 0 0 15px 0; font-size: 0.95rem;">
+                    Agende e acompanhe suas consultas médicas e nutricionais.
+                </p>
+                <a href="/paciente/consultas" style="background: #4caf50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block;">
+                    Em breve
+                </a>
+            </div>
+
+            <!-- Configurações -->
+            <div class="funcionalidade-card" style="background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                <h3 style="color: #4caf50; margin: 0 0 15px 0; font-size: 1.2rem;">
+                    ⚙️ Configurações
+                </h3>
+                <p style="color: #666; margin: 0 0 15px 0; font-size: 0.95rem;">
+                    Gerencie seus dados pessoais e configurações da conta.
+                </p>
+                <a href="/conta" style="background: #4caf50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block;">
+                    Acessar
+                </a>
+            </div>
+        </div>
+
+        <!-- Informações do paciente -->
+        <div class="info-paciente" style="background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h3 style="color: #4caf50; margin: 0 0 15px 0;">
+                👤 Suas Informações
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div>
+                    <strong>Nome:</strong> <?php echo htmlspecialchars($_SESSION['usuario']['nome_usuario']); ?>
                 </div>
-                <div style="flex:1 1 220px; min-width:220px; background:#fff8e1; border-radius:8px; box-shadow:0 1px 6px #ff980011; padding:18px 14px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center;">
-                    <div style="font-size:2.1em; margin-bottom:8px;">📜</div>
-                    <h3 style="margin-bottom: 6px; color:#ff9800; font-size:1.18rem;">Histórico</h3>
-                    <p style="margin:0; color:#555; text-align:center;">Consulte seu histórico de saúde e atendimentos.</p>
+                <div>
+                    <strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['usuario']['email_usuario']); ?>
                 </div>
-                <div style="flex:1 1 220px; min-width:220px; background:#fff8e1; border-radius:8px; box-shadow:0 1px 6px #ff980011; padding:18px 14px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center;">
-                    <div style="font-size:2.1em; margin-bottom:8px;">💬</div>
-                    <h3 style="margin-bottom: 6px; color:#ff9800; font-size:1.18rem;">Suporte</h3>
-                    <p style="margin:0; color:#555; text-align:center;">Fale com nossa equipe para tirar dúvidas ou resolver problemas.</p>
+                <div>
+                    <strong>CPF:</strong> <?php echo htmlspecialchars($_SESSION['paciente']['cpf'] ?? 'Não informado'); ?>
+                </div>
+                <div>
+                    <strong>NIS:</strong> <?php echo htmlspecialchars($_SESSION['paciente']['nis'] ?? 'Não informado'); ?>
                 </div>
             </div>
-        </section>
-        <section class="usuario-section" id="contact" style="background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #ff980022;">
-            <h2 style="font-size:1.6rem; color:#ff9800; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size:1.3em;">📞</span> Contato
-            </h2>
-            <p style="font-size:1.08rem; color:#444;">
-                Precisa de suporte? Fale com nossa equipe:<br>
-                <strong>Email:</strong> <a href="mailto:suporte@delimeter.com" style="color:#ff9800; text-decoration:underline;">suporte@delimeter.com</a><br>
-                Ou utilize o formulário disponível no site.
-            </p>
-        </section>
+        </div>
     </main>
 </div>
+
+<script>
+// Adicionar efeitos hover aos cards
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.funcionalidade-card');
+    
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 4px 20px rgba(76,175,80,0.2)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+        });
+    });
+});
+</script>

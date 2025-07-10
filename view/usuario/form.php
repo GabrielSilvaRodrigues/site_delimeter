@@ -1,27 +1,78 @@
-<main>
-        <div class="container-calc">
-            <form action="/api/usuario" method="POST" id="formulario">
-                <div class="container">
-                    <h1>Cadastro de Usuário</h1>
-                    <div class="form-group">
-                        <label for="nome_usuario">Nome:</label>
-                        <input type="text" name="nome_usuario" required id="nome_usuario">
-                    </div>
-                    <div class="form-group">
-                        <label for="email_usuario">Email:</label>
-                        <input type="email" name="email_usuario" required id="email_usuario">
-                    </div>
-                    <div class="form-group">
-                        <label for="senha_usuario">Senha:</label>
-                        <input type="password" name="senha_usuario" required id="senha_usuario">
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmar_senha">Confirmar Senha:</label>
-                        <input type="password" name="confirmar_senha" required id="confirmar_senha">
-                    </div>
-                    <button type="submit">Cadastrar</button>
-                    <p><a href="/usuario/login">Já tem conta? Faça login aqui</a></p>
+<div class="cadastro-container" style="background: linear-gradient(120deg, #f4f4f4 60%, #e0f7fa 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    <main class="cadastro-main-content" style="max-width: 400px; width: 100%; padding: 20px;">
+        <div class="cadastro-form-container" style="background: #fff; border-radius: 10px; padding: 30px; box-shadow: 0 4px 16px rgba(76,175,80,0.15);">
+            <h1 style="text-align: center; color: #4caf50; margin-bottom: 30px; font-size: 2rem;">
+                📝 Cadastro de Usuário
+            </h1>
+            
+            <div id="message" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 5px;"></div>
+            
+            <form id="cadastroForm" method="POST" action="/api/usuario">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="nome_usuario" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Nome completo:</label>
+                    <input type="text" id="nome_usuario" name="nome_usuario" required 
+                           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">
                 </div>
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="email_usuario" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Email:</label>
+                    <input type="email" id="email_usuario" name="email_usuario" required 
+                           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="senha_usuario" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Senha:</label>
+                    <input type="password" id="senha_usuario" name="senha_usuario" required minlength="6"
+                           style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">
+                </div>
+                
+                <button type="submit" style="width: 100%; padding: 12px; background: #4caf50; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-bottom: 15px;">
+                    Cadastrar
+                </button>
             </form>
+            
+            <div style="text-align: center;">
+                <p style="margin: 10px 0; color: #666;">Já tem uma conta?</p>
+                <a href="/usuario/login" style="color: #4caf50; text-decoration: none; font-weight: bold;">Faça login aqui</a>
+            </div>
         </div>
     </main>
+</div>
+
+<script>
+document.getElementById('cadastroForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('/api/usuario', {
+        method: 'POST',
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('Cadastro realizado com sucesso! Redirecionando...', 'success');
+            setTimeout(() => {
+                window.location.href = '/usuario/login';
+            }, 1500);
+        } else {
+            showMessage(data.error || 'Erro ao cadastrar usuário.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showMessage('Erro de conexão. Tente novamente.', 'error');
+    });
+});
+
+function showMessage(message, type) {
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = message;
+    messageDiv.style.display = 'block';
+    messageDiv.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
+    messageDiv.style.color = type === 'success' ? '#155724' : '#721c24';
+    messageDiv.style.border = type === 'success' ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+}
+</script>

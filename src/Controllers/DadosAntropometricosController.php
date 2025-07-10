@@ -13,40 +13,58 @@ class DadosAntropometricosController {
     }
 
     public function criar() {
+        // Limpar qualquer saída anterior
+        if (ob_get_level()) {
+            ob_clean();
+        }
+        
+        // Garantir que sempre retornamos JSON
+        header('Content-Type: application/json; charset=utf-8');
+        
         $data = json_decode(file_get_contents("php://input"), true);
         if (!$data || !is_array($data)) $data = $_POST;
 
         $id_paciente = $data['id_paciente'] ?? null;
         $sexo_paciente = $data['sexo_paciente'] ?? null;
-        $altura_paciente = $data['altura_paciente'] ?? null; // em metros
+        $altura_paciente = $data['altura_paciente'] ?? null;
         $peso_paciente = $data['peso_paciente'] ?? null;
         $status_paciente = $data['status_paciente'] ?? 1;
         $data_medida = $data['data_medida'] ?? date('Y-m-d');
 
         if (!$id_paciente) {
+            http_response_code(400);
             echo json_encode(['error' => 'ID do paciente é obrigatório.']);
             return;
         }
 
-        $dados = new DadosAntropometricos(
-            null,
-            $id_paciente,
-            $sexo_paciente,
-            $altura_paciente,
-            $peso_paciente,
-            $status_paciente,
-            $data_medida
-        );
+        try {
+            $dados = new DadosAntropometricos(
+                null,
+                $id_paciente,
+                $sexo_paciente,
+                $altura_paciente,
+                $peso_paciente,
+                $status_paciente,
+                $data_medida
+            );
 
-        $result = $this->service->criar($dados);
+            $result = $this->service->criar($dados);
 
-        if ($result) {
-            // Salvar dados antropométricos na sessão
-            $this->salvarDadosNaSessao($sexo_paciente, $altura_paciente, $peso_paciente, $data_medida);
-            
-            echo json_encode(['success' => 'Dados antropométricos cadastrados com sucesso.', 'id' => $result]);
-        } else {
-            echo json_encode(['error' => 'Erro ao cadastrar dados antropométricos.']);
+            if ($result) {
+                // Salvar dados antropométricos na sessão
+                $this->salvarDadosNaSessao($sexo_paciente, $altura_paciente, $peso_paciente, $data_medida);
+                
+                echo json_encode(['success' => true, 'message' => 'Dados antropométricos cadastrados com sucesso.', 'id' => $result]);
+            } else {
+                http_response_code(500);
+                echo json_encode(['error' => 'Erro ao cadastrar dados antropométricos.']);
+            }
+            exit; // Importante: sair aqui
+        } catch (\Exception $e) {
+            error_log("DadosAntropometricosController: Erro ao criar: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao criar dados: ' . $e->getMessage()]);
+            exit; // Importante: sair aqui
         }
     }
 
@@ -63,23 +81,79 @@ class DadosAntropometricosController {
     }
 
     public function buscarPorPaciente() {
+        // Limpar qualquer saída anterior
+        if (ob_get_level()) {
+            ob_clean();
+        }
+        
+        // Garantir que sempre retornamos JSON
+        header('Content-Type: application/json; charset=utf-8');
+        
+        // Evitar cache
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        
         $id_paciente = $_GET['id_paciente'] ?? null;
         
         error_log("DadosAntropometricosController: buscarPorPaciente chamado com ID: " . ($id_paciente ?? 'null'));
         
         if (!$id_paciente) {
             error_log("DadosAntropometricosController: ID do paciente não fornecido");
-            echo json_encode(['error' => 'ID do paciente é obrigatório.']);
-            return;
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'error' => 'ID do paciente é obrigatório.',
+                'debug' => [
+                    'get_params' => $_GET,
+                    'request_uri' => $_SERVER['REQUEST_URI'] ?? null
+                ]
+            ]);
+            exit; // Importante: sair aqui para evitar HTML adicional
         }
 
         try {
             $dados = $this->service->buscarPorPaciente($id_paciente);
+            
             error_log("DadosAntropometricosController: Dados encontrados: " . print_r($dados, true));
-            echo json_encode($dados);
+            
+            // Garantir resposta consistente
+            if (!is_array($dados)) {
+                $dados = [];
+            }
+            
+            // Adicionar IDs corretos se necessário
+            foreach ($dados as &$item) {
+                if (!isset($item['id_dados_antropometricos']) && isset($item['id_medida'])) {
+                    $item['id_dados_antropometricos'] = $item['id_medida'];
+                }
+            }
+            
+            echo json_encode([
+                'success' => true,
+                'data' => $dados,
+                'count' => count($dados),
+                'debug' => [
+                    'id_paciente' => $id_paciente,
+                    'timestamp' => date('Y-m-d H:i:s')
+                ]
+            ]);
+            exit; // Importante: sair aqui para evitar HTML adicional
+            
         } catch (\Exception $e) {
             error_log("DadosAntropometricosController: Erro ao buscar dados: " . $e->getMessage());
-            echo json_encode(['error' => 'Erro ao buscar dados: ' . $e->getMessage()]);
+            error_log("DadosAntropometricosController: Stack trace: " . $e->getTraceAsString());
+            
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Erro interno do servidor: ' . $e->getMessage(),
+                'debug' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'id_paciente' => $id_paciente
+                ]
+            ]);
+            exit; // Importante: sair aqui para evitar HTML adicional
         }
     }
 
@@ -141,39 +215,96 @@ class DadosAntropometricosController {
         }
     }
 
+    public function calcularIMC() {
+        // Limpar qualquer saída anterior
+        if (ob_get_level()) {
+            ob_clean();
+        }
+        
+        // Garantir que sempre retornamos JSON
+        header('Content-Type: application/json; charset=utf-8');
+        
+        $altura = $_GET['altura'] ?? $_POST['altura'] ?? null;
+        $peso = $_GET['peso'] ?? $_POST['peso'] ?? null;
+        
+        error_log("DadosAntropometricosController: calcularIMC - altura: $altura, peso: $peso");
+        
+        if (!$altura || !$peso) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Altura e peso são obrigatórios.',
+                'debug' => [
+                    'altura' => $altura,
+                    'peso' => $peso,
+                    'get_params' => $_GET,
+                    'post_params' => $_POST
+                ]
+            ]);
+            exit; // Importante: sair aqui
+        }
+
+        try {
+            $imc = $this->service->calcularIMC($altura, $peso);
+            $classificacao = $this->service->classificarIMC($imc);
+            
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'imc' => round($imc, 2),
+                    'classificacao' => $classificacao,
+                    'altura' => $altura,
+                    'peso' => $peso
+                ]
+            ]);
+            exit; // Importante: sair aqui
+        } catch (\Exception $e) {
+            error_log("DadosAntropometricosController: Erro ao calcular IMC: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Erro ao calcular IMC: ' . $e->getMessage()
+            ]);
+            exit; // Importante: sair aqui
+        }
+    }
+
     public function deletar() {
-        $id_medida = $_GET['id'] ?? $_POST['id'] ?? null;
+        // Limpar qualquer saída anterior
+        if (ob_get_level()) {
+            ob_clean();
+        }
+        
+        // Garantir que sempre retornamos JSON
+        header('Content-Type: application/json; charset=utf-8');
+        
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!$data || !is_array($data)) $data = $_POST;
+        
+        $id_medida = $data['id'] ?? $_GET['id'] ?? null;
         
         if (!$id_medida) {
+            http_response_code(400);
             echo json_encode(['error' => 'ID da medida é obrigatório.']);
             return;
         }
 
-        $result = $this->service->deletar($id_medida);
-        
-        if ($result !== false) {
-            echo json_encode(['success' => 'Dados antropométricos deletados com sucesso.']);
-        } else {
-            echo json_encode(['error' => 'Erro ao deletar dados antropométricos.']);
+        try {
+            $result = $this->service->deletar($id_medida);
+            
+            if ($result !== false) {
+                echo json_encode(['success' => true, 'message' => 'Dados antropométricos deletados com sucesso.']);
+            } else {
+                http_response_code(500);
+                echo json_encode(['error' => 'Erro ao deletar dados antropométricos.']);
+            }
+            exit; // Importante: sair aqui
+        } catch (\Exception $e) {
+            error_log("DadosAntropometricosController: Erro ao deletar: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao deletar dados: ' . $e->getMessage()]);
+            exit; // Importante: sair aqui
         }
-    }
-
-    public function calcularIMC() {
-        $altura = $_GET['altura'] ?? $_POST['altura'] ?? null;
-        $peso = $_GET['peso'] ?? $_POST['peso'] ?? null;
-        
-        if (!$altura || !$peso) {
-            echo json_encode(['error' => 'Altura e peso são obrigatórios.']);
-            return;
-        }
-
-        $imc = $this->service->calcularIMC($altura, $peso);
-        $classificacao = $this->service->classificarIMC($imc);
-        
-        echo json_encode([
-            'imc' => $imc,
-            'classificacao' => $classificacao
-        ]);
     }
 
     /**

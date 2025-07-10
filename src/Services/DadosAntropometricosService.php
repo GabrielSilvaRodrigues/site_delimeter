@@ -16,15 +16,36 @@ class DadosAntropometricosService {
     }
 
     public function criar(DadosAntropometricos $dados) {
-        return $this->dadosRepository->save($dados);
+        try {
+            $result = $this->dadosRepository->save($dados);
+            error_log("DadosAntropometricosService: Dados criados com ID: " . $result);
+            return $result;
+        } catch (\Exception $e) {
+            error_log("DadosAntropometricosService: Erro ao criar dados: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function listar() {
-        return $this->dadosRepository->findAll();
+        try {
+            $dados = $this->dadosRepository->findAll();
+            error_log("DadosAntropometricosService: Listando " . count($dados) . " registros");
+            return $dados;
+        } catch (\Exception $e) {
+            error_log("DadosAntropometricosService: Erro ao listar dados: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function buscarPorPaciente($id_paciente) {
-        return $this->dadosRepository->findByPacienteId($id_paciente);
+        try {
+            $dados = $this->dadosRepository->findByPacienteId($id_paciente);
+            error_log("DadosAntropometricosService: Encontrados " . count($dados) . " registros para paciente " . $id_paciente);
+            return $dados;
+        } catch (\Exception $e) {
+            error_log("DadosAntropometricosService: Erro ao buscar por paciente: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function buscarUltimaMedida($id_paciente) {

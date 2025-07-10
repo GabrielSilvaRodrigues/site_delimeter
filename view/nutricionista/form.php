@@ -1,4 +1,4 @@
-<main>
+    <main>
         <div class="container-calc">
             <form id="formulario" method="POST" action="/api/nutricionista">
                 <div class="container">
