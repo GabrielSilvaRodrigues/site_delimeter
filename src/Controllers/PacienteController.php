@@ -19,6 +19,7 @@ class PacienteController {
         $nis = $data['nis'] ?? $data['nis_paciente'] ?? null;
 
         if (!$id_usuario || !$cpf) {
+            http_response_code(400);
             echo json_encode(['error' => 'Dados incompletos para vincular paciente.']);
             return;
         }
@@ -33,6 +34,7 @@ class PacienteController {
         $result = $this->service->criar($paciente);
 
         if (is_array($result) && isset($result['error'])) {
+            http_response_code(400);
             echo json_encode(['error' => $result['error']]);
             return;
         }
@@ -48,12 +50,15 @@ class PacienteController {
             $_SESSION['paciente'] = $pacienteData;
         }
 
-        // Redireciona para painel do paciente
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Location: /paciente');
-            exit;
+        // Para requisições AJAX/JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            echo json_encode(['success' => true, 'redirect' => '/paciente']);
+            return;
         }
-        echo json_encode(['success' => true]);
+
+        // Para requisições normais via formulário
+        header('Location: /paciente');
+        exit;
     }
 
     public function mostrarFormulario(){
@@ -61,7 +66,8 @@ class PacienteController {
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
-            echo "Erro: Formulário não encontrado em $formPath";
+            http_response_code(404);
+            echo "Erro: Formulário não encontrado";
         }
     }
 
@@ -71,20 +77,22 @@ class PacienteController {
             header('Location: /usuario/login');
             exit;
         }
+        
         $paciente = $this->service->getPacienteRepository()->findByUsuarioId($id_usuario);
         if (!$paciente) {
-            echo json_encode(['error' => 'Paciente não encontrado.']);
             header('Location: /paciente/cadastro');
             exit;
-        } else {
-            $_SESSION['usuario']['tipo'] = 'paciente';
-            $_SESSION['paciente'] = $paciente; // Salvar dados do paciente na sessão
         }
+        
+        $_SESSION['usuario']['tipo'] = 'paciente';
+        $_SESSION['paciente'] = $paciente;
+        
         $formPath = dirname(__DIR__, 2) . '/view/paciente/index.php';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
-            echo "Erro: Início não encontrado em $formPath";
+            http_response_code(404);
+            echo "Erro: Página inicial não encontrada";
         }
     }
 
@@ -116,6 +124,7 @@ class PacienteController {
         $nis = $data['nis'] ?? null;
 
         if (!$id_usuario || !$cpf) {
+            http_response_code(400);
             echo json_encode(['error' => 'Dados incompletos para atualizar paciente.']);
             return;
         }
@@ -130,6 +139,7 @@ class PacienteController {
         $result = $this->service->atualizarConta($paciente);
 
         if (is_array($result) && isset($result['error'])) {
+            http_response_code(400);
             echo json_encode(['error' => $result['error']]);
             return;
         }
@@ -138,39 +148,52 @@ class PacienteController {
         $_SESSION['usuario']['cpf'] = $cpf;
         $_SESSION['usuario']['nis'] = $nis;
 
-        // Compatível com rota exclusiva, não redireciona para /conta
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Location: /conta');
-            exit;
+        // Para requisições AJAX/JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            echo json_encode(['success' => true]);
+            return;
         }
 
-        echo json_encode(['success' => true]);
+        // Para requisições normais via formulário
+        header('Location: /conta');
+        exit;
     }
 
     public function deletarConta() {
         $id = $_SESSION['usuario']['id_usuario'] ?? $_SESSION['usuario']['id'] ?? null;
-        if ($id) {
-            $this->service->deletarConta($id);
-            $_SESSION['usuario']['tipo'] = 'usuario'; // Redefine tipo para usuário padrão
-            // Compatível com rota exclusiva, não redireciona para /
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-                header('Location: /usuario');
-                exit;
-            }
-            echo json_encode(['success' => true]);
-        } else {
+        if (!$id) {
+            http_response_code(400);
             echo json_encode(["error" => "ID do usuário não fornecido."]);
+            return;
         }
+
+        $result = $this->service->deletarConta($id);
+        $_SESSION['usuario']['tipo'] = 'usuario'; // Redefine tipo para usuário padrão
+        
+        // Para requisições AJAX/JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            echo json_encode(['success' => true, 'redirect' => '/usuario']);
+            return;
+        }
+
+        // Para requisições normais
+        header('Location: /usuario');
+        exit;
     }
 
     public function sairConta() {
         $_SESSION['usuario']['tipo'] = 'usuario';
-        // Compatível com rota exclusiva, não redireciona para /
-        if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Location: /usuario');
-            exit;
+        unset($_SESSION['paciente']); // Remove dados do paciente da sessão
+        
+        // Para requisições AJAX/JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            echo json_encode(["success" => "Sessão encerrada.", 'redirect' => '/usuario']);
+            return;
         }
-        echo json_encode(["success" => "Sessão encerrada."]);
+
+        // Para requisições normais
+        header('Location: /usuario');
+        exit;
     }
 
     public function procurarPorID() {
@@ -270,7 +293,8 @@ class PacienteController {
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
-            echo "Erro: Página não encontrada em $formPath";
+            http_response_code(404);
+            echo "Erro: Página não encontrada";
         }
     }
 
@@ -287,7 +311,8 @@ class PacienteController {
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
-            echo "Erro: Página não encontrada em $formPath";
+            http_response_code(404);
+            echo "Erro: Página não encontrada";
         }
     }
 }

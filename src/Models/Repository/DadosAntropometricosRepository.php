@@ -113,9 +113,16 @@ class DadosAntropometricosRepository {
     }
 
     public function delete($id_medida) {
-        $sql = "DELETE FROM dados_antropometricos WHERE id_medida = :id_medida";
+        $sql = "DELETE FROM dados_antropometricos WHERE id_dados_antropometricos = :id_medida OR id_medida = :id_medida";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id_medida', $id_medida);
+        $stmt->execute();
+    }
+
+    public function deleteByPacienteId($id_paciente) {
+        $sql = "DELETE FROM dados_antropometricos WHERE id_paciente = :id_paciente";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_paciente', $id_paciente);
         $stmt->execute();
     }
 }

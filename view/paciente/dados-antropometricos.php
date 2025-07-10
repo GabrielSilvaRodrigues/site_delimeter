@@ -131,11 +131,16 @@ document.getElementById('dadosForm').addEventListener('submit', async function(e
     data.id_paciente = ID_PACIENTE;
 
     try {
-        const response = await fetch(API_BASE + '/criar', {
+        const response = await fetch(`${API_BASE}/criar`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const result = await response.json();
         if (result.success) {
             alert('Dados antropométricos salvos com sucesso!');
@@ -144,9 +149,10 @@ document.getElementById('dadosForm').addEventListener('submit', async function(e
             document.getElementById('imcResult').style.display = 'none';
             carregarHistorico();
         } else {
-            alert('Erro: ' + (result.error || 'Erro desconhecido'));
+            alert('Erro: ' + (result.error || result.message || 'Erro desconhecido'));
         }
     } catch (error) {
+        console.error('Erro:', error);
         alert('Erro de conexão. Tente novamente.');
     }
 });
@@ -155,33 +161,56 @@ document.getElementById('dadosForm').addEventListener('submit', async function(e
 function calcularIMC() {
     const altura = document.getElementById('altura_paciente').value;
     const peso = document.getElementById('peso_paciente').value;
+    
     if (!altura || !peso) {
         alert('Por favor, preencha altura e peso para calcular o IMC.');
         return;
     }
-    fetch(`${API_BASE}/calcular-imc?altura=${altura}&peso=${peso}`)
-        .then(r => r.json())
+    
+    const params = new URLSearchParams({ altura, peso });
+    
+    fetch(`${API_BASE}/calcular-imc?${params}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(result => {
-            if (result.imc) {
-                document.getElementById('imcValue').textContent = `IMC: ${Number(result.imc).toFixed(2)}`;
-                document.getElementById('imcClassification').textContent = `Classificação: ${result.classificacao}`;
+            if (result.success && result.data) {
+                const { imc, classificacao } = result.data;
+                document.getElementById('imcValue').textContent = `IMC: ${Number(imc).toFixed(2)}`;
+                document.getElementById('imcClassification').textContent = `Classificação: ${classificacao}`;
                 document.getElementById('imcResult').style.display = 'block';
             } else {
-                alert('Erro ao calcular IMC: ' + (result.error || 'Erro desconhecido'));
+                alert('Erro ao calcular IMC: ' + (result.error || result.message || 'Erro desconhecido'));
             }
         })
-        .catch(() => alert('Erro de conexão. Tente novamente.'));
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro de conexão. Tente novamente.');
+        });
 }
 
 // Função para carregar histórico
 function carregarHistorico() {
-    fetch(`${API_BASE}/buscar-por-paciente?id_paciente=${ID_PACIENTE}`)
-        .then(r => r.json())
-        .then(dados => {
-            if (dados.error) {
-                document.getElementById('historicoContainer').innerHTML = `<p style="color: red; text-align: center;">Erro: ${dados.error}</p>`;
+    const params = new URLSearchParams({ id_paciente: ID_PACIENTE });
+    
+    fetch(`${API_BASE}/buscar-por-paciente?${params}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.error) {
+                document.getElementById('historicoContainer').innerHTML = `<p style="color: red; text-align: center;">Erro: ${result.error}</p>`;
                 return;
             }
+            
+            const dados = result.success ? result.data : result;
+            
             if (Array.isArray(dados) && dados.length > 0) {
                 let html = '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
                 html += '<thead><tr style="background: #4caf50; color: white;">';
@@ -191,14 +220,18 @@ function carregarHistorico() {
                 html += '<th style="padding: 12px; text-align: left;">Peso (kg)</th>';
                 html += '<th style="padding: 12px; text-align: left;">IMC</th>';
                 html += '<th style="padding: 12px; text-align: left;">Classificação</th>';
+                html += '<th style="padding: 12px; text-align: center;">Ações</th>';
                 html += '</tr></thead><tbody>';
+                
                 dados.forEach(item => {
                     const altura = Number(item.altura_paciente);
                     const peso = Number(item.peso_paciente);
                     const imc = (altura && peso) ? (peso / (altura * altura)).toFixed(2) : '-';
+                    
                     let sexo = '-';
                     if (item.sexo_paciente === 0 || item.sexo_paciente === '0') sexo = 'Feminino';
                     else if (item.sexo_paciente === 1 || item.sexo_paciente === '1') sexo = 'Masculino';
+                    
                     let classificacao = '-';
                     if (imc !== '-') {
                         const imcNum = parseFloat(imc);
@@ -207,13 +240,21 @@ function carregarHistorico() {
                         else if (imcNum < 30) classificacao = 'Sobrepeso';
                         else classificacao = 'Obesidade';
                     }
+                    
+                    const dataFormatada = item.data_medida ? new Date(item.data_medida).toLocaleDateString('pt-BR') : '-';
+                    
                     html += `<tr style="border-bottom: 1px solid #eee;">`;
-                    html += `<td style="padding: 10px;">${item.data_medida ? String(item.data_medida).replace(/</g,"&lt;") : '-'}</td>`;
+                    html += `<td style="padding: 10px;">${dataFormatada}</td>`;
                     html += `<td style="padding: 10px;">${sexo}</td>`;
-                    html += `<td style="padding: 10px;">${item.altura_paciente ? String(item.altura_paciente).replace(/</g,"&lt;") : '-'}</td>`;
-                    html += `<td style="padding: 10px;">${item.peso_paciente ? String(item.peso_paciente).replace(/</g,"&lt;") : '-'}</td>`;
+                    html += `<td style="padding: 10px;">${item.altura_paciente || '-'}</td>`;
+                    html += `<td style="padding: 10px;">${item.peso_paciente || '-'}</td>`;
                     html += `<td style="padding: 10px; font-weight: bold;">${imc}</td>`;
                     html += `<td style="padding: 10px;">${classificacao}</td>`;
+                    html += `<td style="padding: 10px; text-align: center;">`;
+                    if (item.id_dados_antropometricos) {
+                        html += `<button onclick="excluirMedida(${item.id_dados_antropometricos})" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">🗑️ Excluir</button>`;
+                    }
+                    html += `</td>`;
                     html += `</tr>`;
                 });
                 html += '</tbody></table></div>';
@@ -222,9 +263,41 @@ function carregarHistorico() {
                 document.getElementById('historicoContainer').innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Nenhuma medida encontrada. Adicione sua primeira medida acima!</p>';
             }
         })
-        .catch(() => {
+        .catch(error => {
+            console.error('Erro:', error);
             document.getElementById('historicoContainer').innerHTML = '<p style="color: red; text-align: center;">Erro ao carregar histórico. Tente recarregar a página.</p>';
         });
+}
+
+// Função para excluir medida
+function excluirMedida(id) {
+    if (!confirm('Tem certeza que deseja excluir esta medida?')) {
+        return;
+    }
+    
+    fetch(`${API_BASE}/deletar`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ id: id })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(result => {
+        if (result.success) {
+            alert('Medida excluída com sucesso!');
+            carregarHistorico();
+        } else {
+            alert('Erro ao excluir medida: ' + (result.error || result.message || 'Erro desconhecido'));
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro de conexão. Tente novamente.');
+    });
 }
 
 // Carregar histórico ao carregar a página

@@ -21,6 +21,7 @@ class PacienteRoutes {
         $route->add('POST', '/paciente/conta/atualizar', [$pacienteController, 'atualizarConta']);
         $route->add('POST', '/paciente/conta/deletar', [$pacienteController, 'deletarConta']);
         $route->add('GET', '/paciente/conta/sair', [$pacienteController, 'sairConta']);
+        $route->add('GET', '/paciente/conta/entrar', [$pacienteController, 'procurarPorId']);
     }
 }
 ?>

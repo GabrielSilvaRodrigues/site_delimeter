@@ -19,6 +19,7 @@ class NutricionistaController {
         $cpf = $data['cpf'] ?? null;
 
         if (!$id_usuario || !$crm || !$cpf) {
+            http_response_code(400);
             echo json_encode(['error' => 'Dados incompletos para vincular nutricionista.']);
             return;
         }
@@ -30,10 +31,11 @@ class NutricionistaController {
             $cpf
         );
 
-        try {
-            $this->service->criar($nutricionista);
-        } catch (\Exception $e) {
-            echo json_encode(['error' => $e->getMessage()]);
+        $result = $this->service->criar($nutricionista);
+
+        if (is_array($result) && isset($result['error'])) {
+            http_response_code(400);
+            echo json_encode(['error' => $result['error']]);
             return;
         }
 
@@ -42,12 +44,21 @@ class NutricionistaController {
         $_SESSION['usuario']['crm_nutricionista'] = $crm;
         $_SESSION['usuario']['cpf'] = $cpf;
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Location: /nutricionista');
-            exit;
+        // Carregar os dados completos do nutricionista e salvar na sessão
+        $nutricionistaData = $this->service->getNutricionistaRepository()->findByUsuarioId($id_usuario);
+        if ($nutricionistaData) {
+            $_SESSION['nutricionista'] = $nutricionistaData;
         }
 
-        echo json_encode(['success' => true]);
+        // Para requisições AJAX/JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            echo json_encode(['success' => true, 'redirect' => '/nutricionista']);
+            return;
+        }
+
+        // Para requisições normais via formulário
+        header('Location: /nutricionista');
+        exit;
     }
 
     public function listar() {
@@ -68,18 +79,22 @@ class NutricionistaController {
             header('Location: /usuario/login');
             exit;
         }
-        $nutricionista = $this->service->getNutricionistaRepository()->findById($id_usuario);
+        
+        $nutricionista = $this->service->getNutricionistaRepository()->findByUsuarioId($id_usuario);
         if (!$nutricionista) {
             header('Location: /nutricionista/cadastro');
             exit;
-        } else {
-            $_SESSION['usuario']['tipo'] = 'nutricionista';
         }
+        
+        $_SESSION['usuario']['tipo'] = 'nutricionista';
+        $_SESSION['nutricionista'] = $nutricionista;
+        
         $formPath = dirname(__DIR__, 2) . '/view/nutricionista/index.php';
         if (file_exists($formPath)) {
             include_once $formPath;
         } else {
-            echo "Erro: Início não encontrado em $formPath";
+            http_response_code(404);
+            echo "Erro: Página inicial não encontrada";
         }
     }
 
@@ -110,6 +125,7 @@ class NutricionistaController {
         $cpf = $data['cpf'] ?? null;
 
         if (!$id_usuario || !$crm || !$cpf) {
+            http_response_code(400);
             echo json_encode(['error' => 'Dados incompletos para atualizar nutricionista.']);
             return;
         }
@@ -123,45 +139,171 @@ class NutricionistaController {
         $result = $this->service->atualizarConta($nutricionista);
 
         if (is_array($result) && isset($result['error'])) {
+            http_response_code(400);
             echo json_encode(['error' => $result['error']]);
             return;
         }
 
         // Atualiza sessão com o novo CRM
         $_SESSION['usuario']['crm_nutricionista'] = $crm;
+        $_SESSION['usuario']['cpf'] = $cpf;
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Location: /conta');
-            exit;
+        // Para requisições AJAX/JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            echo json_encode(['success' => true]);
+            return;
         }
 
-        echo json_encode(['success' => true]);
+        // Para requisições normais via formulário
+        header('Location: /conta');
+        exit;
     }
 
     public function deletarConta() {
         $id = $_SESSION['usuario']['id_usuario'] ?? $_SESSION['usuario']['id'] ?? null;
-        if ($id) {
-            $this->service->deletarConta($id);
-            $_SESSION['usuario']['tipo'] = 'usuario'; // Redefine tipo para usuário padrão
-            // Compatível com rota exclusiva, não redireciona para /
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-                header('Location: /usuario');
-                exit;
-            }
-            echo json_encode(['success' => true]);
-        } else {
+        if (!$id) {
+            http_response_code(400);
             echo json_encode(["error" => "ID do usuário não fornecido."]);
+            return;
         }
+
+        $result = $this->service->deletarConta($id);
+        $_SESSION['usuario']['tipo'] = 'usuario'; // Redefine tipo para usuário padrão
+        unset($_SESSION['nutricionista']); // Remove dados do nutricionista da sessão
+        
+        // Para requisições AJAX/JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            echo json_encode(['success' => true, 'redirect' => '/usuario']);
+            return;
+        }
+
+        // Para requisições normais
+        header('Location: /usuario');
+        exit;
     }
 
     public function sairConta() {
         $_SESSION['usuario']['tipo'] = 'usuario';
-        // Compatível com rota exclusiva, não redireciona para /
-        if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            header('Location: /usuario');
+        unset($_SESSION['nutricionista']); // Remove dados do nutricionista da sessão
+        
+        // Para requisições AJAX/JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            echo json_encode(["success" => "Sessão encerrada.", 'redirect' => '/usuario']);
+            return;
+        }
+
+        // Para requisições normais
+        header('Location: /usuario');
+        exit;
+    }
+
+    public function procurarPorID() {
+        $id_usuario = $_SESSION['usuario']['id_usuario'] ?? $_SESSION['usuario']['id'] ?? null;
+        if (!$id_usuario) {
+            echo json_encode(['error' => 'Usuário não está logado.']);
+            return;
+        }
+        $nutricionista = $this->service->getNutricionistaRepository()->findByUsuarioId($id_usuario);
+        if ($nutricionista) {
+            echo json_encode($nutricionista);
+            $_SESSION['usuario']['tipo'] = 'nutricionista';
+            $_SESSION['nutricionista'] = $nutricionista; // Salvar dados do nutricionista na sessão
+            header('Location: /nutricionista');
+            exit;
+        } else {
+            header('Location: /nutricionista/cadastro');
             exit;
         }
-        echo json_encode(["success" => "Usuário deslogado com sucesso."]);
+    }
+
+    /**
+     * Método auxiliar para garantir que os dados do nutricionista estejam na sessão
+     */
+    private function garantirDadosNutricionistaNaSessao() {
+        $id_usuario = $_SESSION['usuario']['id_usuario'] ?? $_SESSION['usuario']['id'] ?? null;
+        
+        if (!$id_usuario) {
+            error_log("NutricionistaController: ID do usuário não encontrado na sessão");
+            error_log("NutricionistaController: Conteúdo da sessão: " . print_r($_SESSION, true));
+            return false;
+        }
+        
+        error_log("NutricionistaController: ID do usuário na sessão: " . $id_usuario);
+        
+        // Se já temos os dados na sessão, não precisa buscar novamente
+        if (isset($_SESSION['nutricionista']['id_nutricionista'])) {
+            error_log("NutricionistaController: Dados do nutricionista já existem na sessão - ID: " . $_SESSION['nutricionista']['id_nutricionista']);
+            return true;
+        }
+        
+        error_log("NutricionistaController: Buscando dados do nutricionista no banco para usuário ID: " . $id_usuario);
+        
+        // Buscar dados do nutricionista no banco
+        $nutricionista = $this->service->getNutricionistaRepository()->findByUsuarioId($id_usuario);
+        if ($nutricionista) {
+            $_SESSION['nutricionista'] = $nutricionista;
+            $_SESSION['usuario']['tipo'] = 'nutricionista';
+            error_log("NutricionistaController: Dados do nutricionista carregados do banco - ID: " . $nutricionista['id_nutricionista']);
+            error_log("NutricionistaController: Dados do nutricionista: " . print_r($nutricionista, true));
+            return true;
+        }
+        
+        error_log("NutricionistaController: Nutricionista não encontrado no banco para usuário ID: " . $id_usuario);
+        return false;
+    }
+
+    /**
+     * Método para servir a página de pacientes
+     */
+    public function mostrarPacientes() {
+        if (!$this->garantirDadosNutricionistaNaSessao()) {
+            header('Location: /nutricionista/cadastro');
+            exit;
+        }
+        
+        $formPath = dirname(__DIR__, 2) . '/view/nutricionista/pacientes.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            http_response_code(404);
+            echo "Erro: Página não encontrada";
+        }
+    }
+
+    /**
+     * Método para servir a página de planos alimentares
+     */
+    public function mostrarPlanosAlimentares() {
+        if (!$this->garantirDadosNutricionistaNaSessao()) {
+            header('Location: /nutricionista/cadastro');
+            exit;
+        }
+        
+        $formPath = dirname(__DIR__, 2) . '/view/nutricionista/planos-alimentares.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            http_response_code(404);
+            echo "Erro: Página não encontrada";
+        }
+    }
+
+    /**
+     * Método para servir a página de relatórios
+     */
+    public function mostrarRelatorios() {
+        if (!$this->garantirDadosNutricionistaNaSessao()) {
+            header('Location: /nutricionista/cadastro');
+            exit;
+        }
+        
+        $formPath = dirname(__DIR__, 2) . '/view/nutricionista/relatorios.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            http_response_code(404);
+            echo "Erro: Página não encontrada";
+        }
     }
 }
 ?>
