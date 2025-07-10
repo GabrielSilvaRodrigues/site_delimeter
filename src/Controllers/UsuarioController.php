@@ -67,6 +67,11 @@ class UsuarioController {
         }
     }
     public function entrar() {
+        // Inicializar sessão se não estiver ativa
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $email = $_POST['email_usuario'] ?? null;
         $senha = $_POST['senha_usuario'] ?? null;
 
@@ -83,54 +88,32 @@ class UsuarioController {
         $usuario = $this->service->login($email, $senha);
 
         if ($usuario) {
-            // Define o tipo do usuário na sessão
-            if (is_array($usuario)) {
-                $_SESSION['usuario'] = $usuario;
-            } else {
-                $_SESSION['usuario'] = (array)$usuario;
+            // Define dados básicos do usuário na sessão
+            $_SESSION['usuario'] = [
+                'id_usuario' => $usuario['id_usuario'],
+                'id' => $usuario['id_usuario'], // Compatibilidade
+                'nome_usuario' => $usuario['nome_usuario'],
+                'email_usuario' => $usuario['email_usuario'],
+                'status_usuario' => $usuario['status_usuario'] ?? 1,
+                'tipo' => 'usuario' // Tipo padrão
+            ];
+
+            // Se for requisição AJAX
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                echo json_encode([
+                    'success' => true, 
+                    'redirect' => '/usuario',
+                    'usuario' => $_SESSION['usuario']
+                ]);
+                return;
             }
 
-            // Sempre salva o ID na sessão
-            $_SESSION['usuario']['id'] = $usuario['id_usuario'] ?? $usuario['id'] ?? null;
-            $_SESSION['usuario']['id_usuario'] = $usuario['id_usuario'] ?? $usuario['id'] ?? null;
+            // Redirecionamento para formulário tradicional
+            header('Location: /usuario');
+            exit;
 
-            // Detecta tipo de usuário (você pode adaptar esta lógica para seu sistema)
-            // Exemplo: checa em cada tabela se existe vínculo com o usuário logado
-            $tipoUsuarioDetectado = 'usuario';
-            $idUsuario = $_SESSION['usuario']['id_usuario'];
-
-            $pacienteRepository = new \Htdocs\Src\Models\Repository\PacienteRepository();
-            $nutricionistaRepository = new \Htdocs\Src\Models\Repository\NutricionistaRepository();
-            $medicoRepository = new \Htdocs\Src\Models\Repository\MedicoRepository();
-
-            $dadosPaciente = $pacienteRepository->findById($idUsuario);
-            if ($dadosPaciente) {
-                $_SESSION['usuario']['cpf'] = $dadosPaciente['cpf'] ?? '';
-                $_SESSION['usuario']['nis'] = $dadosPaciente['nis'] ?? '';
-                $tipoUsuarioDetectado = 'paciente';
-            }
-            $dadosNutricionista = $nutricionistaRepository->findById($idUsuario);
-            if ($dadosNutricionista) {
-                $_SESSION['usuario']['crm_nutricionista'] = $dadosNutricionista['crm_nutricionista'] ?? '';
-                $tipoUsuarioDetectado = 'nutricionista';
-            }
-            $dadosMedico = $medicoRepository->findById($idUsuario);
-            if ($dadosMedico) {
-                $_SESSION['usuario']['crm_medico'] = $dadosMedico['crm_medico'] ?? '';
-                $tipoUsuarioDetectado = 'medico';
-            }
-
-            $_SESSION['usuario']['tipo'] = $tipoUsuarioDetectado;
-
-            // Se for requisição POST tradicional (formulário), redireciona para o painel do usuário
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-                header("Location: /$tipoUsuarioDetectado");
-                exit;
-            }
-
-            // Caso contrário, retorna JSON (para AJAX)
-            echo json_encode(['success' => true, 'usuario' => $_SESSION['usuario']]);
         } else {
+            // Falha na autenticação
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
                 header('Location: /usuario/login?error=invalid_credentials');
                 exit;

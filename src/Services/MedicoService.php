@@ -28,10 +28,17 @@ class MedicoService {
     }
 
     public function login($email, $senha) {
-        $usuario = $this->medicoRepository->findByEmail($email);
+        // Usar UsuarioRepository para login, não MedicoRepository
+        $usuarioRepository = new \Htdocs\Src\Models\Repository\UsuarioRepository();
+        $usuario = $usuarioRepository->findByEmail($email);
+        
         if ($usuario && password_verify($senha, $usuario['senha_usuario'])) {
-            unset($usuario['senha_usuario']);
-            return $usuario;
+            // Verificar se o usuário é médico
+            $medico = $this->medicoRepository->findById($usuario['id_usuario']);
+            if ($medico) {
+                unset($usuario['senha_usuario']);
+                return array_merge($usuario, $medico);
+            }
         }
         return false;
     }

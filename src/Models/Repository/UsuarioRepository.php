@@ -249,5 +249,13 @@ class UsuarioRepository {
         $stmt_historico->bindParam(':id_paciente', $id_paciente);
         $stmt_historico->execute();
     }
+
+    public function findByEmail($email) {
+        $sql = "SELECT * FROM usuario WHERE email_usuario = :email";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
 ?>
