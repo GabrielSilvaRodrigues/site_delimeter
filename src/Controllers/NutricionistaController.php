@@ -160,6 +160,10 @@ class NutricionistaController {
     }
 
     public function deletarConta() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $id = $_SESSION['usuario']['id_usuario'] ?? $_SESSION['usuario']['id'] ?? null;
         if (!$id) {
             http_response_code(400);
@@ -167,28 +171,58 @@ class NutricionistaController {
             return;
         }
 
-        $result = $this->service->deletarConta($id);
-        $_SESSION['usuario']['tipo'] = 'usuario'; // Redefine tipo para usuário padrão
-        unset($_SESSION['nutricionista']); // Remove dados do nutricionista da sessão
-        
-        // Para requisições AJAX/JSON
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            echo json_encode(['success' => true, 'redirect' => '/usuario']);
-            return;
-        }
+        try {
+            $result = $this->service->deletarConta($id);
+            
+            // Limpar dados do nutricionista da sessão
+            $_SESSION['usuario']['tipo'] = 'usuario';
+            unset($_SESSION['nutricionista']);
+            unset($_SESSION['usuario']['crm_nutricionista']);
+            unset($_SESSION['usuario']['cpf']);
+            
+            // Para requisições AJAX/JSON
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                echo json_encode(['success' => true, 'redirect' => '/usuario']);
+                return;
+            }
 
-        // Para requisições normais
-        header('Location: /usuario');
-        exit;
+            // Para requisições normais
+            header('Location: /usuario');
+            exit;
+            
+        } catch (\Exception $e) {
+            error_log("Erro ao deletar conta do nutricionista: " . $e->getMessage());
+            
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                echo json_encode(['error' => 'Erro ao excluir perfil: ' . $e->getMessage()]);
+                return;
+            }
+            
+            header('Location: /conta?erro=1');
+            exit;
+        }
     }
 
     public function sairConta() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Limpar apenas dados específicos do nutricionista, mantendo o usuário logado
         $_SESSION['usuario']['tipo'] = 'usuario';
-        unset($_SESSION['nutricionista']); // Remove dados do nutricionista da sessão
+        unset($_SESSION['nutricionista']);
+        
+        // Remover dados específicos do nutricionista da sessão do usuário
+        if (isset($_SESSION['usuario']['crm_nutricionista'])) unset($_SESSION['usuario']['crm_nutricionista']);
+        if (isset($_SESSION['usuario']['cpf'])) unset($_SESSION['usuario']['cpf']);
         
         // Para requisições AJAX/JSON
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            echo json_encode(["success" => "Sessão encerrada.", 'redirect' => '/usuario']);
+            echo json_encode([
+                "success" => true, 
+                "message" => "Saiu do perfil de nutricionista com sucesso.",
+                'redirect' => '/usuario'
+            ]);
             return;
         }
 
@@ -207,7 +241,7 @@ class NutricionistaController {
         if ($nutricionista) {
             echo json_encode($nutricionista);
             $_SESSION['usuario']['tipo'] = 'nutricionista';
-            $_SESSION['nutricionista'] = $nutricionista; // Salvar dados do nutricionista na sessão
+            $_SESSION['nutricionista'] = $nutricionista;
             header('Location: /nutricionista');
             exit;
         } else {

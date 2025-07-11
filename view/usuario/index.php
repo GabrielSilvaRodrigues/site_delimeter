@@ -28,15 +28,15 @@ if (!isset($_SESSION['usuario'])) {
                 <span style="font-size:1.2em;">📝</span> Acessar como:
             </h2>
             <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;">
-                <a href="/paciente/cadastro" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e0f7fa; border-radius:8px; box-shadow:0 1px 6px #4caf5011; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#388e3c; font-weight:bold; transition:all 0.3s;">
+                <a href="/paciente/conta/entrar" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e0f7fa; border-radius:8px; box-shadow:0 1px 6px #4caf5011; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#388e3c; font-weight:bold; transition:all 0.3s;">
                     <span style="font-size:2.2em; margin-bottom:8px;">🧑‍🦱</span>
                     Paciente
                 </a>
-                <a href="/nutricionista/cadastro" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e8f5e9; border-radius:8px; box-shadow:0 1px 6px #43a04711; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#43a047; font-weight:bold; transition:all 0.3s;">
+                <a href="/nutricionista/conta/entrar" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e8f5e9; border-radius:8px; box-shadow:0 1px 6px #43a04711; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#43a047; font-weight:bold; transition:all 0.3s;">
                     <span style="font-size:2.2em; margin-bottom:8px;">🥗</span>
                     Nutricionista
                 </a>
-                <a href="/medico/cadastro" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e3f2fd; border-radius:8px; box-shadow:0 1px 6px #1976d211; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#1976d2; font-weight:bold; transition:all 0.3s;">
+                <a href="/medico/conta/entrar" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e3f2fd; border-radius:8px; box-shadow:0 1px 6px #1976d211; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#1976d2; font-weight:bold; transition:all 0.3s;">
                     <span style="font-size:2.2em; margin-bottom:8px;">🩺</span>
                     Médico
                 </a>
@@ -49,10 +49,10 @@ if (!isset($_SESSION['usuario'])) {
                 ⚙️ Configurações da Conta
             </h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <a href="/conta" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-decoration: none; color: #495057; border: 1px solid #dee2e6; transition: all 0.3s;">
+                <a href="/conta" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-decoration: none; color: #495057; border: 1px solid #dee2e6; transition: all 0.3s; text-align: center;">
                     📝 Editar Perfil
                 </a>
-                <a href="/conta/sair" style="background: #f8d7da; padding: 15px; border-radius: 8px; text-decoration: none; color: #721c24; border: 1px solid #f5c6cb; transition: all 0.3s;">
+                <a href="/usuario/conta/sair" style="background: #f8d7da; padding: 15px; border-radius: 8px; text-decoration: none; color: #721c24; border: 1px solid #f5c6cb; transition: all 0.3s; text-align: center;">
                     🚪 Sair
                 </a>
             </div>
@@ -73,6 +73,21 @@ document.addEventListener('DOMContentLoaded', function() {
         card.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0)';
             this.style.boxShadow = '0 1px 6px #4caf5011';
+        });
+    });
+
+    // Adicionar efeito hover para botões de configuração
+    const configCards = document.querySelectorAll('a[href="/conta"], a[href="/usuario/conta/sair"]');
+    
+    configCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-1px)';
+            this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
         });
     });
 });

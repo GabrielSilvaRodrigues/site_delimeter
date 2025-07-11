@@ -51,14 +51,61 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const formData = new FormData(this);
+    const email = formData.get('email_usuario');
+    const senha = formData.get('senha_usuario');
+    
+    // Validação básica
+    if (!email || !senha) {
+        showMessage('Por favor, preencha todos os campos.', 'error');
+        return;
+    }
+    
+    // Mostrar loading
+    showMessage('Fazendo login...', 'info');
+    
+    console.log('Enviando dados de login:', { email: email, senha: senha ? '***' : 'vazio' });
     
     fetch('/login/usuario', {
         method: 'POST',
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        body: formData
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams(formData)
     })
-    .then(response => response.json())
-    .then(data => {
+    .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response headers:', [...response.headers.entries()]);
+        
+        return response.text().then(text => {
+            console.log('Response text:', text);
+            
+            // Tentar parsear como JSON
+            try {
+                const data = JSON.parse(text);
+                return { data, status: response.status, ok: response.ok };
+            } catch (e) {
+                console.error('Erro ao parsear JSON:', e);
+                console.error('Texto recebido:', text.substring(0, 500));
+                
+                // Se não é JSON, pode ser um redirecionamento ou erro HTML
+                if (text.includes('<!DOCTYPE') || text.includes('<html')) {
+                    // Servidor retornou HTML - provavelmente erro 500 ou redirecionamento
+                    throw new Error('Servidor retornou HTML. Verifique os logs do servidor.');
+                } else {
+                    throw new Error('Resposta inválida do servidor: ' + text.substring(0, 100));
+                }
+            }
+        });
+    })
+    .then(({ data, status, ok }) => {
+        if (!ok) {
+            throw new Error(data.error || `HTTP ${status}: Erro no servidor`);
+        }
+        
+        console.log('Response data:', data);
+        
         if (data.success) {
             showMessage('Login realizado com sucesso! Redirecionando...', 'success');
             setTimeout(() => {
@@ -69,17 +116,64 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         }
     })
     .catch(error => {
-        console.error('Erro:', error);
-        showMessage('Erro de conexão. Tente novamente.', 'error');
+        console.error('Erro completo:', error);
+        console.error('Stack trace:', error.stack);
+        
+        let errorMessage = 'Erro desconhecido.';
+        
+        if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Erro de rede. Verifique sua conexão com a internet.';
+        } else if (error.message.includes('HTML')) {
+            errorMessage = 'Erro interno do servidor. Verifique os logs.';
+        } else if (error.message.includes('JSON')) {
+            errorMessage = 'Erro de comunicação com o servidor. Contate o suporte.';
+        } else {
+            errorMessage = error.message;
+        }
+        
+        showMessage(errorMessage, 'error');
     });
+});
+
+// Preencher com dados da URL se houver erro
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error) {
+        let message = 'Erro no login.';
+        switch (error) {
+            case 'missing_data':
+                message = 'Por favor, preencha todos os campos.';
+                break;
+            case 'invalid_credentials':
+                message = 'Email ou senha incorretos.';
+                break;
+            case 'server_error':
+                message = 'Erro interno do servidor. Tente novamente.';
+                break;
+        }
+        showMessage(message, 'error');
+    }
 });
 
 function showMessage(message, type) {
     const messageDiv = document.getElementById('message');
     messageDiv.textContent = message;
     messageDiv.style.display = 'block';
-    messageDiv.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
-    messageDiv.style.color = type === 'success' ? '#155724' : '#721c24';
-    messageDiv.style.border = type === 'success' ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+    
+    if (type === 'success') {
+        messageDiv.style.backgroundColor = '#d4edda';
+        messageDiv.style.color = '#155724';
+        messageDiv.style.border = '1px solid #c3e6cb';
+    } else if (type === 'info') {
+        messageDiv.style.backgroundColor = '#d1ecf1';
+        messageDiv.style.color = '#0c5460';
+        messageDiv.style.border = '1px solid #bee5eb';
+    } else {
+        messageDiv.style.backgroundColor = '#f8d7da';
+        messageDiv.style.color = '#721c24';
+        messageDiv.style.border = '1px solid #f5c6cb';
+    }
 }
 </script>

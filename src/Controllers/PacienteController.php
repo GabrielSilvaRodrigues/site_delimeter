@@ -24,6 +24,20 @@ class PacienteController {
             return;
         }
 
+        // Converter id_usuario para int se for string
+        $id_usuario = is_string($id_usuario) ? (int)$id_usuario : $id_usuario;
+
+        // Verificar se o usuário já possui cadastro de paciente
+        $pacienteExistente = $this->service->getPacienteRepository()->findByUsuarioId($id_usuario);
+        if ($pacienteExistente) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                echo json_encode(['error' => 'Este usuário já possui um cadastro de paciente.']);
+                return;
+            }
+            header('Location: /paciente');
+            exit;
+        }
+
         $paciente = new \Htdocs\Src\Models\Entity\Paciente(
             null, // id_paciente será gerado pelo banco
             $id_usuario,
@@ -129,8 +143,12 @@ class PacienteController {
             return;
         }
 
+        // Buscar o paciente existente para obter o id_paciente
+        $pacienteExistente = $this->service->getPacienteRepository()->findByUsuarioId($id_usuario);
+        $id_paciente = $pacienteExistente ? $pacienteExistente['id_paciente'] : null;
+
         $paciente = new \Htdocs\Src\Models\Entity\Paciente(
-            null, // id_paciente será usado para update
+            $id_paciente,
             (int)$id_usuario,
             $cpf,
             $nis
@@ -160,34 +178,75 @@ class PacienteController {
     }
 
     public function deletarConta() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $id = $_SESSION['usuario']['id_usuario'] ?? $_SESSION['usuario']['id'] ?? null;
         if (!$id) {
-            http_response_code(400);
-            echo json_encode(["error" => "ID do usuário não fornecido."]);
-            return;
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                http_response_code(400);
+                echo json_encode(["error" => "ID do usuário não fornecido."]);
+                return;
+            }
+            header('Location: /usuario/login');
+            exit;
         }
 
-        $result = $this->service->deletarConta($id);
-        $_SESSION['usuario']['tipo'] = 'usuario'; // Redefine tipo para usuário padrão
-        
-        // Para requisições AJAX/JSON
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            echo json_encode(['success' => true, 'redirect' => '/usuario']);
-            return;
-        }
+        try {
+            $result = $this->service->deletarConta($id);
+            
+            // Limpar dados do paciente da sessão
+            $_SESSION['usuario']['tipo'] = 'usuario';
+            unset($_SESSION['paciente']);
+            unset($_SESSION['dados_antropometricos']);
+            unset($_SESSION['usuario']['cpf']);
+            unset($_SESSION['usuario']['nis']);
+            
+            // Para requisições AJAX/JSON
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                echo json_encode(['success' => true, 'redirect' => '/usuario']);
+                return;
+            }
 
-        // Para requisições normais
-        header('Location: /usuario');
-        exit;
+            // Para requisições normais
+            header('Location: /usuario');
+            exit;
+            
+        } catch (\Exception $e) {
+            error_log("Erro ao deletar conta do paciente: " . $e->getMessage());
+            
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                echo json_encode(['error' => 'Erro ao excluir perfil: ' . $e->getMessage()]);
+                return;
+            }
+            
+            header('Location: /conta?erro=1');
+            exit;
+        }
     }
 
     public function sairConta() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Limpar apenas dados específicos do paciente, mantendo o usuário logado
         $_SESSION['usuario']['tipo'] = 'usuario';
-        unset($_SESSION['paciente']); // Remove dados do paciente da sessão
+        unset($_SESSION['paciente']);
+        unset($_SESSION['dados_antropometricos']);
+        
+        // Remover dados específicos do paciente da sessão do usuário
+        if (isset($_SESSION['usuario']['cpf'])) unset($_SESSION['usuario']['cpf']);
+        if (isset($_SESSION['usuario']['nis'])) unset($_SESSION['usuario']['nis']);
         
         // Para requisições AJAX/JSON
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            echo json_encode(["success" => "Sessão encerrada.", 'redirect' => '/usuario']);
+            echo json_encode([
+                "success" => true, 
+                "message" => "Saiu do perfil de paciente com sucesso.",
+                'redirect' => '/usuario'
+            ]);
             return;
         }
 

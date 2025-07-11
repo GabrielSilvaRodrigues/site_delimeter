@@ -9,6 +9,36 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: /usuario/login');
     exit;
 }
+
+// Carregar dados específicos dos perfis se não estiverem na sessão
+$dadosPaciente = null;
+$dadosNutricionista = null;
+$dadosMedico = null;
+
+if (!empty($_SESSION['usuario']['id_usuario'])) {
+    require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+    
+    try {
+        // Buscar dados do paciente
+        $pacienteRepo = new \Htdocs\Src\Models\Repository\PacienteRepository();
+        $dadosPaciente = $pacienteRepo->findByUsuarioId($_SESSION['usuario']['id_usuario']);
+        
+        // Buscar dados do nutricionista
+        $nutricionistaRepo = new \Htdocs\Src\Models\Repository\NutricionistaRepository();
+        $dadosNutricionista = $nutricionistaRepo->findByUsuarioId($_SESSION['usuario']['id_usuario']);
+        
+        // Buscar dados do médico
+        $medicoRepo = new \Htdocs\Src\Models\Repository\MedicoRepository();
+        $dadosMedico = $medicoRepo->findByUsuarioId($_SESSION['usuario']['id_usuario']);
+        
+    } catch (\Exception $e) {
+        error_log("Erro ao carregar dados dos perfis: " . $e->getMessage());
+        // Em caso de erro, definir como null para evitar crashes
+        $dadosPaciente = null;
+        $dadosNutricionista = null;
+        $dadosMedico = null;
+    }
+}
 ?>
 
 <div class="conta-container" style="background: linear-gradient(120deg, #f4f4f4 60%, #e0f7fa 100%); min-height: 100vh;">
@@ -65,20 +95,20 @@ if (!isset($_SESSION['usuario'])) {
                         🧑‍🦱 Perfil de Paciente
                     </h4>
                     
-                    <?php if (isset($_SESSION['usuario']['tipo']) && $_SESSION['usuario']['tipo'] === 'paciente'): ?>
+                    <?php if ($dadosPaciente): ?>
                         <p style="color: #2e7d32; margin-bottom: 15px;">✅ Você já possui um perfil de paciente ativo.</p>
                         
                         <form id="pacienteForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">CPF:</label>
                                 <input type="text" id="cpf_paciente" name="cpf" placeholder="000.000.000-00" 
-                                       value="<?php echo htmlspecialchars($_SESSION['usuario']['cpf'] ?? ''); ?>"
+                                       value="<?php echo htmlspecialchars($dadosPaciente['cpf'] ?? ''); ?>"
                                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">NIS:</label>
                                 <input type="text" id="nis_paciente" name="nis" placeholder="000.00000.00-0"
-                                       value="<?php echo htmlspecialchars($_SESSION['usuario']['nis'] ?? ''); ?>"
+                                       value="<?php echo htmlspecialchars($dadosPaciente['nis'] ?? ''); ?>"
                                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                             </div>
                         </form>
@@ -108,20 +138,20 @@ if (!isset($_SESSION['usuario'])) {
                         🥗 Perfil de Nutricionista
                     </h4>
                     
-                    <?php if (isset($_SESSION['usuario']['tipo']) && $_SESSION['usuario']['tipo'] === 'nutricionista'): ?>
+                    <?php if ($dadosNutricionista): ?>
                         <p style="color: #2e7d32; margin-bottom: 15px;">✅ Você já possui um perfil de nutricionista ativo.</p>
                         
                         <form id="nutricionistaForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">CRN:</label>
                                 <input type="text" id="crm_nutricionista" name="crm_nutricionista" placeholder="12345/SP"
-                                       value="<?php echo htmlspecialchars($_SESSION['usuario']['crm_nutricionista'] ?? ''); ?>"
+                                       value="<?php echo htmlspecialchars($dadosNutricionista['crm_nutricionista'] ?? ''); ?>"
                                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">CPF:</label>
                                 <input type="text" id="cpf_nutricionista" name="cpf" placeholder="000.000.000-00"
-                                       value="<?php echo htmlspecialchars($_SESSION['usuario']['cpf'] ?? ''); ?>"
+                                       value="<?php echo htmlspecialchars($dadosNutricionista['cpf'] ?? ''); ?>"
                                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                             </div>
                         </form>
@@ -151,20 +181,20 @@ if (!isset($_SESSION['usuario'])) {
                         🩺 Perfil de Médico
                     </h4>
                     
-                    <?php if (isset($_SESSION['usuario']['tipo']) && $_SESSION['usuario']['tipo'] === 'medico'): ?>
+                    <?php if ($dadosMedico): ?>
                         <p style="color: #1565c0; margin-bottom: 15px;">✅ Você já possui um perfil de médico ativo.</p>
                         
                         <form id="medicoForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">CRM:</label>
                                 <input type="text" id="crm_medico" name="crm_medico" placeholder="12345/SP"
-                                       value="<?php echo htmlspecialchars($_SESSION['usuario']['crm_medico'] ?? ''); ?>"
+                                       value="<?php echo htmlspecialchars($dadosMedico['crm_medico'] ?? ''); ?>"
                                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">CPF:</label>
                                 <input type="text" id="cpf_medico" name="cpf" placeholder="000.000.000-00"
-                                       value="<?php echo htmlspecialchars($_SESSION['usuario']['cpf'] ?? ''); ?>"
+                                       value="<?php echo htmlspecialchars($dadosMedico['cpf'] ?? ''); ?>"
                                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
                             </div>
                         </form>
@@ -272,6 +302,13 @@ document.addEventListener('DOMContentLoaded', function() {
     ['cpf_paciente', 'cpf_nutricionista', 'cpf_medico'].forEach(id => {
         const element = document.getElementById(id);
         if (element) {
+            // Aplicar máscara no valor atual
+            let currentValue = element.value.replace(/\D/g, '');
+            if (currentValue.length === 11) {
+                element.value = currentValue.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+            
+            // Aplicar máscara em tempo real
             element.addEventListener('input', function(e) {
                 let value = e.target.value.replace(/\D/g, '');
                 if (value.length <= 11) {
@@ -285,6 +322,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Máscara NIS
     const nisElement = document.getElementById('nis_paciente');
     if (nisElement) {
+        // Aplicar máscara no valor atual
+        let currentValue = nisElement.value.replace(/\D/g, '');
+        if (currentValue.length === 11) {
+            nisElement.value = currentValue.replace(/(\d{3})(\d{5})(\d{2})(\d{1})/, '$1.$2.$3-$4');
+        }
+        
+        // Aplicar máscara em tempo real
         nisElement.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length <= 11) {

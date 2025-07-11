@@ -12,7 +12,7 @@ class DiarioDeAlimentosRoutes {
         $diarioDeAlimentosService = new DiarioDeAlimentosService($diarioDeAlimentosRepository);
         $diarioDeAlimentosController = new DiarioDeAlimentosController($diarioDeAlimentosService);
 
-        // API Routes para diário de alimentos
+        // API Routes para diário de alimentos - garantir que não incluam HTML
         $route->add('POST', '/api/diario-alimentos/criar', [$diarioDeAlimentosController, 'criar']);
         $route->add('GET', '/api/diario-alimentos/listar', [$diarioDeAlimentosController, 'listar']);
         $route->add('GET', '/api/diario-alimentos/buscar-por-id', [$diarioDeAlimentosController, 'buscarPorId']);

@@ -50,6 +50,14 @@ class MedicoRepository {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function findByUsuarioId($id_usuario) {
+        $sql = "SELECT * FROM medico WHERE id_usuario = :id_usuario";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function findAll() {
         $sql = "SELECT * FROM medico";
         $stmt = $this->conn->prepare($sql);
