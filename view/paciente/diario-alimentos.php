@@ -571,166 +571,605 @@ async function excluirRegistro(id_diario) {
     }
 }
 
-// Função melhorada para salvar localmente
-function salvarLocalmente(dados, alimentos) {
-    const registroLocal = {
-        id: 'local_' + Date.now(),
-        ...dados,
-        alimentos: alimentos,
-        timestamp: new Date().toISOString(),
-        sincronizado: false
-    };
-    
-    let registrosLocais = JSON.parse(localStorage.getItem('diario_local') || '[]');
-    registrosLocais.push(registroLocal);
-    localStorage.setItem('diario_local', JSON.stringify(registrosLocais));
-    
-    alert('Registro salvo localmente! Será sincronizado quando a conexão for restabelecida.');
-    limparFormulario();
-    
-    // Mostrar botão para tentar sincronizar
-    mostrarBotaoSincronizar();
+// Função para limpar formulário
+function limparFormulario() {
+    document.getElementById('diarioForm').reset();
+    document.getElementById('data_diario').value = new Date().toISOString().split('T')[0];
+    document.getElementById('buscar_alimento').value = '';
+    alimentosSelecionados = [];
+    atualizarListaAlimentosSelecionados();
+    document.getElementById('busca-resultados').style.display = 'none';
 }
 
-function mostrarBotaoSincronizar() {
-    const registrosLocais = JSON.parse(localStorage.getItem('diario_local') || '[]');
-    if (registrosLocais.length > 0) {
-        const botaoSync = document.createElement('div');
-        botaoSync.id = 'sync-button';
-        botaoSync.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ff9800; color: white; padding: 10px; border-radius: 5px; cursor: pointer; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.3);';
-        botaoSync.innerHTML = `📡 ${registrosLocais.length} registro(s) local(is) - Clique para sincronizar`;
-        botaoSync.onclick = sincronizarRegistrosLocais;
+// Função para carregar histórico filtrado
+function carregarHistoricoFiltrado() {
+    const dataInicio = document.getElementById('filtro_data_inicio').value;
+    const dataFim = document.getElementById('filtro_data_fim').value;
+    
+    if (!dataInicio || !dataFim) {
+        alert('Por favor, selecione as datas de início e fim.');
+        return;
+    }
+    
+    if (new Date(dataInicio) > new Date(dataFim)) {
+        alert('A data de início não pode ser maior que a data de fim.');
+        return;
+    }
+    
+    console.log('Carregando histórico filtrado:', { dataInicio, dataFim });
+    carregarHistorico();
+}
+
+// Remover código duplicado dos event listeners e manter apenas uma função DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Página carregada, iniciando carregamento...');
+    
+    // Carregar alimentos primeiro
+    carregarAlimentos().then(() => {
+        console.log('Alimentos carregados:', alimentosDisponiveis.length);
+    });
+    
+    // Carregar histórico
+    carregarHistorico();
+    
+    // Verificar registros locais não sincronizados
+    mostrarBotaoSincronizar();
+    
+    // Definir datas padrão para o filtro (última semana)
+    const hoje = new Date();
+    const umaSemanaAtras = new Date(hoje.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    document.getElementById('filtro_data_inicio').value = umaSemanaAtras.toISOString().split('T')[0];
+    document.getElementById('filtro_data_fim').value = hoje.toISOString().split('T')[0];
+    
+    // Inicializar lista de alimentos selecionados
+    atualizarListaAlimentosSelecionados();
+    
+    // Event listener para busca de alimentos
+    document.getElementById('buscar_alimento').addEventListener('input', function(e) {
+        const termo = e.target.value.trim();
         
-        // Remover botão anterior se existir
-        const botaoExistente = document.getElementById('sync-button');
-        if (botaoExistente) {
-            botaoExistente.remove();
+        if (termo.length >= 2) {
+            buscarAlimentos(termo);
+        } else {
+            document.getElementById('busca-resultados').style.display = 'none';
+        }
+    });
+    
+    // Event listener único para o formulário
+    document.getElementById('diarioForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        data.id_paciente = ID_PACIENTE;
+        
+        // Adicionar alimentos selecionados aos dados
+        data.alimentos_selecionados = alimentosSelecionados;
+        
+        // Verificar se temos dados suficientes
+        if (alimentosSelecionados.length === 0 && !data.descricao_diario.trim()) {
+            alert('Por favor, adicione alimentos ou escreva uma descrição do que você comeu.');
+            return;
         }
         
-        document.body.appendChild(botaoSync);
+        console.log('Enviando dados:', data);
+        
+        try {
+            const response = await fetch(API_DIARIO + '/criar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const text = await response.text();
+            console.log('Response text:', text);
+            
+            let result;
+            
+            try {
+                result = JSON.parse(text);
+            } catch (parseError) {
+                console.log('Tentando extrair JSON do HTML...');
+                result = extrairJSONDaResposta(text);
+                if (!result) {
+                    throw new Error('Resposta inválida do servidor');
+                }
+            }
+            
+            console.log('Resultado final:', result);
+            
+            if (result && result.success) {
+                alert('Registro do diário salvo com sucesso!');
+                limparFormulario();
+                carregarHistorico();
+            } else {
+                throw new Error(result?.error || 'Erro desconhecido da API');
+            }
+        } catch (error) {
+            console.error('Erro ao salvar:', error);
+            
+            // Opção de salvar localmente
+            const salvarLocal = confirm(`Erro de conexão: ${error.message}\n\nDeseja salvar o registro localmente para sincronizar depois?`);
+            
+            if (salvarLocal) {
+                salvarLocalmente(data, alimentosSelecionados);
+                alert('Registro salvo localmente! Use o botão de sincronização quando a conexão for restabelecida.');
+            }
+        }
+    });
+});
+
+// Função melhorada para salvar localmente
+function salvarLocalmente(dados, alimentos) {
+    try {
+        const registroLocal = {
+            id: 'local_' + Date.now(),
+            data_diario: dados.data_diario,
+            descricao_diario: dados.descricao_diario,
+            id_paciente: dados.id_paciente,
+            alimentos: alimentos.map(a => ({
+                id_alimento: a.id_alimento,
+                descricao_alimento: a.descricao_alimento,
+                dados_nutricionais: a.dados_nutricionais
+            })),
+            timestamp: new Date().toISOString(),
+            sincronizado: false
+        };
+        
+        let registrosLocais = JSON.parse(localStorage.getItem('diario_local') || '[]');
+        registrosLocais.push(registroLocal);
+        localStorage.setItem('diario_local', JSON.stringify(registrosLocais));
+        
+        console.log('Registro salvo localmente:', registroLocal);
+        
+        limparFormulario();
+        mostrarBotaoSincronizar();
+        
+        // Adicionar à exibição local temporariamente
+        adicionarRegistroLocalAoHistorico(registroLocal);
+        
+    } catch (error) {
+        console.error('Erro ao salvar localmente:', error);
+        alert('Erro ao salvar mesmo localmente. Tente novamente.');
     }
 }
 
+// Função para adicionar registro local ao histórico visualmente
+function adicionarRegistroLocalAoHistorico(registro) {
+    const container = document.getElementById('historicoContainer');
+    const historicoAtual = container.innerHTML;
+    
+    if (historicoAtual.includes('Nenhum registro encontrado')) {
+        container.innerHTML = '';
+    }
+    
+    const dataFormatada = new Date(registro.data_diario + 'T00:00:00').toLocaleDateString('pt-BR');
+    
+    const novoRegistroHTML = `
+        <div style="display: grid; gap: 15px; margin-bottom: 15px;">
+            <div style="border: 2px solid #ff9800; border-radius: 8px; padding: 20px; background: #fff3e0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0; color: #ff9800;">📅 ${dataFormatada} <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-left: 10px;">LOCAL</span></h3>
+                    <button onclick="removerRegistroLocal('${registro.id}')" 
+                            style="background: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                        🗑️ Remover
+                    </button>
+                </div>
+                <p style="margin: 10px 0; color: #333; line-height: 1.5;">${registro.descricao_diario || 'Sem descrição'}</p>
+                ${registro.alimentos.length > 0 ? `
+                    <div style="margin-top: 10px;">
+                        <strong style="color: #ff9800;">Alimentos:</strong>
+                        <ul style="margin: 5px 0 0 20px; color: #333;">
+                            ${registro.alimentos.map(a => `<li>${a.descricao_alimento}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : '<p style="color: #666; font-style: italic;">Nenhum alimento selecionado.</p>'}
+                <p style="color: #666; font-size: 11px; margin: 10px 0 0 0; font-style: italic;">
+                    *Salvo localmente - será sincronizado automaticamente
+                </p>
+            </div>
+        </div>
+    `;
+    
+    // Adicionar no início do container
+    container.innerHTML = novoRegistroHTML + container.innerHTML;
+}
+
+// Função para remover registro local
+function removerRegistroLocal(id) {
+    if (confirm('Deseja remover este registro local?')) {
+        let registrosLocais = JSON.parse(localStorage.getItem('diario_local') || '[]');
+        registrosLocais = registrosLocais.filter(r => r.id !== id);
+        localStorage.setItem('diario_local', JSON.stringify(registrosLocais));
+        
+        carregarHistorico(); // Recarregar histórico
+        mostrarBotaoSincronizar(); // Atualizar botão de sync
+    }
+}
+
+// Melhorar sincronização
 async function sincronizarRegistrosLocais() {
     const registrosLocais = JSON.parse(localStorage.getItem('diario_local') || '[]');
+    
+    if (registrosLocais.length === 0) {
+        alert('Não há registros locais para sincronizar.');
+        return;
+    }
+    
     let sincronizados = 0;
+    let erros = 0;
+    
+    const botaoSync = document.getElementById('sync-button');
+    if (botaoSync) {
+        botaoSync.innerHTML = '⏳ Sincronizando...';
+        botaoSync.style.background = '#6c757d';
+    }
     
     for (const registro of registrosLocais) {
         if (!registro.sincronizado) {
             try {
+                console.log('Sincronizando registro:', registro);
+                
                 const response = await fetch(API_DIARIO + '/criar', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest'
                     },
-                    body: JSON.stringify(registro)
+                    body: JSON.stringify({
+                        id_paciente: registro.id_paciente,
+                        data_diario: registro.data_diario,
+                        descricao_diario: registro.descricao_diario,
+                        alimentos_selecionados: registro.alimentos
+                    })
                 });
                 
                 if (response.ok) {
-                    registro.sincronizado = true;
-                    sincronizados++;
+                    const text = await response.text();
+                    let result;
+                    
+                    try {
+                        result = JSON.parse(text);
+                    } catch (parseError) {
+                        result = extrairJSONDaResposta(text);
+                    }
+                    
+                    if (result && result.success) {
+                        registro.sincronizado = true;
+                        sincronizados++;
+                        console.log('Registro sincronizado com sucesso');
+                    } else {
+                        erros++;
+                        console.error('Erro na resposta da API:', result);
+                    }
+                } else {
+                    erros++;
+                    console.error('Erro HTTP:', response.status);
                 }
             } catch (error) {
+                erros++;
                 console.error('Erro ao sincronizar registro:', error);
             }
         }
     }
     
+    // Atualizar localStorage
     localStorage.setItem('diario_local', JSON.stringify(registrosLocais));
     
+    // Remover registros sincronizados
+    const registrosRestantes = registrosLocais.filter(r => !r.sincronizado);
+    localStorage.setItem('diario_local', JSON.stringify(registrosRestantes));
+    
+    // Feedback para o usuário
     if (sincronizados > 0) {
-        alert(`${sincronizados} registro(s) sincronizado(s) com sucesso!`);
+        alert(`✅ ${sincronizados} registro(s) sincronizado(s) com sucesso!${erros > 0 ? `\n⚠️ ${erros} erro(s) encontrado(s).` : ''}`);
         carregarHistorico();
-        
-        // Remover registros sincronizados
-        const registrosRestantes = registrosLocais.filter(r => !r.sincronizado);
-        localStorage.setItem('diario_local', JSON.stringify(registrosRestantes));
-        
-        if (registrosRestantes.length === 0) {
-            const botaoSync = document.getElementById('sync-button');
-            if (botaoSync) {
-                botaoSync.remove();
-            }
-        } else {
-            mostrarBotaoSincronizar();
+    } else if (erros > 0) {
+        alert(`❌ Não foi possível sincronizar os registros (${erros} erro(s)).\nVerifique sua conexão e tente novamente.`);
+    }
+    
+    // Atualizar ou remover botão de sincronização
+    if (registrosRestantes.length === 0) {
+        if (botaoSync) {
+            botaoSync.remove();
         }
     } else {
-        alert('Não foi possível sincronizar os registros. Verifique sua conexão.');
+        mostrarBotaoSincronizar();
     }
 }
 
-// Remover listener duplicado do formulário
-document.getElementById('diarioForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+// Melhorar botão de sincronização
+function mostrarBotaoSincronizar() {
+    const registrosLocais = JSON.parse(localStorage.getItem('diario_local') || '[]');
+    const registrosNaoSincronizados = registrosLocais.filter(r => !r.sincronizado);
     
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData.entries());
-    data.id_paciente = ID_PACIENTE;
-    
-    // Adicionar alimentos selecionados aos dados
-    data.alimentos_selecionados = alimentosSelecionados;
-    
-    // Verificar se temos dados suficientes
-    if (alimentosSelecionados.length === 0 && !data.descricao_diario.trim()) {
-        alert('Por favor, adicione alimentos ou escreva uma descrição do que você comeu.');
-        return;
+    // Remover botão existente
+    const botaoExistente = document.getElementById('sync-button');
+    if (botaoExistente) {
+        botaoExistente.remove();
     }
     
-    console.log('Dados do formulário:', data);
-    
+    if (registrosNaoSincronizados.length > 0) {
+        const botaoSync = document.createElement('div');
+        botaoSync.id = 'sync-button';
+        botaoSync.style.cssText = `
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            background: #ff9800; 
+            color: white; 
+            padding: 12px 16px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            z-index: 1000; 
+            box-shadow: 0 4px 12px rgba(255,152,0,0.4);
+            font-size: 14px;
+            font-weight: bold;
+            border: 2px solid #f57c00;
+            transition: all 0.3s ease;
+        `;
+        
+        botaoSync.innerHTML = `
+            📡 ${registrosNaoSincronizados.length} registro(s) local(is)
+            <br><small style="font-size: 11px; opacity: 0.9;">Clique para sincronizar</small>
+        `;
+        
+        botaoSync.onclick = sincronizarRegistrosLocais;
+        
+        // Efeitos hover
+        botaoSync.onmouseenter = function() {
+            this.style.transform = 'scale(1.05)';
+            this.style.background = '#f57c00';
+        };
+        
+        botaoSync.onmouseleave = function() {
+            this.style.transform = 'scale(1)';
+            this.style.background = '#ff9800';
+        };
+        
+        document.body.appendChild(botaoSync);
+    }
+}
+
+// Função para carregar alimentos de um registro específico
+async function carregarAlimentosDoRegistro(id_diario) {
     try {
-        const response = await fetch(API_DIARIO + '/criar', {
-            method: 'POST',
+        // Tentar primeiro a API
+        const response = await fetch(`${API_ALIMENTOS}/buscar-por-diario?id_diario=${id_diario}`, {
             headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(data)
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
         });
         
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const container = document.getElementById(`alimentos-${id_diario}`);
         
-        const text = await response.text();
-        let result;
-        
-        try {
-            result = JSON.parse(text);
-        } catch (parseError) {
-            result = extrairJSONDaResposta(text);
-            if (!result) {
-                throw new Error('Resposta inválida do servidor');
+        if (response.ok) {
+            const text = await response.text();
+            let alimentos;
+            
+            try {
+                alimentos = JSON.parse(text);
+            } catch (parseError) {
+                // Se não conseguir parsear, tentar extrair JSON
+                alimentos = extrairJSONDaResposta(text);
+                if (!alimentos) {
+                    alimentos = [];
+                }
             }
-        }
-        
-        if (result.success) {
-            alert('Registro do diário salvo com sucesso!');
-            limparFormulario();
-            carregarHistorico();
+            
+            if (Array.isArray(alimentos) && alimentos.length > 0) {
+                let html = '<strong style="color: #ff9800;">Alimentos:</strong><ul style="margin: 5px 0 0 20px; color: #333;">';
+                alimentos.forEach(alimento => {
+                    html += `<li>${alimento.descricao_alimento}</li>`;
+                });
+                html += '</ul>';
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<p style="color: #666; font-style: italic;">Nenhum alimento registrado.</p>';
+            }
         } else {
-            alert('Erro: ' + (result.error || 'Erro desconhecido'));
+            // Fallback: mostrar alimentos genéricos baseados no horário/tipo
+            container.innerHTML = `
+                <p style="color: #666; font-style: italic;">
+                    <span style="color: #ff9800;">Alimentos:</span> Dados não disponíveis via API. 
+                    <button onclick="editarAlimentosRegistro(${id_diario})" 
+                            style="background: #ff9800; color: white; padding: 2px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; margin-left: 5px;">
+                        ✏️ Editar
+                    </button>
+                </p>
+            `;
         }
     } catch (error) {
-        console.error('Erro:', error);
-        
-        // Fallback: salvar localmente
-        if (confirm('Erro de conexão. Deseja tentar salvar o registro localmente para enviar depois?')) {
-            salvarLocalmente(data, alimentosSelecionados);
+        console.error('Erro ao carregar alimentos:', error);
+        const container = document.getElementById(`alimentos-${id_diario}`);
+        if (container) {
+            container.innerHTML = `
+                <p style="color: #666; font-style: italic;">
+                    <span style="color: #ff9800;">Alimentos:</span> Erro de conexão. 
+                    <button onclick="tentarNovamenteAlimentos(${id_diario})" 
+                            style="background: #f44336; color: white; padding: 2px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; margin-left: 5px;">
+                        🔄 Tentar novamente
+                    </button>
+                </p>
+            `;
         }
     }
-});
+}
 
-// Função para buscar alimentos
-document.getElementById('buscar_alimento').addEventListener('input', function(e) {
-    const termo = e.target.value.trim();
+function editarAlimentosRegistro(id_diario) {
+    const container = document.getElementById(`alimentos-${id_diario}`);
+    container.innerHTML = `
+        <div style="background: #fff3cd; padding: 10px; border-radius: 5px; border: 1px solid #ffeaa7;">
+            <p style="margin: 0 0 10px 0; color: #856404; font-size: 13px;">
+                <strong>Edição de alimentos para este registro:</strong>
+            </p>
+            <input type="text" id="edit-alimentos-${id_diario}" placeholder="Digite os alimentos separados por vírgula..." 
+                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; margin-bottom: 10px;">
+            <div style="display: flex; gap: 5px;">
+                <button onclick="salvarAlimentosEditados(${id_diario})" 
+                        style="background: #28a745; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                    💾 Salvar
+                </button>
+                <button onclick="carregarAlimentosDoRegistro(${id_diario})" 
+                        style="background: #6c757d; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                    ❌ Cancelar
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function salvarAlimentosEditados(id_diario) {
+    const input = document.getElementById(`edit-alimentos-${id_diario}`);
+    const alimentosTexto = input.value.trim();
     
-    if (termo.length >= 2) {
-        buscarAlimentos(termo);
+    if (alimentosTexto) {
+        const alimentos = alimentosTexto.split(',').map(a => a.trim()).filter(a => a);
+        
+        const container = document.getElementById(`alimentos-${id_diario}`);
+        let html = '<strong style="color: #ff9800;">Alimentos:</strong><ul style="margin: 5px 0 0 20px; color: #333;">';
+        alimentos.forEach(alimento => {
+            html += `<li>${alimento}</li>`;
+        });
+        html += '</ul>';
+        html += `<p style="color: #666; font-size: 11px; margin: 5px 0 0 0; font-style: italic;">
+                    *Editado manualmente - 
+                    <button onclick="editarAlimentosRegistro(${id_diario})" 
+                            style="background: none; border: none; color: #ff9800; cursor: pointer; font-size: 11px; text-decoration: underline;">
+                        editar novamente
+                    </button>
+                 </p>`;
+        container.innerHTML = html;
+        
+        // Aqui você poderia fazer uma chamada para salvar no backend se necessário
+        console.log(`Alimentos editados para registro ${id_diario}:`, alimentos);
     } else {
-        document.getElementById('busca-resultados').style.display = 'none';
+        alert('Por favor, digite pelo menos um alimento.');
     }
+}
+
+function tentarNovamenteAlimentos(id_diario) {
+    carregarAlimentosDoRegistro(id_diario);
+}
+
+// Remover os event listeners duplicados e manter apenas um
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Página carregada, iniciando carregamento...');
+    
+    // Carregar alimentos primeiro
+    carregarAlimentos().then(() => {
+        console.log('Alimentos carregados:', alimentosDisponiveis.length);
+    });
+    
+    // Carregar histórico
+    carregarHistorico();
+    
+    // Verificar registros locais não sincronizados
+    mostrarBotaoSincronizar();
+    
+    // Definir datas padrão para o filtro (última semana)
+    const hoje = new Date();
+    const umaSemanaAtras = new Date(hoje.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    document.getElementById('filtro_data_inicio').value = umaSemanaAtras.toISOString().split('T')[0];
+    document.getElementById('filtro_data_fim').value = hoje.toISOString().split('T')[0];
+    
+    // Inicializar lista de alimentos selecionados
+    atualizarListaAlimentosSelecionados();
+    
+    // Event listener para busca de alimentos
+    document.getElementById('buscar_alimento').addEventListener('input', function(e) {
+        const termo = e.target.value.trim();
+        
+        if (termo.length >= 2) {
+            buscarAlimentos(termo);
+        } else {
+            document.getElementById('busca-resultados').style.display = 'none';
+        }
+    });
+    
+    // Event listener único para o formulário
+    document.getElementById('diarioForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        data.id_paciente = ID_PACIENTE;
+        
+        // Adicionar alimentos selecionados aos dados
+        data.alimentos_selecionados = alimentosSelecionados;
+        
+        // Verificar se temos dados suficientes
+        if (alimentosSelecionados.length === 0 && !data.descricao_diario.trim()) {
+            alert('Por favor, adicione alimentos ou escreva uma descrição do que você comeu.');
+            return;
+        }
+        
+        console.log('Enviando dados:', data);
+        
+        try {
+            const response = await fetch(API_DIARIO + '/criar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const text = await response.text();
+            console.log('Response text:', text);
+            
+            let result;
+            
+            try {
+                result = JSON.parse(text);
+            } catch (parseError) {
+                console.log('Tentando extrair JSON do HTML...');
+                result = extrairJSONDaResposta(text);
+                if (!result) {
+                    throw new Error('Resposta inválida do servidor');
+                }
+            }
+            
+            console.log('Resultado final:', result);
+            
+            if (result && result.success) {
+                alert('Registro do diário salvo com sucesso!');
+                limparFormulario();
+                carregarHistorico();
+            } else {
+                throw new Error(result?.error || 'Erro desconhecido da API');
+            }
+        } catch (error) {
+            console.error('Erro ao salvar:', error);
+            
+            // Opção de salvar localmente
+            const salvarLocal = confirm(`Erro de conexão: ${error.message}\n\nDeseja salvar o registro localmente para sincronizar depois?`);
+            
+            if (salvarLocal) {
+                salvarLocalmente(data, alimentosSelecionados);
+                alert('Registro salvo localmente! Use o botão de sincronização quando a conexão for restabelecida.');
+            }
+        }
+    });
 });
 
 // Função para buscar alimentos na lista
@@ -913,216 +1352,7 @@ function removerAlimentoSelecionado(index) {
     }
 }
 
-async function carregarAlimentosDoRegistro(id_diario) {
-    try {
-        // Tentar primeiro a API
-        const response = await fetch(`${API_ALIMENTOS}/buscar-por-diario?id_diario=${id_diario}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            }
-        });
-        
-        const container = document.getElementById(`alimentos-${id_diario}`);
-        
-        if (response.ok) {
-            const text = await response.text();
-            let alimentos;
-            
-            try {
-                alimentos = JSON.parse(text);
-            } catch (parseError) {
-                // Se não conseguir parsear, tentar extrair JSON
-                alimentos = extrairJSONDaResposta(text);
-                if (!alimentos) {
-                    alimentos = [];
-                }
-            }
-            
-            if (Array.isArray(alimentos) && alimentos.length > 0) {
-                let html = '<strong style="color: #ff9800;">Alimentos:</strong><ul style="margin: 5px 0 0 20px; color: #333;">';
-                alimentos.forEach(alimento => {
-                    html += `<li>${alimento.descricao_alimento}</li>`;
-                });
-                html += '</ul>';
-                container.innerHTML = html;
-            } else {
-                container.innerHTML = '<p style="color: #666; font-style: italic;">Nenhum alimento registrado.</p>';
-            }
-        } else {
-            // Fallback: mostrar alimentos genéricos baseados no horário/tipo
-            container.innerHTML = `
-                <p style="color: #666; font-style: italic;">
-                    <span style="color: #ff9800;">Alimentos:</span> Dados não disponíveis via API. 
-                    <button onclick="editarAlimentosRegistro(${id_diario})" 
-                            style="background: #ff9800; color: white; padding: 2px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; margin-left: 5px;">
-                        ✏️ Editar
-                    </button>
-                </p>
-            `;
-        }
-    } catch (error) {
-        console.error('Erro ao carregar alimentos:', error);
-        const container = document.getElementById(`alimentos-${id_diario}`);
-        if (container) {
-            container.innerHTML = `
-                <p style="color: #666; font-style: italic;">
-                    <span style="color: #ff9800;">Alimentos:</span> Erro de conexão. 
-                    <button onclick="tentarNovamenteAlimentos(${id_diario})" 
-                            style="background: #f44336; color: white; padding: 2px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; margin-left: 5px;">
-                        🔄 Tentar novamente
-                    </button>
-                </p>
-            `;
-        }
-    }
-}
-
-function editarAlimentosRegistro(id_diario) {
-    const container = document.getElementById(`alimentos-${id_diario}`);
-    container.innerHTML = `
-        <div style="background: #fff3cd; padding: 10px; border-radius: 5px; border: 1px solid #ffeaa7;">
-            <p style="margin: 0 0 10px 0; color: #856404; font-size: 13px;">
-                <strong>Edição de alimentos para este registro:</strong>
-            </p>
-            <input type="text" id="edit-alimentos-${id_diario}" placeholder="Digite os alimentos separados por vírgula..." 
-                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; margin-bottom: 10px;">
-            <div style="display: flex; gap: 5px;">
-                <button onclick="salvarAlimentosEditados(${id_diario})" 
-                        style="background: #28a745; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">
-                    💾 Salvar
-                </button>
-                <button onclick="carregarAlimentosDoRegistro(${id_diario})" 
-                        style="background: #6c757d; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">
-                    ❌ Cancelar
-                </button>
-            </div>
-        </div>
-    `;
-}
-
-function salvarAlimentosEditados(id_diario) {
-    const input = document.getElementById(`edit-alimentos-${id_diario}`);
-    const alimentosTexto = input.value.trim();
-    
-    if (alimentosTexto) {
-        const alimentos = alimentosTexto.split(',').map(a => a.trim()).filter(a => a);
-        
-        const container = document.getElementById(`alimentos-${id_diario}`);
-        let html = '<strong style="color: #ff9800;">Alimentos:</strong><ul style="margin: 5px 0 0 20px; color: #333;">';
-        alimentos.forEach(alimento => {
-            html += `<li>${alimento}</li>`;
-        });
-        html += '</ul>';
-        html += `<p style="color: #666; font-size: 11px; margin: 5px 0 0 0; font-style: italic;">
-                    *Editado manualmente - 
-                    <button onclick="editarAlimentosRegistro(${id_diario})" 
-                            style="background: none; border: none; color: #ff9800; cursor: pointer; font-size: 11px; text-decoration: underline;">
-                        editar novamente
-                    </button>
-                 </p>`;
-        container.innerHTML = html;
-        
-        // Aqui você poderia fazer uma chamada para salvar no backend se necessário
-        console.log(`Alimentos editados para registro ${id_diario}:`, alimentos);
-    } else {
-        alert('Por favor, digite pelo menos um alimento.');
-    }
-}
-
-function tentarNovamenteAlimentos(id_diario) {
-    carregarAlimentosDoRegistro(id_diario);
-}
-
-// Remover os event listeners duplicados e manter apenas um
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Página carregada, iniciando carregamento...');
-    
-    // Carregar alimentos primeiro
-    carregarAlimentos().then(() => {
-        console.log('Alimentos carregados:', alimentosDisponiveis.length);
-    });
-    
-    // Carregar histórico
-    carregarHistorico();
-    
-    // Verificar registros locais não sincronizados
-    mostrarBotaoSincronizar();
-    
-    // Definir datas padrão para o filtro (última semana)
-    const hoje = new Date();
-    const umaSemanaAtras = new Date(hoje.getTime() - 7 * 24 * 60 * 60 * 1000);
-    
-    document.getElementById('filtro_data_inicio').value = umaSemanaAtras.toISOString().split('T')[0];
-    document.getElementById('filtro_data_fim').value = hoje.toISOString().split('T')[0];
-    
-    // Inicializar lista de alimentos selecionados
-    atualizarListaAlimentosSelecionados();
-    
-    // Event listener único para o formulário
-    document.getElementById('diarioForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-        data.id_paciente = ID_PACIENTE;
-        
-        // Adicionar alimentos selecionados aos dados
-        data.alimentos_selecionados = alimentosSelecionados;
-        
-        // Verificar se temos dados suficientes
-        if (alimentosSelecionados.length === 0 && !data.descricao_diario.trim()) {
-            alert('Por favor, adicione alimentos ou escreva uma descrição do que você comeu.');
-            return;
-        }
-        
-        console.log('Dados do formulário:', data);
-        
-        try {
-            const response = await fetch(API_DIARIO + '/criar', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(data)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const text = await response.text();
-            let result;
-            
-            try {
-                result = JSON.parse(text);
-            } catch (parseError) {
-                result = extrairJSONDaResposta(text);
-                if (!result) {
-                    throw new Error('Resposta inválida do servidor');
-                }
-            }
-            
-            if (result.success) {
-                alert('Registro do diário salvo com sucesso!');
-                limparFormulario();
-                carregarHistorico();
-            } else {
-                alert('Erro: ' + (result.error || 'Erro desconhecido'));
-            }
-        } catch (error) {
-            console.error('Erro:', error);
-            
-            // Fallback: salvar localmente
-            if (confirm('Erro de conexão. Deseja tentar salvar o registro localmente para enviar depois?')) {
-                salvarLocalmente(data, alimentosSelecionados);
-            }
-        }
-    });
-});
-
-// Carregar histórico e alimentos ao carregar a página
+// Função para carregar histórico e alimentos ao carregar a página
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Página carregada, iniciando carregamento...');
     
