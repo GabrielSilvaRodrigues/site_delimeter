@@ -112,19 +112,44 @@ class DiarioDeAlimentosRepository {
 
     // Método para associar alimentos ao diário
     public function associarAlimento($id_diario, $id_alimento) {
-        $sql = "INSERT INTO relacao_diario_alimento (id_diario, id_alimento) VALUES (:id_diario, :id_alimento)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':id_diario', $id_diario);
-        $stmt->bindParam(':id_alimento', $id_alimento);
-        $stmt->execute();
+        try {
+            $sql = "INSERT INTO relacao_diario_alimento (id_diario, id_alimento) VALUES (:id_diario, :id_alimento)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':id_diario', $id_diario);
+            $stmt->bindParam(':id_alimento', $id_alimento);
+            return $stmt->execute();
+        } catch (\Exception $e) {
+            error_log("Erro ao associar alimento: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function removerAlimento($id_diario, $id_alimento) {
-        $sql = "DELETE FROM relacao_diario_alimento WHERE id_diario = :id_diario AND id_alimento = :id_alimento";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':id_diario', $id_diario);
-        $stmt->bindParam(':id_alimento', $id_alimento);
-        $stmt->execute();
+        try {
+            $sql = "DELETE FROM relacao_diario_alimento WHERE id_diario = :id_diario AND id_alimento = :id_alimento";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':id_diario', $id_diario);
+            $stmt->bindParam(':id_alimento', $id_alimento);
+            return $stmt->execute();
+        } catch (\Exception $e) {
+            error_log("Erro ao remover alimento: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function verificarAssociacaoAlimento($id_diario, $id_alimento) {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM relacao_diario_alimento WHERE id_diario = :id_diario AND id_alimento = :id_alimento";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':id_diario', $id_diario);
+            $stmt->bindParam(':id_alimento', $id_alimento);
+            $stmt->execute();
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $result['count'] > 0;
+        } catch (\Exception $e) {
+            error_log("Erro ao verificar associação: " . $e->getMessage());
+            return false;
+        }
     }
 }
 ?>

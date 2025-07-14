@@ -12,6 +12,9 @@ class AlimentoController {
     }
 
     public function criar() {
+        $this->limparOutput();
+        header('Content-Type: application/json');
+        
         $data = json_decode(file_get_contents("php://input"), true);
         if (!$data || !is_array($data)) $data = $_POST;
 
@@ -19,33 +22,43 @@ class AlimentoController {
         $dados_nutricionais = $data['dados_nutricionais'] ?? null;
 
         if (!$descricao_alimento) {
-            echo json_encode(['error' => 'Descrição do alimento é obrigatória.']);
-            return;
+            echo json_encode(['success' => false, 'error' => 'Descrição do alimento é obrigatória.']);
+            exit;
         }
 
-        if (!$this->service->validarDadosNutricionais($dados_nutricionais)) {
-            echo json_encode(['error' => 'Dados nutricionais inválidos.']);
-            return;
+        try {
+            $alimento = new Alimento(
+                null,
+                $descricao_alimento,
+                $dados_nutricionais
+            );
+
+            $result = $this->service->criar($alimento);
+
+            if ($result) {
+                echo json_encode(['success' => true, 'message' => 'Alimento cadastrado com sucesso.', 'id' => $result]);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Erro ao cadastrar alimento.']);
+            }
+        } catch (\Exception $e) {
+            error_log("Erro ao criar alimento: " . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Erro interno do servidor.']);
         }
-
-        $alimento = new Alimento(
-            null,
-            $descricao_alimento,
-            $dados_nutricionais
-        );
-
-        $result = $this->service->criar($alimento);
-
-        if ($result) {
-            echo json_encode(['success' => 'Alimento cadastrado com sucesso.', 'id' => $result]);
-        } else {
-            echo json_encode(['error' => 'Erro ao cadastrar alimento.']);
-        }
+        exit;
     }
 
     public function listar() {
-        $alimentos = $this->service->listar();
-        echo json_encode($alimentos);
+        $this->limparOutput();
+        header('Content-Type: application/json');
+        
+        try {
+            $alimentos = $this->service->listar();
+            echo json_encode(['success' => true, 'data' => $alimentos]);
+        } catch (\Exception $e) {
+            error_log("Erro ao listar alimentos: " . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Erro ao buscar alimentos.']);
+        }
+        exit;
     }
 
     public function buscarPorId() {
@@ -61,15 +74,24 @@ class AlimentoController {
     }
 
     public function buscarPorDescricao() {
+        $this->limparOutput();
+        header('Content-Type: application/json');
+        
         $descricao = $_GET['descricao'] ?? null;
         
-        if (!$descricao) {
-            echo json_encode(['error' => 'Descrição é obrigatória para busca.']);
-            return;
+        if (!$descricao || strlen(trim($descricao)) < 2) {
+            echo json_encode(['success' => false, 'error' => 'Digite pelo menos 2 caracteres para buscar.']);
+            exit;
         }
 
-        $alimentos = $this->service->buscarPorDescricao($descricao);
-        echo json_encode($alimentos);
+        try {
+            $alimentos = $this->service->buscarPorDescricao(trim($descricao));
+            echo json_encode(['success' => true, 'data' => $alimentos]);
+        } catch (\Exception $e) {
+            error_log("Erro ao buscar alimentos por descrição: " . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Erro ao buscar alimentos.']);
+        }
+        exit;
     }
 
     public function buscarPorDieta() {
@@ -85,15 +107,24 @@ class AlimentoController {
     }
 
     public function buscarPorDiario() {
+        $this->limparOutput();
+        header('Content-Type: application/json');
+        
         $id_diario = $_GET['id_diario'] ?? null;
         
         if (!$id_diario) {
-            echo json_encode(['error' => 'ID do diário é obrigatório.']);
-            return;
+            echo json_encode(['success' => false, 'error' => 'ID do diário é obrigatório.']);
+            exit;
         }
 
-        $alimentos = $this->service->buscarPorDiario($id_diario);
-        echo json_encode($alimentos);
+        try {
+            $alimentos = $this->service->buscarPorDiario($id_diario);
+            echo json_encode(['success' => true, 'data' => $alimentos]);
+        } catch (\Exception $e) {
+            error_log("Erro ao buscar alimentos do diário: " . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Erro ao buscar alimentos do diário.']);
+        }
+        exit;
     }
 
     public function atualizar() {
@@ -161,6 +192,24 @@ class AlimentoController {
         }
         
         echo json_encode($resultado);
+    }
+
+    /**
+     * Método para limpar output buffer e garantir JSON limpo
+     */
+    private function limparOutput() {
+        // Limpar qualquer output anterior
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        // Iniciar novo buffer
+        ob_start();
+        
+        // Configurar headers para evitar cache
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
+        header('Expires: 0');
     }
 }
 ?>

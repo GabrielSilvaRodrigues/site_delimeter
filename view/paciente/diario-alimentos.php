@@ -162,29 +162,6 @@ const ID_PACIENTE = <?php echo $id_paciente; ?>;
 // Estado da aplicação
 let alimentosSelecionados = [];
 
-// Função para verificar se a API está funcionando
-async function verificarAPI() {
-    try {
-        const response = await fetch(`${API_BASE}/listar`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            }
-        });
-        
-        if (response.ok) {
-            console.log('API principal funcionando');
-            return true;
-        }
-        
-        throw new Error(`API não responde: ${response.status}`);
-        
-    } catch (error) {
-        console.error('Erro na verificação da API:', error);
-        return false;
-    }
-}
-
 // Função para buscar alimentos
 async function buscarAlimentos(termo) {
     if (termo.length < 2) {
@@ -193,6 +170,8 @@ async function buscarAlimentos(termo) {
     }
     
     try {
+        console.log('Buscando alimentos com termo:', termo);
+        
         const response = await fetch(`${API_ALIMENTOS}/buscar-por-descricao?descricao=${encodeURIComponent(termo)}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -204,22 +183,10 @@ async function buscarAlimentos(termo) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const text = await response.text();
-        let result;
+        const result = await response.json();
+        console.log('Resultado da busca:', result);
         
-        try {
-            result = JSON.parse(text);
-        } catch (parseError) {
-            // Tentar extrair JSON do HTML
-            const jsonMatch = text.match(/\{"success".*?\}/);
-            if (jsonMatch) {
-                result = JSON.parse(jsonMatch[0]);
-            } else {
-                throw new Error('Resposta não contém JSON válido');
-            }
-        }
-        
-        if (result.success && result.data) {
+        if (result.success && Array.isArray(result.data)) {
             mostrarResultadosBusca(result.data);
         } else {
             mostrarResultadosBusca([]);
@@ -227,7 +194,7 @@ async function buscarAlimentos(termo) {
         
     } catch (error) {
         console.error('Erro ao buscar alimentos:', error);
-        mostrarMensagem('Erro ao buscar alimentos', 'error');
+        mostrarMensagem('Erro ao buscar alimentos: ' + error.message, 'error');
     }
 }
 
@@ -235,6 +202,8 @@ async function buscarAlimentos(termo) {
 function mostrarResultadosBusca(alimentos) {
     const container = document.getElementById('resultadosContainer');
     const section = document.getElementById('buscaResultados');
+    
+    console.log('Mostrando resultados:', alimentos);
     
     if (!alimentos || alimentos.length === 0) {
         container.innerHTML = '<p style="color: #666;">Nenhum alimento encontrado.</p>';
@@ -271,6 +240,8 @@ function mostrarResultadosBusca(alimentos) {
 
 // Função para adicionar alimento
 function adicionarAlimento(idAlimento, descricao) {
+    console.log('Adicionando alimento:', idAlimento, descricao);
+    
     if (alimentosSelecionados.find(a => a.id === idAlimento)) {
         mostrarMensagem('Alimento já foi selecionado', 'warning');
         return;
@@ -497,6 +468,8 @@ function mostrarHistoricoVazio() {
 // Função para carregar alimentos de um registro
 async function carregarAlimentosDoRegistro(idDiario) {
     try {
+        console.log('Carregando alimentos do diário:', idDiario);
+        
         const response = await fetch(`${API_ALIMENTOS}/buscar-por-diario?id_diario=${idDiario}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -507,22 +480,10 @@ async function carregarAlimentosDoRegistro(idDiario) {
         const container = document.getElementById(`alimentos-${idDiario}`);
         
         if (response.ok) {
-            const text = await response.text();
-            let result;
+            const result = await response.json();
+            console.log('Resultado dos alimentos do diário:', result);
             
-            try {
-                result = JSON.parse(text);
-            } catch (parseError) {
-                // Tentar extrair JSON
-                const jsonMatch = text.match(/\{"success".*?\}/);
-                if (jsonMatch) {
-                    result = JSON.parse(jsonMatch[0]);
-                } else {
-                    result = { success: false, data: [] };
-                }
-            }
-            
-            if (result.success && result.data && result.data.length > 0) {
+            if (result.success && Array.isArray(result.data) && result.data.length > 0) {
                 let html = '<strong style="color: #ff9800;">Alimentos:</strong><div style="margin-top: 5px;">';
                 result.data.forEach(alimento => {
                     html += `
@@ -636,6 +597,9 @@ document.getElementById('diarioForm').addEventListener('submit', async function(
     }
 
     try {
+        console.log('Criando diário com dados:', data);
+        
+        // Primeiro, criar o registro do diário
         const response = await fetch(`${API_BASE}/criar`, {
             method: 'POST',
             headers: {
@@ -649,40 +613,47 @@ document.getElementById('diarioForm').addEventListener('submit', async function(
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const text = await response.text();
-        let result;
-        
-        try {
-            result = JSON.parse(text);
-        } catch (parseError) {
-            // Tentar extrair JSON
-            const jsonMatch = text.match(/\{"success".*?\}/);
-            if (jsonMatch) {
-                result = JSON.parse(jsonMatch[0]);
-            } else {
-                throw new Error('Resposta inválida do servidor');
-            }
-        }
+        const result = await response.json();
+        console.log('Resultado da criação do diário:', result);
         
         if (result.success) {
             const idDiario = result.id;
+            console.log('Diário criado com ID:', idDiario);
             
-            // Associar alimentos ao diário
+            // Associar alimentos ao diário, um por vez
+            let alimentosAssociados = 0;
             for (const alimento of alimentosSelecionados) {
-                await fetch(`${API_BASE}/associar-alimento`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        id_diario: idDiario,
-                        id_alimento: alimento.id
-                    })
-                });
+                try {
+                    console.log('Associando alimento:', alimento.id, 'ao diário:', idDiario);
+                    
+                    const associacaoResponse = await fetch(`${API_BASE}/associar-alimento`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            id_diario: idDiario,
+                            id_alimento: alimento.id
+                        })
+                    });
+                    
+                    if (associacaoResponse.ok) {
+                        const associacaoResult = await associacaoResponse.json();
+                        console.log('Resultado da associação:', associacaoResult);
+                        
+                        if (associacaoResult.success) {
+                            alimentosAssociados++;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erro ao associar alimento:', alimento.id, error);
+                }
             }
             
-            mostrarMensagem('Registro do diário salvo com sucesso!', 'success');
+            console.log(`${alimentosAssociados} alimentos associados de ${alimentosSelecionados.length}`);
+            
+            mostrarMensagem(`Registro do diário salvo com sucesso! ${alimentosAssociados} alimento(s) associado(s).`, 'success');
             limparFormulario();
             carregarHistorico();
         } else {
@@ -736,6 +707,8 @@ function excluirRegistro(id) {
 
 // Função para remover alimento do registro
 function removerAlimentoDoRegistro(idDiario, idAlimento) {
+    console.log('Removendo alimento', idAlimento, 'do diário', idDiario);
+    
     fetch(`${API_BASE}/remover-alimento`, {
         method: 'POST',
         headers: {
@@ -754,6 +727,8 @@ function removerAlimentoDoRegistro(idDiario, idAlimento) {
         return response.json();
     })
     .then(result => {
+        console.log('Resultado da remoção:', result);
+        
         if (result.success) {
             mostrarMensagem('Alimento removido com sucesso!', 'success');
             carregarAlimentosDoRegistro(idDiario);

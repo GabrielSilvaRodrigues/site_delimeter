@@ -239,6 +239,14 @@ class DiarioDeAlimentosController {
         }
 
         try {
+            // Verificar se a associação já existe
+            $existeAssociacao = $this->service->getDiarioRepository()->verificarAssociacaoAlimento($id_diario, $id_alimento);
+            
+            if ($existeAssociacao) {
+                echo json_encode(['success' => true, 'message' => 'Alimento já está associado ao diário.']);
+                exit;
+            }
+
             $result = $this->service->associarAlimento($id_diario, $id_alimento);
             
             if ($result !== false) {
@@ -248,7 +256,7 @@ class DiarioDeAlimentosController {
             }
         } catch (\Exception $e) {
             error_log("Erro ao associar alimento: " . $e->getMessage());
-            echo json_encode(['success' => false, 'error' => 'Erro interno do servidor.']);
+            echo json_encode(['success' => false, 'error' => 'Erro interno do servidor: ' . $e->getMessage()]);
         }
         exit;
     }
