@@ -22,14 +22,26 @@ class ConsultaController {
         $id_paciente = $data['id_paciente'] ?? null;
         $id_profissional = $data['id_profissional'] ?? null;
         $tipo_profissional = $data['tipo_profissional'] ?? null;
+        $observacoes = $data['observacoes'] ?? null;
 
-        if (!$data_consulta) {
-            echo json_encode(['success' => false, 'error' => 'Data da consulta é obrigatória.']);
+        if (!$data_consulta || !$id_paciente || !$tipo_profissional) {
+            echo json_encode(['success' => false, 'error' => 'Data da consulta, paciente e tipo são obrigatórios.']);
             exit;
         }
 
         try {
-            $consulta = new Consulta(null, $data_consulta);
+            $consulta = new Consulta(
+                null, 
+                $data_consulta, 
+                null, 
+                $id_paciente, 
+                ($tipo_profissional === 'medico') ? $id_profissional : null,
+                ($tipo_profissional === 'nutricionista') ? $id_profissional : null,
+                $tipo_profissional,
+                'agendado',
+                $observacoes
+            );
+            
             $result = $this->service->agendarConsulta($consulta, $id_paciente, $id_profissional, $tipo_profissional);
 
             if ($result) {
@@ -156,6 +168,55 @@ class ConsultaController {
             http_response_code(404);
             echo "Erro: Página não encontrada";
         }
+    }
+
+    public function buscarAgendaPorPaciente() {
+        $this->limparOutput();
+        header('Content-Type: application/json');
+        
+        $id_paciente = $_GET['id_paciente'] ?? null;
+        
+        if (!$id_paciente) {
+            echo json_encode(['success' => false, 'error' => 'ID do paciente é obrigatório.']);
+            exit;
+        }
+
+        try {
+            $agenda = $this->service->buscarAgendaPorPaciente($id_paciente);
+            echo json_encode(['success' => true, 'data' => $agenda]);
+        } catch (\Exception $e) {
+            error_log("Erro ao buscar agenda por paciente: " . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Erro ao buscar agenda do paciente.']);
+        }
+        exit;
+    }
+
+    public function atualizarStatusAgenda() {
+        $this->limparOutput();
+        header('Content-Type: application/json');
+        
+        $data = json_decode(file_get_contents("php://input"), true);
+        $id_agenda = $data['id_agenda'] ?? null;
+        $novo_status = $data['status'] ?? null;
+        
+        if (!$id_agenda || !$novo_status) {
+            echo json_encode(['success' => false, 'error' => 'ID da agenda e status são obrigatórios.']);
+            exit;
+        }
+
+        try {
+            $result = $this->service->atualizarStatusAgenda($id_agenda, $novo_status);
+            
+            if ($result) {
+                echo json_encode(['success' => true, 'message' => 'Status da agenda atualizado com sucesso.']);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Erro ao atualizar status da agenda.']);
+            }
+        } catch (\Exception $e) {
+            error_log("Erro ao atualizar status da agenda: " . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Erro interno do servidor.']);
+        }
+        exit;
     }
 
     private function limparOutput() {

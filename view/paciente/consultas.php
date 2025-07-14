@@ -49,20 +49,28 @@ $id_paciente = (int)$_SESSION['paciente']['id_paciente'];
             <h2 style="color: #4caf50; margin-bottom: 20px; font-size: 1.4rem;">
                 📋 Agendar Nova Consulta
             </h2>
-            <form id="consultaForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                <div class="form-group">
-                    <label for="data_consulta" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Data e Hora:</label>
-                    <input type="datetime-local" id="data_consulta" name="data_consulta" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            <form id="consultaForm" style="display: grid; gap: 15px;">
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="data_consulta" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Data e Hora:</label>
+                        <input type="datetime-local" id="data_consulta" name="data_consulta" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_profissional" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Tipo de Consulta:</label>
+                        <select id="tipo_profissional" name="tipo_profissional" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">Selecione...</option>
+                            <option value="medico">Consulta Médica</option>
+                            <option value="nutricionista">Consulta Nutricional</option>
+                        </select>
+                    </div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="tipo_profissional" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Tipo de Consulta:</label>
-                    <select id="tipo_profissional" name="tipo_profissional" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                        <option value="">Selecione...</option>
-                        <option value="medico">Consulta Médica</option>
-                        <option value="nutricionista">Consulta Nutricional</option>
-                    </select>
+                    <label for="observacoes" style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Observações (opcional):</label>
+                    <textarea id="observacoes" name="observacoes" rows="3" placeholder="Descreva o motivo da consulta ou outras informações importantes..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: vertical;"></textarea>
                 </div>
-                <div class="form-group" style="grid-column: 1 / -1; display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+                
+                <div class="form-group" style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
                     <button type="submit" style="background: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">
                         📅 Agendar Consulta
                     </button>

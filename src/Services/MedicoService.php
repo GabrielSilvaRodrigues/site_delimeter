@@ -58,5 +58,33 @@ class MedicoService {
     public function deletarConta($id_usuario) {
         return $this->medicoRepository->delete($id_usuario);
     }
+
+    /**
+     * Listar todos os pacientes disponíveis no sistema
+     */
+    public function listarTodosPacientes() {
+        return $this->medicoRepository->listarTodosPacientes();
+    }
+
+    /**
+     * Buscar pacientes por termo (nome, CPF, etc.)
+     */
+    public function buscarPacientes($termo) {
+        return $this->medicoRepository->buscarPacientes($termo);
+    }
+
+    /**
+     * Obter dados detalhados de um paciente específico
+     */
+    public function obterPacientePorId($idPaciente) {
+        return $this->medicoRepository->obterPacientePorId($idPaciente);
+    }
+
+    /**
+     * Obter histórico médico de um paciente
+     */
+    public function obterHistoricoPaciente($idPaciente) {
+        return $this->medicoRepository->obterHistoricoPaciente($idPaciente);
+    }
 }
 ?>

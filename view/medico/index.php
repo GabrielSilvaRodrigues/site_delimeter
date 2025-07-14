@@ -32,24 +32,63 @@
         </section>
         <section class="usuario-section" id="services" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #1976d222;">
             <h2 style="font-size:1.6rem; color:#1976d2; margin-bottom: 18px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size:1.3em;">🛠️</span> Serviços
+                <span style="font-size:1.3em;">🛠️</span> Funcionalidades Médicas
             </h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between;">
-                <div style="flex:1 1 220px; min-width:220px; background:#f8faff; border-radius:8px; box-shadow:0 1px 6px #1976d211; padding:18px 14px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center;">
-                    <div style="font-size:2.1em; margin-bottom:8px;">👨‍⚕️</div>
-                    <h3 style="margin-bottom: 6px; color:#1976d2; font-size:1.18rem;">Pacientes</h3>
-                    <p style="margin:0; color:#555; text-align:center;">Gerencie e acompanhe seus pacientes.</p>
-                </div>
-                <div style="flex:1 1 220px; min-width:220px; background:#f8faff; border-radius:8px; box-shadow:0 1px 6px #1976d211; padding:18px 14px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center;">
-                    <div style="font-size:2.1em; margin-bottom:8px;">📋</div>
-                    <h3 style="margin-bottom: 6px; color:#1976d2; font-size:1.18rem;">Prontuários</h3>
-                    <p style="margin:0; color:#555; text-align:center;">Acesse históricos clínicos e anotações.</p>
-                </div>
-                <div style="flex:1 1 220px; min-width:220px; background:#f8faff; border-radius:8px; box-shadow:0 1px 6px #1976d211; padding:18px 14px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center;">
-                    <div style="font-size:2.1em; margin-bottom:8px;">🧰</div>
-                    <h3 style="margin-bottom: 6px; color:#1976d2; font-size:1.18rem;">Ferramentas</h3>
-                    <p style="margin:0; color:#555; text-align:center;">Utilize calculadoras e recursos médicos.</p>
-                </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                
+                <!-- Pacientes -->
+                <a href="/medico/pacientes" style="text-decoration: none; color: inherit;">
+                    <div class="funcionalidade-card" style="background:#f8faff; border-radius:12px; box-shadow:0 2px 10px #1976d211; padding:20px; border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer;">
+                        <div style="font-size:3em; margin-bottom:12px; text-align: center;">👨‍⚕️</div>
+                        <h3 style="margin-bottom: 8px; color:#1976d2; font-size:1.3rem; text-align: center;">Pacientes</h3>
+                        <p style="margin:0; color:#555; text-align:center; line-height: 1.5;">Gerencie e acompanhe seus pacientes, visualize históricos médicos.</p>
+                    </div>
+                </a>
+
+                <!-- Prontuários -->
+                <a href="/medico/prontuarios" style="text-decoration: none; color: inherit;">
+                    <div class="funcionalidade-card" style="background:#f8faff; border-radius:12px; box-shadow:0 2px 10px #1976d211; padding:20px; border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer;">
+                        <div style="font-size:3em; margin-bottom:12px; text-align: center;">📋</div>
+                        <h3 style="margin-bottom: 8px; color:#1976d2; font-size:1.3rem; text-align: center;">Prontuários</h3>
+                        <p style="margin:0; color:#555; text-align:center; line-height: 1.5;">Acesse e edite prontuários médicos, históricos clínicos.</p>
+                    </div>
+                </a>
+
+                <!-- Receitas -->
+                <a href="/medico/receitas" style="text-decoration: none; color: inherit;">
+                    <div class="funcionalidade-card" style="background:#f8faff; border-radius:12px; box-shadow:0 2px 10px #1976d211; padding:20px; border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer;">
+                        <div style="font-size:3em; margin-bottom:12px; text-align: center;">💊</div>
+                        <h3 style="margin-bottom: 8px; color:#1976d2; font-size:1.3rem; text-align: center;">Receitas</h3>
+                        <p style="margin:0; color:#555; text-align:center; line-height: 1.5;">Crie e gerencie receitas médicas para seus pacientes.</p>
+                    </div>
+                </a>
+
+                <!-- Consultas -->
+                <a href="/medico/consultas" style="text-decoration: none; color: inherit;">
+                    <div class="funcionalidade-card" style="background:#f8faff; border-radius:12px; box-shadow:0 2px 10px #1976d211; padding:20px; border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer;">
+                        <div style="font-size:3em; margin-bottom:12px; text-align: center;">🩺</div>
+                        <h3 style="margin-bottom: 8px; color:#1976d2; font-size:1.3rem; text-align: center;">Consultas</h3>
+                        <p style="margin:0; color:#555; text-align:center; line-height: 1.5;">Agende e gerencie consultas com seus pacientes.</p>
+                    </div>
+                </a>
+
+                <!-- Validar Dietas -->
+                <a href="/medico/validar-dietas" style="text-decoration: none; color: inherit;">
+                    <div class="funcionalidade-card" style="background:#f8faff; border-radius:12px; box-shadow:0 2px 10px #1976d211; padding:20px; border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer;">
+                        <div style="font-size:3em; margin-bottom:12px; text-align: center;">🥗</div>
+                        <h3 style="margin-bottom: 8px; color:#1976d2; font-size:1.3rem; text-align: center;">Validar Dietas</h3>
+                        <p style="margin:0; color:#555; text-align:center; line-height: 1.5;">Revise e valide dietas prescritas por nutricionistas.</p>
+                    </div>
+                </a>
+
+                <!-- Calculadora Nutricional -->
+                <a href="/calculo-nutricional" style="text-decoration: none; color: inherit;">
+                    <div class="funcionalidade-card" style="background:#f8faff; border-radius:12px; box-shadow:0 2px 10px #1976d211; padding:20px; border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer;">
+                        <div style="font-size:3em; margin-bottom:12px; text-align: center;">🧮</div>
+                        <h3 style="margin-bottom: 8px; color:#1976d2; font-size:1.3rem; text-align: center;">Calculadora</h3>
+                        <p style="margin:0; color:#555; text-align:center; line-height: 1.5;">Ferramentas de cálculo nutricional e análise corporal.</p>
+                    </div>
+                </a>
             </div>
         </section>
         <section class="usuario-section" id="contact" style="background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #1976d222;">
@@ -64,3 +103,11 @@
         </section>
     </main>
 </div>
+
+<!-- Incluir scripts das classes -->
+<script src="/public/assets/scripts/ui-effects.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Painel do médico carregado');
+});
+</script>

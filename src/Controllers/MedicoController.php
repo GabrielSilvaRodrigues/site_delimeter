@@ -341,5 +341,171 @@ class MedicoController {
             echo "Erro: Página não encontrada";
         }
     }
+
+    /**
+     * Método para listar todos os pacientes - API
+     */
+    public function listarPacientes() {
+        header('Content-Type: application/json');
+        
+        if (!$this->garantirDadosMedicoNaSessao()) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Acesso não autorizado']);
+            return;
+        }
+        
+        try {
+            $pacientes = $this->service->listarTodosPacientes();
+            echo json_encode(['success' => true, 'data' => $pacientes]);
+        } catch (\Exception $e) {
+            error_log("Erro ao listar pacientes: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro interno do servidor']);
+        }
+    }
+
+    /**
+     * Método para buscar pacientes por termo - API
+     */
+    public function buscarPacientes() {
+        header('Content-Type: application/json');
+        
+        if (!$this->garantirDadosMedicoNaSessao()) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Acesso não autorizado']);
+            return;
+        }
+        
+        $termo = $_GET['termo'] ?? '';
+        
+        if (empty($termo)) {
+            echo json_encode(['success' => false, 'error' => 'Termo de busca é obrigatório']);
+            return;
+        }
+        
+        try {
+            $pacientes = $this->service->buscarPacientes($termo);
+            echo json_encode(['success' => true, 'data' => $pacientes]);
+        } catch (\Exception $e) {
+            error_log("Erro ao buscar pacientes: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro interno do servidor']);
+        }
+    }
+
+    /**
+     * Método para obter dados de um paciente específico - API
+     */
+    public function obterPaciente() {
+        header('Content-Type: application/json');
+        
+        if (!$this->garantirDadosMedicoNaSessao()) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Acesso não autorizado']);
+            return;
+        }
+        
+        $idPaciente = $_GET['id'] ?? '';
+        
+        if (empty($idPaciente)) {
+            echo json_encode(['success' => false, 'error' => 'ID do paciente é obrigatório']);
+            return;
+        }
+        
+        try {
+            $paciente = $this->service->obterPacientePorId($idPaciente);
+            if ($paciente) {
+                echo json_encode(['success' => true, 'data' => $paciente]);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Paciente não encontrado']);
+            }
+        } catch (\Exception $e) {
+            error_log("Erro ao obter paciente: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Erro interno do servidor']);
+        }
+    }
+
+    /**
+     * Método para mostrar detalhes de um paciente específico
+     */
+    public function mostrarDetalhesPaciente() {
+        if (!$this->garantirDadosMedicoNaSessao()) {
+            header('Location: /medico/cadastro');
+            exit;
+        }
+        
+        // Extrair ID do paciente da URL
+        $uri = $_SERVER['REQUEST_URI'];
+        $matches = [];
+        if (preg_match('/\/medico\/paciente\/(\d+)$/', $uri, $matches)) {
+            $idPaciente = $matches[1];
+            
+            try {
+                $paciente = $this->service->obterPacientePorId($idPaciente);
+                if (!$paciente) {
+                    http_response_code(404);
+                    echo "Paciente não encontrado";
+                    return;
+                }
+                
+                $formPath = dirname(__DIR__, 2) . '/view/medico/paciente-detalhes.php';
+                if (file_exists($formPath)) {
+                    include_once $formPath;
+                } else {
+                    http_response_code(404);
+                    echo "Erro: Página não encontrada";
+                }
+            } catch (\Exception $e) {
+                error_log("Erro ao carregar detalhes do paciente: " . $e->getMessage());
+                http_response_code(500);
+                echo "Erro interno do servidor";
+            }
+        } else {
+            http_response_code(400);
+            echo "ID do paciente inválido";
+        }
+    }
+
+    /**
+     * Método para mostrar histórico de um paciente específico
+     */
+    public function mostrarHistoricoPaciente() {
+        if (!$this->garantirDadosMedicoNaSessao()) {
+            header('Location: /medico/cadastro');
+            exit;
+        }
+        
+        // Extrair ID do paciente da URL
+        $uri = $_SERVER['REQUEST_URI'];
+        $matches = [];
+        if (preg_match('/\/medico\/paciente\/(\d+)\/historico$/', $uri, $matches)) {
+            $idPaciente = $matches[1];
+            
+            try {
+                $paciente = $this->service->obterPacientePorId($idPaciente);
+                if (!$paciente) {
+                    http_response_code(404);
+                    echo "Paciente não encontrado";
+                    return;
+                }
+                
+                $formPath = dirname(__DIR__, 2) . '/view/medico/paciente-historico.php';
+                if (file_exists($formPath)) {
+                    include_once $formPath;
+                } else {
+                    http_response_code(404);
+                    echo "Erro: Página não encontrada";
+                }
+            } catch (\Exception $e) {
+                error_log("Erro ao carregar histórico do paciente: " . $e->getMessage());
+                http_response_code(500);
+                echo "Erro interno do servidor";
+            }
+        } else {
+            http_response_code(400);
+            echo "ID do paciente inválido";
+        }
+    }
 }
 ?>

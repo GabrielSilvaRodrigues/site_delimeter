@@ -68,19 +68,60 @@ class ConsultaService {
     }
 
     public function agendarConsulta(Consulta $consulta, $id_paciente, $id_profissional = null, $tipo_profissional = null) {
+        // Primeiro, criar a consulta
         $id_consulta = $this->criar($consulta);
+        
         if ($id_consulta) {
-            $this->associarPaciente($id_consulta, $id_paciente);
+            // Depois, criar o registro na agenda
+            $id_medico = ($tipo_profissional === 'medico') ? $id_profissional : null;
+            $id_nutricionista = ($tipo_profissional === 'nutricionista') ? $id_profissional : null;
             
-            if ($id_profissional && $tipo_profissional) {
-                if ($tipo_profissional === 'medico') {
-                    $this->associarMedico($id_consulta, $id_profissional);
-                } elseif ($tipo_profissional === 'nutricionista') {
-                    $this->associarNutricionista($id_consulta, $id_profissional);
+            $agenda_id = $this->consultaRepository->criarAgenda(
+                $id_consulta,
+                $id_paciente,
+                $id_medico,
+                $id_nutricionista,
+                $tipo_profissional,
+                $consulta->getObservacoes()
+            );
+            
+            if ($agenda_id) {
+                // Manter compatibilidade com sistema antigo
+                $this->associarPaciente($id_consulta, $id_paciente);
+                
+                if ($id_profissional && $tipo_profissional) {
+                    if ($tipo_profissional === 'medico') {
+                        $this->associarMedico($id_consulta, $id_profissional);
+                    } elseif ($tipo_profissional === 'nutricionista') {
+                        $this->associarNutricionista($id_consulta, $id_profissional);
+                    }
                 }
+                
+                return $id_consulta;
             }
         }
-        return $id_consulta;
+        
+        return false;
+    }
+
+    public function buscarAgendaPorPaciente($id_paciente) {
+        return $this->consultaRepository->findAgendaByPacienteId($id_paciente);
+    }
+
+    public function buscarAgendaPorMedico($id_medico) {
+        return $this->consultaRepository->findAgendaByMedicoId($id_medico);
+    }
+
+    public function buscarAgendaPorNutricionista($id_nutricionista) {
+        return $this->consultaRepository->findAgendaByNutricionistaId($id_nutricionista);
+    }
+
+    public function atualizarStatusAgenda($id_agenda, $novo_status) {
+        return $this->consultaRepository->updateStatusAgenda($id_agenda, $novo_status);
+    }
+
+    public function adicionarObservacaoAgenda($id_agenda, $observacao) {
+        return $this->consultaRepository->addObservacaoAgenda($id_agenda, $observacao);
     }
 
     public function obterConsultasHoje() {
