@@ -10,6 +10,8 @@ use Htdocs\Src\Routes\DadosAntropometricosRoutes;
 use Htdocs\Src\Routes\DietaRoutes;
 use Htdocs\Src\Routes\DiarioDeAlimentosRoutes;
 use Htdocs\Src\Routes\AlimentoRoutes;
+use Htdocs\Src\Routes\ConsultaRoutes;
+use Htdocs\Src\Routes\ReceitaRoutes;
 
 class Routes {
     private $routes = [];
@@ -58,6 +60,8 @@ class Routes {
         new DietaRoutes($this);
         new DiarioDeAlimentosRoutes($this);
         new AlimentoRoutes($this);
+        new ConsultaRoutes($this);
+        new ReceitaRoutes($this);
     }
 }
 ?>

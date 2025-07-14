@@ -374,5 +374,23 @@ class PacienteController {
             echo "Erro: Página não encontrada";
         }
     }
+
+    /**
+     * Método para servir a página de consultas do paciente
+     */
+    public function mostrarConsultas() {
+        if (!$this->garantirDadosPacienteNaSessao()) {
+            header('Location: /paciente/cadastro');
+            exit;
+        }
+        
+        $formPath = dirname(__DIR__, 2) . '/view/paciente/consultas.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            http_response_code(404);
+            echo "Erro: Página não encontrada";
+        }
+    }
 }
 ?>

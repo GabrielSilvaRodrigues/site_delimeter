@@ -258,32 +258,59 @@ class NutricionistaController {
         
         if (!$id_usuario) {
             error_log("NutricionistaController: ID do usuário não encontrado na sessão");
-            error_log("NutricionistaController: Conteúdo da sessão: " . print_r($_SESSION, true));
             return false;
         }
         
-        error_log("NutricionistaController: ID do usuário na sessão: " . $id_usuario);
-        
         // Se já temos os dados na sessão, não precisa buscar novamente
         if (isset($_SESSION['nutricionista']['id_nutricionista'])) {
-            error_log("NutricionistaController: Dados do nutricionista já existem na sessão - ID: " . $_SESSION['nutricionista']['id_nutricionista']);
             return true;
         }
-        
-        error_log("NutricionistaController: Buscando dados do nutricionista no banco para usuário ID: " . $id_usuario);
         
         // Buscar dados do nutricionista no banco
         $nutricionista = $this->service->getNutricionistaRepository()->findByUsuarioId($id_usuario);
         if ($nutricionista) {
             $_SESSION['nutricionista'] = $nutricionista;
             $_SESSION['usuario']['tipo'] = 'nutricionista';
-            error_log("NutricionistaController: Dados do nutricionista carregados do banco - ID: " . $nutricionista['id_nutricionista']);
-            error_log("NutricionistaController: Dados do nutricionista: " . print_r($nutricionista, true));
             return true;
         }
         
-        error_log("NutricionistaController: Nutricionista não encontrado no banco para usuário ID: " . $id_usuario);
         return false;
+    }
+
+    /**
+     * Método para servir a página de consultas
+     */
+    public function mostrarConsultas() {
+        if (!$this->garantirDadosNutricionistaNaSessao()) {
+            header('Location: /nutricionista/cadastro');
+            exit;
+        }
+        
+        $formPath = dirname(__DIR__, 2) . '/view/nutricionista/consultas.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            http_response_code(404);
+            echo "Erro: Página não encontrada";
+        }
+    }
+
+    /**
+     * Método para servir a página de dietas
+     */
+    public function mostrarDietas() {
+        if (!$this->garantirDadosNutricionistaNaSessao()) {
+            header('Location: /nutricionista/cadastro');
+            exit;
+        }
+        
+        $formPath = dirname(__DIR__, 2) . '/view/nutricionista/dietas.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            http_response_code(404);
+            echo "Erro: Página não encontrada";
+        }
     }
 
     /**

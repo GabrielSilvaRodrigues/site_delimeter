@@ -20,6 +20,11 @@ class NutricionistaRoutes {
         $route->add('GET', '/nutricionista/conta/sair', [$nutricionistaController, 'sairConta']);
         $route->add('GET', '/nutricionista', [$nutricionistaController, 'mostrarHome']);
         $route->add('GET', '/nutricionista/conta/entrar', [$nutricionistaController, 'procurarPorId']);
+        
+        // Novas rotas para funcionalidades do nutricionista
+        $route->add('GET', '/nutricionista/consultas', [$nutricionistaController, 'mostrarConsultas']);
+        $route->add('GET', '/nutricionista/dietas', [$nutricionistaController, 'mostrarDietas']);
+        $route->add('GET', '/nutricionista/pacientes', [$nutricionistaController, 'mostrarPacientes']);
     }
 }
 ?>

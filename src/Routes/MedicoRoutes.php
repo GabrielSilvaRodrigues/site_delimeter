@@ -20,6 +20,11 @@ class MedicoRoutes {
         $route->add('GET', '/medico/conta/sair', [$medicoController, 'sairConta']);
         $route->add('GET', '/medico', [$medicoController, 'mostrarHome']);
         $route->add('GET', '/medico/conta/entrar', [$medicoController, 'procurarPorId']);
+        
+        // Novas rotas para funcionalidades do médico
+        $route->add('GET', '/medico/consultas', [$medicoController, 'mostrarConsultas']);
+        $route->add('GET', '/medico/prescricoes', [$medicoController, 'mostrarPrescricoes']);
+        $route->add('GET', '/medico/validacoes', [$medicoController, 'mostrarValidacoes']);
     }
 }
 ?>

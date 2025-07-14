@@ -323,5 +323,23 @@ class MedicoController {
             echo "Erro: Página não encontrada";
         }
     }
+
+    /**
+     * Método para servir a página de validações
+     */
+    public function mostrarValidacoes() {
+        if (!$this->garantirDadosMedicoNaSessao()) {
+            header('Location: /medico/cadastro');
+            exit;
+        }
+        
+        $formPath = dirname(__DIR__, 2) . '/view/medico/validacoes.php';
+        if (file_exists($formPath)) {
+            include_once $formPath;
+        } else {
+            http_response_code(404);
+            echo "Erro: Página não encontrada";
+        }
+    }
 }
 ?>

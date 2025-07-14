@@ -39,18 +39,18 @@ if ($usuario) {
             <div class="caixas">
                 <div class="caixa">
                     <a href="#"><img src="/public/assets/images/nutricionista.jpg" alt="Nutricionista" class="caixaRelativa"></a>
-                    <h3>Marque uma consulta com uma nutricionista</h3>
-                    <p>Para acompanhar sua alimentação.</p>
+                    <h3>Consultas com profissionais de saúde</h3>
+                    <p>Agende consultas com nutricionistas e médicos especializados.</p>
                 </div>
                 <div class="caixa">
                     <a href="#"><img src="/public/assets/images/dieta.jpg" alt="Dieta" class="caixaRelativa"></a>
-                    <h3>Dietas focadas no seu perfil</h3>
-                    <p>Através do mapeamento de dados.</p>
+                    <h3>Dietas personalizadas</h3>
+                    <p>Receba planos alimentares adaptados ao seu perfil e necessidades.</p>
                 </div>
                 <div class="caixa">
                     <a href="#"><img src="/public/assets/images/crianca.jpg" alt="Criança" class="caixaRelativa"></a>
-                    <h3>Plano alimentar junto ao cadúnico</h3>
-                    <p>Associar famílias de baixa renda a fornecedores de alimentos.</p>
+                    <h3>Acompanhamento nutricional completo</h3>
+                    <p>Monitore sua alimentação, medidas corporais e evolução de saúde.</p>
                 </div>
             </div>
         </section>

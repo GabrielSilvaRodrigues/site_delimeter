@@ -64,7 +64,7 @@ if (!isset($_SESSION['paciente'])) {
                     Agende e acompanhe suas consultas médicas e nutricionais.
                 </p>
                 <a href="/paciente/consultas" style="background: #4caf50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; display: inline-block;">
-                    Em breve
+                    Acessar
                 </a>
             </div>
 
