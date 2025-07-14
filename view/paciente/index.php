@@ -105,21 +105,77 @@ if (!isset($_SESSION['paciente'])) {
     </main>
 </div>
 
+<script src="/public/assets/scripts/ui-effects.js"></script>
 <script>
-// Adicionar efeitos hover aos cards
-document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.funcionalidade-card');
-    
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-            this.style.boxShadow = '0 4px 20px rgba(76,175,80,0.2)';
-        });
+class PacienteDashboard {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.loadDashboardData();
+    }
+
+    setupEventListeners() {
+        // Event listeners específicos do dashboard do paciente
+        const cards = document.querySelectorAll('.funcionalidade-card');
         
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+        cards.forEach(card => {
+            card.addEventListener('click', (e) => this.onCardClick(e, card));
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'button');
         });
-    });
+
+        // Adicionar suporte a teclado
+        document.addEventListener('keydown', (e) => this.onKeyDown(e));
+    }
+
+    onCardClick(e, card) {
+        // Se o clique foi em um link, deixar o comportamento padrão
+        if (e.target.tagName === 'A') return;
+        
+        // Caso contrário, navegar para o link dentro do card
+        const link = card.querySelector('a[href]');
+        if (link && !link.href.includes('Em breve')) {
+            window.location.href = link.href;
+        }
+    }
+
+    onKeyDown(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            const focusedCard = document.activeElement;
+            if (focusedCard.classList.contains('funcionalidade-card')) {
+                e.preventDefault();
+                this.onCardClick(e, focusedCard);
+            }
+        }
+    }
+
+    loadDashboardData() {
+        // Aqui poderia carregar dados específicos do dashboard
+        this.updateLastActivity();
+    }
+
+    updateLastActivity() {
+        const now = new Date();
+        const activity = `Último acesso: ${now.toLocaleDateString('pt-BR')} às ${now.toLocaleTimeString('pt-BR')}`;
+        
+        // Adicionar informação de último acesso se houver elemento para isso
+        const activityElement = document.getElementById('last-activity');
+        if (activityElement) {
+            activityElement.textContent = activity;
+        }
+    }
+
+    showNotification(message, type = 'info') {
+        // Método para mostrar notificações específicas do paciente
+        console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+}
+
+// Inicializar quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+    new PacienteDashboard();
 });
 </script>

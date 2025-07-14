@@ -35,7 +35,7 @@
             <div class="overlay">
                 <nav>
                     <ul aria-label="Acessibilidade" class="acessibilidade">
-                        <li><a href="/sobre" class="link">Sobre Nós</a></li>
+                        <li><a href="/delimeter/sobre" class="link">Sobre Nós</a></li>
                         <?php if (isset($_SESSION['usuario'])): ?>
                             <?php if ($_SESSION['usuario']['tipo'] === 'paciente'): ?>
                                 <li><a href="/paciente/dados-antropometricos" class="link">Cálculo nutricional</a></li>

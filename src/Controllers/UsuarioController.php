@@ -182,6 +182,23 @@ class UsuarioController {
         }
     }
 
+    public function obterDados() {
+        if (!isset($_SESSION['usuario'])) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Usuário não está logado.']);
+            return;
+        }
+
+        $dados = [
+            'id_usuario' => $_SESSION['usuario']['id_usuario'] ?? $_SESSION['usuario']['id'],
+            'nome_usuario' => $_SESSION['usuario']['nome_usuario'],
+            'email_usuario' => $_SESSION['usuario']['email_usuario'],
+            'tipo' => $_SESSION['usuario']['tipo'] ?? 'usuario'
+        ];
+
+        echo json_encode($dados);
+    }
+
     public function atualizarConta() {
         if (!isset($_SESSION['usuario'])) {
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {

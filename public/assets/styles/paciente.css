@@ -493,3 +493,528 @@ footer p {
     border-radius: 8px; /* Opcional: Adiciona bordas arredondadas */
     margin: 10px; /* Espaçamento entre as imagens */
 }
+
+/* Estilos para páginas do paciente */
+
+/* Paciente Container */
+.paciente-container {
+    background: linear-gradient(120deg, #f4f4f4 60%, #e8f5e8 100%);
+    min-height: 100vh;
+}
+
+.paciente-main-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.paciente-header {
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #4caf50 70%, #388e3c 100%);
+    box-shadow: 0 4px 16px rgba(76,175,80,0.15);
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.paciente-header h1 {
+    color: #fff;
+    margin: 0 0 10px 0;
+    font-size: 2.2rem;
+}
+
+.paciente-header p {
+    color: #e8f5e8;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Funcionalidades Grid */
+.funcionalidades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.funcionalidade-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.funcionalidade-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(76,175,80,0.2);
+}
+
+.funcionalidade-card h3 {
+    color: #4caf50;
+    margin: 0 0 15px 0;
+    font-size: 1.2rem;
+}
+
+.funcionalidade-card p {
+    color: #666;
+    margin: 0 0 15px 0;
+    font-size: 0.95rem;
+}
+
+.funcionalidade-card a {
+    background: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.funcionalidade-card a:hover {
+    background: #45a049;
+}
+
+/* Info Paciente */
+.info-paciente {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.info-paciente h3 {
+    color: #4caf50;
+    margin: 0 0 15px 0;
+}
+
+.info-paciente > div {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+/* Diário de Alimentos */
+.diario-container {
+    background: linear-gradient(120deg, #f4f4f4 60%, #fff3e0 100%);
+    min-height: 100vh;
+}
+
+.diario-main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.diario-header {
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #ff9800 70%, #f57c00 100%);
+    box-shadow: 0 4px 16px rgba(255,152,0,0.15);
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.diario-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    color: #fff;
+    text-shadow: 1px 2px 6px rgba(0,0,0,0.2);
+}
+
+.diario-header p {
+    font-size: 1.1rem;
+    color: #fff3e0;
+    margin: 0;
+}
+
+/* Form Section */
+.form-section {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-section h2 {
+    color: #ff9800;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.form-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-clear {
+    background: #9e9e9e;
+    color: white;
+}
+
+.btn-save {
+    background: #ff9800;
+    color: white;
+}
+
+/* Alimentos Selecionados */
+.alimentos-selecionados {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background: #f9f9f9;
+}
+
+.alimentos-selecionados h3 {
+    margin: 0 0 10px 0;
+    color: #ff9800;
+}
+
+#alimentosList {
+    min-height: 50px;
+}
+
+/* Busca Resultados */
+#busca-resultados {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: none;
+}
+
+#busca-resultados h3 {
+    color: #ff9800;
+    margin-bottom: 15px;
+}
+
+#resultados-container {
+    display: grid;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.alimento-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.alimento-item:hover {
+    background: #f5f5f5;
+    transform: translateY(-2px);
+}
+
+.alimento-item.selecionado {
+    background: #e8f5e9;
+    border-color: #4caf50;
+}
+
+.alimento-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alimento-item h4 {
+    margin: 0;
+    color: #ff9800;
+}
+
+.alimento-status {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    color: white;
+}
+
+.alimento-status.adicionar {
+    background: #ff9800;
+}
+
+.alimento-status.selecionado {
+    background: #4caf50;
+}
+
+/* Histórico Section */
+.historico-section {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.historico-section h2 {
+    color: #ff9800;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+}
+
+.filtros {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.filtros > div {
+    flex: 1;
+}
+
+.filtros label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.filtros input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.filtros button {
+    background: #ff9800;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 25px;
+}
+
+/* Dados Antropométricos */
+.dados-container {
+    background: linear-gradient(120deg, #f4f4f4 60%, #e8f5e8 100%);
+    min-height: 100vh;
+}
+
+.dados-main-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dados-header {
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #4caf50 70%, #388e3c 100%);
+    box-shadow: 0 4px 16px rgba(76,175,80,0.15);
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.dados-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    color: #fff;
+    text-shadow: 1px 2px 6px rgba(0,0,0,0.2);
+}
+
+.dados-header p {
+    font-size: 1.1rem;
+    color: #e8f5e8;
+    margin: 0;
+}
+
+.dados-header .ultimos-dados {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+}
+
+.dados-header .ultimos-dados h3 {
+    color: #fff;
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+}
+
+.dados-header .dados-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    color: #e8f5e8;
+}
+
+#imcResult {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 5px;
+    display: none;
+}
+
+#imcResult h3 {
+    color: #4caf50;
+    margin: 0 0 10px 0;
+}
+
+/* Tabela do histórico */
+.tabela-historico {
+    overflow-x: auto;
+}
+
+.tabela-historico table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.tabela-historico thead tr {
+    background: #4caf50;
+    color: white;
+}
+
+.tabela-historico th,
+.tabela-historico td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.tabela-historico th:last-child,
+.tabela-historico td:last-child {
+    text-align: center;
+}
+
+.tabela-historico tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Registro do diário */
+.registro-diario {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f9f9f9;
+    margin-bottom: 15px;
+}
+
+.registro-diario.local {
+    border: 2px solid #ff9800;
+    background: #fff3e0;
+}
+
+.registro-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.registro-header h3 {
+    margin: 0;
+    color: #ff9800;
+}
+
+.registro-local-tag {
+    background: #ff9800;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    margin-left: 10px;
+}
+
+.registro-content {
+    margin: 10px 0;
+    color: #333;
+    line-height: 1.5;
+}
+
+.registro-alimentos {
+    margin-top: 10px;
+}
+
+.registro-alimentos strong {
+    color: #ff9800;
+}
+
+.registro-alimentos ul {
+    margin: 5px 0 0 20px;
+    color: #333;
+}
+
+.registro-info {
+    color: #666;
+    font-size: 11px;
+    margin: 10px 0 0 0;
+    font-style: italic;
+}
+
+/* Sync button */
+#sync-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #ff9800;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(255,152,0,0.4);
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #f57c00;
+    transition: all 0.3s ease;
+}
+
+#sync-button:hover {
+    transform: scale(1.05);
+    background: #f57c00;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .filtros {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filtros > div {
+        flex: none;
+    }
+    
+    .filtros button {
+        margin-top: 10px;
+    }
+    
+    .dados-header .dados-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .funcionalidades-grid {
+        grid-template-columns: 1fr;
+    }
+}

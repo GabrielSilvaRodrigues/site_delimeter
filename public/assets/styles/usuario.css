@@ -493,3 +493,378 @@ footer p {
     border-radius: 8px; /* Opcional: Adiciona bordas arredondadas */
     margin: 10px; /* Espaçamento entre as imagens */
 }
+
+/* Estilos para páginas de usuário */
+
+/* Login Container */
+.login-container {
+    background: linear-gradient(120deg, #f4f4f4 60%, #e0f7fa 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-main-content {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+}
+
+.login-form-container {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 16px rgba(76,175,80,0.15);
+}
+
+.login-form-container h1 {
+    text-align: center;
+    color: #4caf50;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+/* Cadastro Container */
+.cadastro-container {
+    background: linear-gradient(120deg, #f4f4f4 60%, #e0f7fa 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cadastro-main-content {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+}
+
+.cadastro-form-container {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 16px rgba(76,175,80,0.15);
+}
+
+.cadastro-form-container h1 {
+    text-align: center;
+    color: #4caf50;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+/* Usuario Container */
+.usuario-container {
+    background: linear-gradient(120deg, #f4f4f4 60%, #e0f7fa 100%);
+    min-height: 100vh;
+}
+
+.usuario-main-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.usuario-header {
+    margin-bottom: 40px;
+    background: linear-gradient(90deg, #4CAF50 70%, #388e3c 100%);
+    box-shadow: 0 4px 16px rgba(76,175,80,0.13);
+    border-radius: 14px;
+    padding: 25px;
+}
+
+.usuario-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    color: #fff;
+    text-shadow: 1px 2px 8px #388e3c33;
+}
+
+.usuario-header p {
+    font-size: 1.18rem;
+    color: #e0ffe0;
+    margin-bottom: 0;
+}
+
+.usuario-section {
+    margin-bottom: 32px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #4caf5022;
+    padding: 25px;
+    text-align: center;
+}
+
+.usuario-section h2 {
+    font-size: 1.4rem;
+    color: #388e3c;
+    margin-bottom: 18px;
+}
+
+/* Conta Container */
+.conta-container {
+    background: linear-gradient(120deg, #f4f4f4 60%, #e0f7fa 100%);
+    min-height: 100vh;
+}
+
+.conta-main-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.conta-header {
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #4CAF50 70%, #388e3c 100%);
+    box-shadow: 0 4px 16px rgba(76,175,80,0.15);
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.conta-header h1 {
+    color: #fff;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.conta-form-container {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 16px rgba(76,175,80,0.15);
+}
+
+.conta-form-container h3 {
+    color: #4caf50;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #4caf50;
+    padding-bottom: 5px;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+/* Buttons */
+button[type="submit"],
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+button[type="submit"]:hover,
+.btn-primary:hover {
+    background: #45a049;
+}
+
+/* Links */
+.usuario-section a,
+.conta-section a {
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+}
+
+.usuario-section a:hover,
+.conta-section a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76,175,80,0.2);
+}
+
+/* Messages */
+#message {
+    display: none;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.message-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+/* Grid layouts */
+.usuario-cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+}
+
+.usuario-card {
+    flex: 1 1 180px;
+    min-width: 180px;
+    max-width: 220px;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(76,175,80,0.11);
+    padding: 18px 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.usuario-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76,175,80,0.2);
+}
+
+.usuario-card.paciente {
+    background: #e0f7fa;
+    color: #388e3c;
+}
+
+.usuario-card.nutricionista {
+    background: #e8f5e9;
+    color: #43a047;
+}
+
+.usuario-card.medico {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.usuario-card .icon {
+    font-size: 2.2em;
+    margin-bottom: 8px;
+}
+
+/* Perfil sections */
+.perfil-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid;
+}
+
+.perfil-section.paciente {
+    background: #e8f5e9;
+    border-left-color: #4caf50;
+}
+
+.perfil-section.nutricionista {
+    background: #e8f5e9;
+    border-left-color: #43a047;
+}
+
+.perfil-section.medico {
+    background: #e3f2fd;
+    border-left-color: #1976d2;
+}
+
+.perfil-section h4 {
+    margin: 0 0 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.perfil-section.paciente h4 {
+    color: #2e7d32;
+}
+
+.perfil-section.nutricionista h4 {
+    color: #2e7d32;
+}
+
+.perfil-section.medico h4 {
+    color: #1565c0;
+}
+
+.perfil-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.perfil-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.perfil-actions button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-update {
+    background: #4caf50;
+    color: white;
+}
+
+.btn-delete {
+    background: #f44336;
+    color: white;
+}
+
+.btn-logout {
+    background: #ff9800;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .usuario-cards-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .usuario-card {
+        max-width: 100%;
+    }
+    
+    .perfil-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .perfil-actions {
+        flex-direction: column;
+    }
+}
