@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS delimeter;
 USE delimeter;
+
 CREATE TABLE usuario (
     id_usuario BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome_usuario VARCHAR(255) NOT NULL,
@@ -50,7 +51,7 @@ CREATE TABLE dados_antropometricos (
     id_medida BIGINT AUTO_INCREMENT PRIMARY KEY,
     id_paciente BIGINT NOT NULL,
     sexo_paciente TINYINT,
-    altura_paciente FLOAT,
+    altura_paciente FLOAT, -- altura em metros (ex: 1.75)
     peso_paciente FLOAT,
     status_paciente TINYINT,
     data_medida DATE,
@@ -211,3 +212,16 @@ CREATE TABLE relacao_consulta_medico (
     FOREIGN KEY (id_consulta) REFERENCES consulta(id_consulta),
     FOREIGN KEY (id_medico) REFERENCES medico(id_medico)
 );
+
+-- Inserir alguns dados de exemplo para alimentos
+INSERT INTO alimento (descricao_alimento, dados_nutricionais) VALUES
+('Arroz branco cozido', '{"calorias": 130, "carboidratos": 28, "proteinas": 2.7, "gorduras": 0.3}'),
+('Feijão preto cozido', '{"calorias": 132, "carboidratos": 24, "proteinas": 8.9, "gorduras": 0.5}'),
+('Frango grelhado (peito)', '{"calorias": 165, "carboidratos": 0, "proteinas": 31, "gorduras": 3.6}'),
+('Brócolis cozido', '{"calorias": 25, "carboidratos": 5, "proteinas": 3, "gorduras": 0.3}'),
+('Batata doce cozida', '{"calorias": 86, "carboidratos": 20, "proteinas": 1.6, "gorduras": 0.1}'),
+('Banana', '{"calorias": 89, "carboidratos": 23, "proteinas": 1.1, "gorduras": 0.3}'),
+('Aveia', '{"calorias": 68, "carboidratos": 12, "proteinas": 2.4, "gorduras": 1.4}'),
+('Leite desnatado', '{"calorias": 34, "carboidratos": 5, "proteinas": 3.4, "gorduras": 0.1}'),
+('Ovos cozidos', '{"calorias": 155, "carboidratos": 1.1, "proteinas": 13, "gorduras": 11}'),
+('Salmão grelhado', '{"calorias": 206, "carboidratos": 0, "proteinas": 22, "gorduras": 12}');

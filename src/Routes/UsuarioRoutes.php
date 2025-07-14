@@ -20,7 +20,13 @@ class UsuarioRoutes {
         $route->add('POST', '/conta/atualizar', [$usuarioController, 'atualizarConta']);
         $route->add('POST', '/conta/deletar', [$usuarioController, 'deletarConta']);
         $route->add('GET', '/conta/sair', [$usuarioController, 'sairConta']);
-        $route->add('GET', '/usuario', [$usuarioController, 'mostrarHome']); // Adiciona rota para painel do usuário padrão
+        $route->add('GET', '/usuario', [$usuarioController, 'mostrarHome']);
+        
+        // Novas rotas para gerenciar perfis específicos
+        $route->add('POST', '/conta/perfil/criar', [$usuarioController, 'criarPerfil']);
+        $route->add('POST', '/conta/perfil/atualizar', [$usuarioController, 'atualizarPerfil']);
+        $route->add('POST', '/conta/perfil/excluir', [$usuarioController, 'excluirPerfil']);
+        $route->add('GET', '/conta/perfil/sair', [$usuarioController, 'sairPerfil']);
     }
 }
 ?>

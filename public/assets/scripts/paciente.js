@@ -279,3 +279,56 @@ document.getElementById('formulario').addEventListener('submit', function(e) {
     }
 }
 );
+
+// Scripts para páginas do paciente
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar efeitos hover aos cards de funcionalidades
+    const cards = document.querySelectorAll('.funcionalidade-card');
+    
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 4px 20px rgba(76,175,80,0.2)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+        });
+    });
+});
+
+// Máscara para CPF
+function aplicarMascaraCPF() {
+    const cpfInput = document.getElementById('cpf');
+    if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                e.target.value = value;
+            }
+        });
+    }
+}
+
+// Máscara para NIS
+function aplicarMascaraNIS() {
+    const nisInput = document.getElementById('nis');
+    if (nisInput) {
+        nisInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d{5})(\d{2})(\d{1})/, '$1.$2.$3-$4');
+                e.target.value = value;
+            }
+        });
+    }
+}
+
+// Aplicar máscaras quando DOM carregar
+document.addEventListener('DOMContentLoaded', function() {
+    aplicarMascaraCPF();
+    aplicarMascaraNIS();
+});

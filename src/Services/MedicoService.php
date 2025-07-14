@@ -16,7 +16,11 @@ class MedicoService {
     }
 
     public function criar(Medico $medico) {
-        return $this->medicoRepository->save($medico);
+        try {
+            return $this->medicoRepository->save($medico);
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
     }
 
     public function listar() {
@@ -24,16 +28,31 @@ class MedicoService {
     }
 
     public function login($email, $senha) {
-        $usuario = $this->medicoRepository->findByEmail($email);
+        // Usar UsuarioRepository para login, não MedicoRepository
+        $usuarioRepository = new \Htdocs\Src\Models\Repository\UsuarioRepository();
+        $usuario = $usuarioRepository->findByEmail($email);
+        
         if ($usuario && password_verify($senha, $usuario['senha_usuario'])) {
-            unset($usuario['senha_usuario']);
-            return $usuario;
+            // Verificar se o usuário é médico
+            $medico = $this->medicoRepository->findById($usuario['id_usuario']);
+            if ($medico) {
+                unset($usuario['senha_usuario']);
+                return array_merge($usuario, $medico);
+            }
         }
         return false;
     }
 
     public function atualizarConta(Medico $medico) {
-        return $this->medicoRepository->update($medico);
+        try {
+            return $this->medicoRepository->update($medico);
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    public function mostrarConta($id_usuario) {
+        return $this->medicoRepository->findById($id_usuario);
     }
 
     public function deletarConta($id_usuario) {

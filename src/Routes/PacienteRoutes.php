@@ -14,11 +14,14 @@ class PacienteRoutes {
 
         // Painel do paciente
         $route->add('GET', '/paciente', [$pacienteController, 'mostrarHome']);
+        $route->add('GET', '/paciente/dados-antropometricos', [$pacienteController, 'mostrarDadosAntropometricos']);
+        $route->add('GET', '/paciente/diario-alimentos', [$pacienteController, 'mostrarDiarioAlimentos']);
         $route->add('POST', '/api/paciente', [$pacienteController, 'criar']);
         $route->add('GET', '/paciente/cadastro', [$pacienteController, 'mostrarFormulario']);
         $route->add('POST', '/paciente/conta/atualizar', [$pacienteController, 'atualizarConta']);
         $route->add('POST', '/paciente/conta/deletar', [$pacienteController, 'deletarConta']);
         $route->add('GET', '/paciente/conta/sair', [$pacienteController, 'sairConta']);
+        $route->add('GET', '/paciente/conta/entrar', [$pacienteController, 'procurarPorId']);
     }
 }
 ?>

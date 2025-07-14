@@ -50,6 +50,14 @@ class NutricionistaRepository {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function findByUsuarioId($id_usuario) {
+        $sql = "SELECT * FROM nutricionista WHERE id_usuario = :id_usuario";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function findAll() {
         $sql = "SELECT * FROM nutricionista";
         $stmt = $this->conn->prepare($sql);
@@ -58,15 +66,29 @@ class NutricionistaRepository {
     }
 
     public function update(Nutricionista $nutricionista) {
-        $sql = "UPDATE nutricionista SET crm_nutricionista = :crm_nutricionista, cpf = :cpf WHERE id_usuario = :id_usuario";
-        $stmt = $this->conn->prepare($sql);
-        $id_usuario = $nutricionista->getIdUsuario();
-        $crm_nutricionista = $nutricionista->getCrmNutricionista();
-        $cpf = $nutricionista->getCpf();
-        $stmt->bindParam(':crm_nutricionista', $crm_nutricionista);
-        $stmt->bindParam(':cpf', $cpf);
-        $stmt->bindParam(':id_usuario', $id_usuario);
-        $stmt->execute();
+        try {
+            $sql = "UPDATE nutricionista SET crm_nutricionista = :crm_nutricionista, cpf = :cpf WHERE id_usuario = :id_usuario";
+            $stmt = $this->conn->prepare($sql);
+            $id_usuario = $nutricionista->getIdUsuario();
+            $crm_nutricionista = $nutricionista->getCrmNutricionista();
+            $cpf = $nutricionista->getCpf();
+            $stmt->bindParam(':crm_nutricionista', $crm_nutricionista);
+            $stmt->bindParam(':cpf', $cpf);
+            $stmt->bindParam(':id_usuario', $id_usuario);
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            if ($e->getCode() == 23000) { // Código de violação de integridade (duplicidade) MySQL
+                $errorMessage = $e->getMessage();
+                if (strpos($errorMessage, 'crm_nutricionista') !== false) {
+                    throw new \Exception("Já existe um nutricionista cadastrado com este CRM.");
+                } elseif (strpos($errorMessage, 'cpf') !== false) {
+                    throw new \Exception("Já existe um nutricionista cadastrado com este CPF.");
+                } else {
+                    throw new \Exception("Violação de integridade: dados duplicados.");
+                }
+            }
+            throw $e;
+        }
     }
 
     public function delete($id_usuario) {

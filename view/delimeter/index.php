@@ -16,12 +16,12 @@ if ($usuario) {
                 <div class="caixaAlfa caixaRelativa">
                     <h2>Sobre o Delímiter</h2>
                     <p>Uma plataforma nova voltada à alimentação</p>
-                    <a href="about.php" class="link">Saiba mais</a>
+                    <a href="/sobre" class="link">Saiba mais</a>
                 </div>
                 <div class="caixaAlfa caixaRelativa">
                     <h2>Dados métricos</h2>
                     <p>Calcule o seu gasto energético basal</p>
-                    <a href="calculo_landpage.php" class="link">Saiba mais</a>
+                    <a href="/calculo" class="link">Saiba mais</a>
                 </div>
             </div>
             <div class="parceiros">

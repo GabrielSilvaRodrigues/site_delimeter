@@ -36,9 +36,9 @@
                 <nav>
                     <ul aria-label="Acessibilidade" class="acessibilidade">
                         <li><a href="/delimeter/sobre" class="link">Sobre Nós</a></li>
-                        <li><a href="/delimeter/calculo" class="link">Cálculo nutricional</a></li>
                         <?php if (isset($_SESSION['usuario'])): ?>
                             <?php if ($_SESSION['usuario']['tipo'] === 'paciente'): ?>
+                                <li><a href="/paciente/dados-antropometricos" class="link">Cálculo nutricional</a></li>
                                 <li><a href="/paciente" class="link">Painel</a></li>
                             <?php elseif ($_SESSION['usuario']['tipo'] === 'nutricionista'): ?>
                                 <li><a href="/nutricionista" class="link">Painel</a></li>
@@ -48,6 +48,7 @@
                             <li><a href="/conta" class="link">Conta</a></li>
                             <li><a href="/usuario" class="link">Home</a></li>
                         <?php else: ?>
+                            <li><a href="/calculo" class="link">Cálculo nutricional</a></li>
                             <li><a href="/usuario/cadastro" class="link">Cadastrar-se</a></li>
                             <li><a href="/usuario/login" class="link">Login</a></li>
                         <?php endif; ?>

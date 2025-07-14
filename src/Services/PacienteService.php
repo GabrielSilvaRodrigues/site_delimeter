@@ -28,11 +28,15 @@ class PacienteService {
     }
 
     public function mostrarConta($id_usuario) {
-        return $this->pacienteRepository->findById($id_usuario);
+        return $this->pacienteRepository->findByUsuarioId($id_usuario);
     }
 
     public function atualizarConta(Paciente $paciente) {
-        return $this->pacienteRepository->update($paciente);
+        try {
+            return $this->pacienteRepository->update($paciente);
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
     }
 
     public function deletarConta($id_usuario) {

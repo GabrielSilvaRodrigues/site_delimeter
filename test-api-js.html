@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste API Dados Antropométricos</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>Teste da API de Dados Antropométricos</h1>
+    
+    <div id="results"></div>
+    
+    <script>
+    // Função para fazer logs visuais
+    function log(message, type = 'info') {
+        const div = document.createElement('div');
+        div.style.padding = '10px';
+        div.style.margin = '5px 0';
+        div.style.borderRadius = '5px';
+        
+        switch(type) {
+            case 'error':
+                div.style.backgroundColor = '#ffebee';
+                div.style.color = '#c62828';
+                break;
+            case 'success':
+                div.style.backgroundColor = '#e8f5e8';
+                div.style.color = '#2e7d2e';
+                break;
+            default:
+                div.style.backgroundColor = '#f5f5f5';
+                div.style.color = '#333';
+        }
+        
+        div.innerHTML = message;
+        document.getElementById('results').appendChild(div);
+        console.log(message);
+    }
+    
+    // Testes das APIs
+    async function testarAPIs() {
+        log('=== INICIANDO TESTES DA API ===');
+        
+        // Teste 1: /api/dados-antropometricos/listar
+        log('Teste 1: GET /api/dados-antropometricos/listar');
+        try {
+            const response = await fetch('/api/dados-antropometricos/listar');
+            log(`Status: ${response.status} ${response.statusText}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                log(`Resposta: ${JSON.stringify(data)}`, 'success');
+            } else {
+                const text = await response.text();
+                log(`Erro HTTP: ${text}`, 'error');
+            }
+        } catch (error) {
+            log(`Erro de rede: ${error.message}`, 'error');
+        }
+        
+        // Teste 2: /api/dados-antropometricos/buscar-por-paciente
+        log('<br>Teste 2: GET /api/dados-antropometricos/buscar-por-paciente?id_paciente=1');
+        try {
+            const response = await fetch('/api/dados-antropometricos/buscar-por-paciente?id_paciente=1');
+            log(`Status: ${response.status} ${response.statusText}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                log(`Resposta: ${JSON.stringify(data)}`, 'success');
+            } else {
+                const text = await response.text();
+                log(`Erro HTTP: ${text}`, 'error');
+            }
+        } catch (error) {
+            log(`Erro de rede: ${error.message}`, 'error');
+        }
+        
+        // Teste 3: /api/dados-antropometricos/calcular-imc
+        log('<br>Teste 3: GET /api/dados-antropometricos/calcular-imc?altura=1.75&peso=70');
+        try {
+            const response = await fetch('/api/dados-antropometricos/calcular-imc?altura=1.75&peso=70');
+            log(`Status: ${response.status} ${response.statusText}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                log(`Resposta: ${JSON.stringify(data)}`, 'success');
+            } else {
+                const text = await response.text();
+                log(`Erro HTTP: ${text}`, 'error');
+            }
+        } catch (error) {
+            log(`Erro de rede: ${error.message}`, 'error');
+        }
+        
+        log('=== TESTES CONCLUÍDOS ===');
+    }
+    
+    // Executar testes quando a página carregar
+    document.addEventListener('DOMContentLoaded', testarAPIs);
+    </script>
+</body>
+</html>

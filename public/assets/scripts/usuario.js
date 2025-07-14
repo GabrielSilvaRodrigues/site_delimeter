@@ -1,190 +1,239 @@
-function validarFormulario() {
-    const formulario = document.getElementById('formulario');
-    const camposObrigatorios = formulario.querySelectorAll('[required]');
-    let formularioValido = true;
-
-    camposObrigatorios.forEach(campo => {
-        if (!campo.value) {
-            formularioValido = false;
-            campo.classList.add('erro');
-            if (!campo.nextElementSibling || !campo.nextElementSibling.classList.contains('mensagem-erro')) {
-                const mensagemErro = document.createElement('span');
-                mensagemErro.classList.add('mensagem-erro');
-                mensagemErro.textContent = 'Este campo é obrigatório.';
-                campo.parentNode.insertBefore(mensagemErro, campo.nextSibling);
-            }
-        } else {
-            campo.classList.remove('erro');
-            if (campo.nextElementSibling && campo.nextElementSibling.classList.contains('mensagem-erro')) {
-                campo.nextElementSibling.remove();
-            }
-        }
-    });
-
-    return formularioValido;
+class ApiClient {
+    async post(url, data) {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(data)
+        });
+        return response.json();
+    }
 }
 
-function enviarDados() {
-    if (!validarFormulario()) {
-        return; // Impede o envio se o formulário não for válido
-    }
-
-    const nome = document.getElementById('nome').value;
-    const idade = parseInt(document.getElementById('idade').value);
-    const sexo = document.getElementById('sexo').value;
-    const peso = parseFloat(document.getElementById('peso').value);
-    const alturaN = parseFloat(document.getElementById('altura').value);
-    const altura = alturaN / 100;
-    const atividade = document.getElementById('atividade').value;
-
-    const imc = peso / (altura * altura);
-    const pesoIdeal = ((altura ** 2) * 21.7).toFixed(1);
-    let classificado = '';
-    let corIMC = '';
-    let fatorAtividade = { 'sedentário': 1.55, 'moderadamente ativo': 1.85, 'ativo': 2.20 }[atividade] || 1.55;
-
-    if (imc < 18.5) { classificado = "Baixo peso"; corIMC = "blue"; }
-    else if (imc <= 24.99) { classificado = "Eutrofia"; corIMC = "green"; }
-    else if (imc <= 29.99) { classificado = "Sobrepeso"; corIMC = "orange"; }
-    else { classificado = "Obesidade"; corIMC = "red"; }
-
-    let geb, gebIdeal;
-    if (sexo === 'masculino') {
-        if (idade <= 3) { geb = (59.512 * peso) - 30.4; gebIdeal = (59.512 * pesoIdeal) - 30.4; }
-        else if (idade <= 10) { geb = (22.706 * peso) + 504.3; gebIdeal = (22.706 * pesoIdeal) + 504.3; }
-        else if (idade <= 18) { geb = (17.686 * peso) + 658.2; gebIdeal = (17.686 * pesoIdeal) + 658.2; }
-        else if (idade <= 30) { geb = (15.057 * peso) + 692.2; gebIdeal = (15.057 * pesoIdeal) + 692.2; }
-        else if (idade <= 60) { geb = (11.472 * peso) + 873.1; gebIdeal = (11.472 * pesoIdeal) + 873.1; }
-        else { geb = (11.711 * peso) + 587.7; gebIdeal = (11.711 * pesoIdeal) + 587.7; }
-    } else {
-        if (idade <= 3) { geb = (58.31 * peso) - 31.1; gebIdeal = (58.31 * pesoIdeal) - 31.1; }
-        else if (idade <= 10) { geb = (20.315 * peso) + 485.9; gebIdeal = (20.315 * pesoIdeal) + 485.9; }
-        else if (idade <= 18) { geb = (13.384 * peso) + 692.6; gebIdeal = (13.384 * pesoIdeal) + 692.6; }
-        else if (idade <= 30) { geb = (14.818 * peso) + 486.6; gebIdeal = (14.818 * pesoIdeal) + 486.6; }
-        else if (idade <= 60) { geb = (8.126 * peso) + 845.6; gebIdeal = (8.126 * pesoIdeal) + 845.6; }
-        else { geb = (9.082 * peso) + 658.5; gebIdeal = (9.082 * pesoIdeal) + 658.5; }
-    }
-
-    const get = geb * fatorAtividade;
-    const getIdeal = gebIdeal * fatorAtividade;
-
-    const proteinaMin = getIdeal * 0.10;
-    const proteinaMax = getIdeal * 0.15;
-
-    const gramagemProteinaMin = proteinaMin / 4;
-    const gramagemProteinaMax = proteinaMax / 4;
-
-    const carboidratosMin = getIdeal * 0.15;
-    const carboidratosMax = getIdeal * 0.30;
-
-    const gramagemCarboidratoMin = carboidratosMin / 4;
-    const gramagemCarboidratoMax = carboidratosMax / 4;
-
-    const lipidiosMin = getIdeal * 0.55;
-    const lipidiosMax = getIdeal * 0.75;
-
-    const gramagemLipidioMin = lipidiosMin / 9;
-    const gramagemLipidioMax = lipidiosMax / 9;
-
-    const refeicoes = {
-        '🍞 Café da manhã': getIdeal * 0.25,
-        '🍎 Lanche da manhã': getIdeal * 0.05,
-        '🍛 Almoço': getIdeal * 0.35,
-        '☕ Lanche da tarde': getIdeal * 0.10,
-        '🍽️ Jantar': getIdeal * 0.15,
-        '🥛 Lanche da noite': getIdeal * 0.05,
-    };
-
-    const macroNutrientes = {
-        '🍚 Carboidratos': {
-            min: carboidratosMin.toFixed(1),
-            max: carboidratosMax.toFixed(1),
-            gramasMin: gramagemCarboidratoMin.toFixed(1),
-            gramasMax: gramagemCarboidratoMax.toFixed(1),
-            cor: 'green',
-        },
-        '🍗 Proteínas': {
-            min: proteinaMin.toFixed(1),
-            max: proteinaMax.toFixed(1),
-            gramasMin: gramagemProteinaMin.toFixed(1),
-            gramasMax: gramagemProteinaMax.toFixed(1),
-            cor: 'red',
-        },
-        '🥑 Lipídios': {
-            min: lipidiosMin.toFixed(1),
-            max: lipidiosMax.toFixed(1),
-            gramasMin: gramagemLipidioMin.toFixed(1),
-            gramasMax: gramagemLipidioMax.toFixed(1),
-            cor: 'orange',
-        },
-    };
-
-    let resultadoDiv = document.getElementById('resultado');
-    resultadoDiv.innerHTML = `
-        <p><strong>Nome:</strong> ${nome}</p>
-        <p><strong>Idade:</strong> ${idade}</p>
-        <p><strong>Sexo:</strong> ${sexo}</p>
-        <p><strong>Peso:</strong> ${peso} kg</p>
-        <p><strong>Altura:</strong> ${altura} m</p>
-        <p><strong>Atividade Física:</strong> ${atividade}</p>
-        <p><strong>IMC:</strong> <span style='background-color: ${corIMC};'>${imc.toFixed(1)}</span></p>
-        <p><strong>Classificação corporal:</strong> ${classificado}</p>
-        <p><strong>Gasto Energético Basal:</strong> ${geb.toFixed(1)} Kcal</p>
-        <p><strong>Gasto Energético Total:</strong> ${get.toFixed(1)} Kcal</p>
-        <p><strong>Gasto Energético Total Ideal:</strong> ${getIdeal.toFixed(1)} Kcal</p>
-        <hr>
-        <h3>Distribuição energética</h3>
-        ${Object.entries(refeicoes).map(([refeicao, valor]) => `<p><strong>${refeicao}:</strong> ${valor.toFixed(1)} Kcal</p>`).join('')}
-        <hr>
-        <h3>Macro nutrientes</h3>
-        ${Object.entries(macroNutrientes).map(([nutriente, dados]) => `
-            <p><strong>${nutriente}:</strong> Mínimo <span style='background-color: ${dados.cor};'>${dados.min}</span> Kcal (${dados.gramasMin} gramas) e máximo <span style='background-color: ${dados.cor};'>${dados.max}</span> Kcal (${dados.gramasMax} gramas)</p>
-        `).join('')}
-        
-    `;
-    resultadoDiv.style.display = 'block'; // Mostra a div
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const containerForm = document.getElementById('container-formulario-nutricional');
-    let alertaAtivo = true; // Só mostra após recarregar
-
-    containerForm.addEventListener('mouseenter', function() {
-        if (alertaAtivo) {
-            mostrarAlertaNutricional();
-            alertaAtivo = false; // Desativa até a próxima recarga
-        }
-    });
-
-    function mostrarAlertaNutricional() {
+class MessageManager {
+    success(message) {
         Swal.fire({
-            position: "top-end",
-            html: `
-                <div style="display: flex; align-items: center; text-align: left;">
-                    <img src="assets/images/persefone-feliz.png" 
-                         style="width: 110px; height: 130px; margin-right: 20px;">
-                    <div>
-                        <h3 style="color: #2c3e50;">Assistente Virtual Perséfone</h3>
-                        <p style="color: #555; margin-top: 10px;">
-                            Preencha todos os campos para calcular suas necessidades energéticas.<br>
-                            Dica: Altura em centímetros (ex: 175) e peso em kg (ex: 68.5).
-                        </p>
-                    </div>
-                </div>
-            `,
-            showConfirmButton: true,
-            confirmButtonText: 'Entendi',
-            confirmButtonColor: '#4CAF50',
-            width: '500px',
-            backdrop: true
+            icon: 'success',
+            title: 'Sucesso',
+            text: message,
+            timer: 3000,
+            showConfirmButton: false
         });
     }
-});
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Verifica se já foi mostrado (com verificação mais robusta)
-    if (sessionStorage.getItem('delimeterTourCompleted') !== 'true') {
-        const slides = [
+    error(message) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: message,
+            timer: 3000,
+            showConfirmButton: false
+        });
+    }
+}
+
+class FormValidator {
+    constructor() {
+        this.rules = {};
+    }
+
+    addRule(field, rules) {
+        this.rules[field] = rules;
+        return this;
+    }
+
+    validate(form) {
+        let isValid = true;
+
+        for (const field in this.rules) {
+            const fieldRules = this.rules[field];
+            const value = form[field].value.trim();
+            fieldRules.forEach(rule => {
+                if (!this.applyRule(rule, value, form)) {
+                    isValid = false;
+                    this.showError(field, rule.message);
+                } else {
+                    this.clearError(field);
+                }
+            });
+        }
+
+        return isValid;
+    }
+
+    applyRule(rule, value, form) {
+        switch (rule.type) {
+            case 'required':
+                return value !== '';
+            case 'minLength':
+                return value.length >= rule.min;
+            case 'email':
+                return /^\S+@\S+\.\S+$/.test(value);
+            case 'match':
+                return value === form[rule.field].value;
+            default:
+                return true;
+        }
+    }
+
+    showError(field, message) {
+        const input = document.querySelector(`[name="${field}"]`);
+        input.classList.add('erro');
+        let error = input.parentNode.querySelector('.mensagem-erro');
+        if (!error) {
+            error = document.createElement('span');
+            error.classList.add('mensagem-erro');
+            input.parentNode.insertBefore(error, input.nextSibling);
+        }
+        error.textContent = message;
+    }
+
+    clearError(field) {
+        const input = document.querySelector(`[name="${field}"]`);
+        input.classList.remove('erro');
+        const error = input.parentNode.querySelector('.mensagem-erro');
+        if (error) {
+            error.remove();
+        }
+    }
+}
+
+class UsuarioManager {
+    constructor() {
+        this.apiClient = new ApiClient();
+        this.messageManager = new MessageManager();
+        this.validator = new FormValidator();
+        this.initializeEventListeners();
+        this.setupValidation();
+    }
+
+    initializeEventListeners() {
+        // Form submission
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+        });
+
+        // UI effects
+        this.setupUIEffects();
+        
+        // Tour if not completed
+        this.checkAndShowTour();
+    }
+
+    setupValidation() {
+        this.validator
+            .addRule('nome', [
+                { type: 'required' },
+                { type: 'minLength', min: 2 }
+            ])
+            .addRule('email', [
+                { type: 'required' },
+                { type: 'email' }
+            ])
+            .addRule('senha', [
+                { type: 'required' },
+                { type: 'minLength', min: 6 }
+            ])
+            .addRule('confirmar_senha', [
+                { type: 'required' },
+                { type: 'match', field: 'senha' }
+            ]);
+    }
+
+    handleFormSubmit(e) {
+        const form = e.target;
+        
+        if (!this.validator.validate(form)) {
+            e.preventDefault();
+            this.messageManager.error('Por favor, corrija os erros no formulário.');
+            return;
+        }
+        
+        // Form específico handling pode ser adicionado aqui
+    }
+
+    setupUIEffects() {
+        // Hover effects for cards
+        const cards = document.querySelectorAll('.usuario-card, a[style*="background:#e0f7fa"], a[style*="background:#e8f5e9"], a[style*="background:#e3f2fd"]');
+        
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 4px 12px rgba(76,175,80,0.2)';
+                this.style.transition = 'all 0.3s ease';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 1px 6px #4caf5011';
+            });
+        });
+    }
+
+    checkAndShowTour() {
+        if (sessionStorage.getItem('delimeterTourCompleted') !== 'true') {
+            new TourManager().start();
+        }
+    }
+
+    // Métodos para gerenciamento de perfis
+    async criarPerfil(tipo) {
+        const urls = {
+            paciente: '/paciente/cadastro',
+            nutricionista: '/nutricionista/cadastro',
+            medico: '/medico/cadastro'
+        };
+        
+        if (urls[tipo]) {
+            window.location.href = urls[tipo];
+        } else {
+            this.messageManager.error('Tipo de perfil inválido.');
+        }
+    }
+
+    async atualizarPerfil(tipo, dados) {
+        try {
+            const response = await this.apiClient.post(`/api/${tipo}/atualizar`, dados);
+            
+            if (response.success) {
+                this.messageManager.success(`Dados do ${tipo} atualizados com sucesso!`);
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                throw new Error(response.error || 'Erro desconhecido');
+            }
+        } catch (error) {
+            this.messageManager.error(`Erro ao atualizar: ${error.message}`);
+        }
+    }
+
+    async excluirPerfil(tipo) {
+        if (!confirm(`Tem certeza que deseja excluir seu perfil de ${tipo}?`)) {
+            return;
+        }
+        
+        try {
+            const response = await this.apiClient.post(`/api/${tipo}/excluir`);
+            
+            if (response.success) {
+                this.messageManager.success('Perfil excluído com sucesso!');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                throw new Error(response.error || 'Erro desconhecido');
+            }
+        } catch (error) {
+            this.messageManager.error(`Erro ao excluir perfil: ${error.message}`);
+        }
+    }
+
+    // ...existing code...
+}
+
+class TourManager {
+    constructor() {
+        this.slides = [
             {
                 title: "Bem-vindo ao Delimeter!",
                 text: "Sua plataforma completa para saúde nutricional inteligente.",
@@ -201,81 +250,208 @@ document.addEventListener('DOMContentLoaded', function() {
                 image: "/public/assets/images/sus.jpeg"
             }
         ];
-
-        let currentSlide = 0;
-
-        function completeTour() {
-            // Marca como completo de forma mais confiável
-            sessionStorage.setItem('delimeterTourCompleted', 'true');
-            document.removeEventListener('keydown', handleInteraction);
-            Swal.close();
-        }
-
-        function handleInteraction(e) {
-            const isRightKey = e.key === 'ArrowRight';
-            const isLeftKey = e.key === 'ArrowLeft';
-            const isClick = e.type === 'click';
-            
-            if (isRightKey || isClick) {
-                e.preventDefault();
-                if (currentSlide < slides.length - 1) {
-                    currentSlide++;
-                    showSlide();
-                } else {
-                    completeTour();
-                }
-            } else if (isLeftKey && currentSlide > 0) {
-                e.preventDefault();
-                currentSlide--;
-                showSlide();
-            }
-        }
-
-        function showSlide() {
-            Swal.fire({
-                title: slides[currentSlide].title,
-                html: `
-                    <div style="text-align: center; cursor: pointer;">
-                        <img src="${slides[currentSlide].image}" 
-                             style="max-width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px; margin: 10px 0 15px;"
-                             alt="${slides[currentSlide].title}">
-                        <p style="color: #555; margin: 15px 0 20px; font-size: 1.05em;">${slides[currentSlide].text}</p>
-                        <div style="display: flex; justify-content: center; gap: 8px;">
-                            ${slides.map((_, i) => `
-                                <div style="width: 10px; height: 10px; border-radius: 50%; 
-                                    background: ${i === currentSlide ? '#4CAF50' : '#ddd'};"></div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `,
-                showConfirmButton: false,
-                showCancelButton: false,
-                allowOutsideClick: true,
-                background: '#ffffff',
-                width: 600,
-                didOpen: () => {
-                    const popup = Swal.getPopup();
-                    popup.addEventListener('click', handleInteraction);
-                    document.addEventListener('keydown', handleInteraction);
-                },
-                willClose: () => {
-                    document.removeEventListener('keydown', handleInteraction);
-                }
-            });
-        }
-
-        // Mostra após pequeno delay para melhor experiência
-        setTimeout(showSlide, 800);
+        this.currentSlide = 0;
     }
 
-});
+    start() {
+        this.showSlide();
+    }
 
-document.getElementById('formulario').addEventListener('submit', function(e) {
-    var senha = document.getElementById('senha').value;
-    var confirmar = document.getElementById('confirmar_senha').value;
-    if (senha !== confirmar) {
-        alert('As senhas não coincidem!');
-        e.preventDefault();
+    showSlide() {
+        Swal.fire({
+            title: this.slides[this.currentSlide].title,
+            html: this.getSlideHTML(),
+            showConfirmButton: false,
+            showCancelButton: false,
+            allowOutsideClick: true,
+            background: '#ffffff',
+            width: 600,
+            didOpen: () => {
+                const popup = Swal.getPopup();
+                popup.addEventListener('click', (e) => this.handleInteraction(e));
+                document.addEventListener('keydown', (e) => this.handleInteraction(e));
+            },
+            willClose: () => {
+                document.removeEventListener('keydown', this.handleInteraction);
+            }
+        });
+    }
+
+    getSlideHTML() {
+        return `
+            <div style="text-align: center; cursor: pointer;">
+                <img src="${this.slides[this.currentSlide].image}" 
+                     style="max-width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px; margin: 10px 0 15px;"
+                     alt="${this.slides[this.currentSlide].title}">
+                <p style="color: #555; margin: 15px 0 20px; font-size: 1.05em;">
+                    ${this.slides[this.currentSlide].text}
+                </p>
+                <div style="display: flex; justify-content: center; gap: 8px;">
+                    ${this.slides.map((_, i) => `
+                        <div style="width: 10px; height: 10px; border-radius: 50%; 
+                            background: ${i === this.currentSlide ? '#4CAF50' : '#ddd'};"></div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    handleInteraction(e) {
+        const isNext = e.key === 'ArrowRight' || e.type === 'click';
+        const isPrev = e.key === 'ArrowLeft';
+        
+        if (isNext) {
+            if (this.currentSlide < this.slides.length - 1) {
+                this.currentSlide++;
+                this.showSlide();
+            } else {
+                this.complete();
+            }
+        } else if (isPrev && this.currentSlide > 0) {
+            this.currentSlide--;
+            this.showSlide();
+        }
+    }
+
+    complete() {
+        sessionStorage.setItem('delimeterTourCompleted', 'true');
+        Swal.close();
     }
 }
-);
+
+// Inicializar quando DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+    window.usuarioManager = new UsuarioManager();
+});
+
+// Funções globais para compatibilidade com HTML inline
+function criarPerfil(tipo) {
+    if (window.usuarioManager) {
+        window.usuarioManager.criarPerfil(tipo);
+    }
+}
+
+function atualizarPaciente() {
+    if (window.usuarioManager) {
+        const dados = {
+            cpf: document.getElementById('cpf_paciente').value,
+            nis: document.getElementById('nis_paciente').value
+        };
+        window.usuarioManager.atualizarPerfil('paciente', dados);
+    }
+}
+
+function atualizarNutricionista() {
+    if (window.usuarioManager) {
+        const dados = {
+            crm_nutricionista: document.getElementById('crm_nutricionista').value,
+            cpf: document.getElementById('cpf_nutricionista').value
+        };
+        window.usuarioManager.atualizarPerfil('nutricionista', dados);
+    }
+}
+
+function atualizarMedico() {
+    if (window.usuarioManager) {
+        const dados = {
+            crm_medico: document.getElementById('crm_medico').value,
+            cpf: document.getElementById('cpf_medico').value
+        };
+        window.usuarioManager.atualizarPerfil('medico', dados);
+    }
+}
+
+function excluirPerfil(tipo) {
+    if (window.usuarioManager) {
+        window.usuarioManager.excluirPerfil(tipo);
+    }
+}
+
+function sairPerfil(tipo) {
+    if (!confirm(`Tem certeza que deseja sair do perfil de ${tipo}?`)) {
+        return;
+    }
+    
+    fetch(`/${tipo}/conta/sair`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(() => {
+        window.location.href = '/usuario';
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao sair do perfil. Tente novamente.');
+    });
+}
+
+function confirmarExclusaoTotal() {
+    if (!confirm('ATENÇÃO: Esta ação irá excluir sua conta completamente, incluindo todos os perfis e dados associados. Esta ação não pode ser desfeita.\n\nTem certeza que deseja continuar?')) {
+        return;
+    }
+    
+    if (!confirm('Última confirmação: Tem ABSOLUTA certeza que deseja excluir sua conta permanentemente?')) {
+        return;
+    }
+    
+    fetch('/api/usuario/excluir-completo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert('Conta excluída com sucesso. Você será redirecionado.');
+            window.location.href = '/';
+        } else {
+            alert('Erro ao excluir conta: ' + (result.error || 'Erro desconhecido'));
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro de conexão. Tente novamente.');
+    });
+}
+
+function sairCompleto() {
+    if (!confirm('Tem certeza que deseja sair do sistema?')) {
+        return;
+    }
+    
+    window.location.href = '/usuario/conta/sair';
+}
+
+// Máscara para CPF
+function aplicarMascaraCPF(elemento) {
+    elemento.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+            value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            e.target.value = value;
+        }
+    });
+}
+
+// Aplicar máscaras quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    // CPF masks
+    const cpfInputs = document.querySelectorAll('input[id*="cpf"]');
+    cpfInputs.forEach(aplicarMascaraCPF);
+    
+    // NIS mask
+    const nisInput = document.getElementById('nis_paciente');
+    if (nisInput) {
+        nisInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d{5})(\d{2})(\d{1})/, '$1.$2.$3-$4');
+                e.target.value = value;
+            }
+        });
+    }
+});

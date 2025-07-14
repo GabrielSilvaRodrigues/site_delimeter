@@ -19,6 +19,7 @@ class NutricionistaRoutes {
         $route->add('POST', '/nutricionista/conta/deletar', [$nutricionistaController, 'deletarConta']);
         $route->add('GET', '/nutricionista/conta/sair', [$nutricionistaController, 'sairConta']);
         $route->add('GET', '/nutricionista', [$nutricionistaController, 'mostrarHome']);
+        $route->add('GET', '/nutricionista/conta/entrar', [$nutricionistaController, 'procurarPorId']);
     }
 }
 ?>

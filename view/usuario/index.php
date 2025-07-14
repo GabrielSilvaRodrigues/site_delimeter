@@ -1,86 +1,94 @@
+<?php
+// Inicializar sessão se não estiver ativa
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificar se usuário está logado
+if (!isset($_SESSION['usuario'])) {
+    header('Location: /usuario/login');
+    exit;
+}
+?>
+
 <div class="usuario-container" style="background: linear-gradient(120deg, #f4f4f4 60%, #e0f7fa 100%); min-height: 100vh;">
     <main class="usuario-main-content" style="max-width: 900px; margin: 0 auto; padding-bottom: 40px;">
-        <div class="usuario-header" style="margin-bottom: 40px; background: linear-gradient(90deg, #4CAF50 70%, #388e3c 100%); box-shadow: 0 4px 16px rgba(76,175,80,0.13); border-radius: 14px;">
+        <div class="usuario-header" style="margin-bottom: 40px; background: linear-gradient(90deg, #4CAF50 70%, #388e3c 100%); box-shadow: 0 4px 16px rgba(76,175,80,0.13); border-radius: 14px; padding: 25px;">
             <h1 style="font-size:2.5rem; margin-bottom: 10px; letter-spacing: 1px; color: #fff; text-shadow: 1px 2px 8px #388e3c33;">
-                👤 Bem-vindo ao Sistema de Gerenciamento de Usuários
+                👤 Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome_usuario']); ?>!
             </h1>
             <p style="font-size:1.18rem; color:#e0ffe0; margin-bottom: 0;">
-                Gerencie seus dados, visualize informações e aproveite nossos serviços exclusivos.
+                Escolha sua área de atuação ou continue como usuário padrão.
             </p>
         </div>
-        <!-- Seção de cadastro para diferentes perfis -->
-        <section class="usuario-section" id="cadastro-tipos" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #4caf5022; text-align:center;">
+        
+        <!-- Seção de escolha de perfil -->
+        <section class="usuario-section" id="cadastro-tipos" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #4caf5022; padding: 25px; text-align:center;">
             <h2 style="font-size:1.4rem; color:#388e3c; margin-bottom: 18px;">
-                <span style="font-size:1.2em;">📝</span> Entrar como:
+                <span style="font-size:1.2em;">📝</span> Acessar como:
             </h2>
             <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;">
-                <a href="/paciente" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e0f7fa; border-radius:8px; box-shadow:0 1px 6px #4caf5011; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#388e3c; font-weight:bold; transition:box-shadow 0.2s;">
+                <a href="/paciente/conta/entrar" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e0f7fa; border-radius:8px; box-shadow:0 1px 6px #4caf5011; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#388e3c; font-weight:bold; transition:all 0.3s;">
                     <span style="font-size:2.2em; margin-bottom:8px;">🧑‍🦱</span>
                     Paciente
                 </a>
-                <a href="/nutricionista" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e8f5e9; border-radius:8px; box-shadow:0 1px 6px #43a04711; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#43a047; font-weight:bold; transition:box-shadow 0.2s;">
+                <a href="/nutricionista/conta/entrar" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e8f5e9; border-radius:8px; box-shadow:0 1px 6px #43a04711; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#43a047; font-weight:bold; transition:all 0.3s;">
                     <span style="font-size:2.2em; margin-bottom:8px;">🥗</span>
                     Nutricionista
                 </a>
-                <a href="/medico" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e3f2fd; border-radius:8px; box-shadow:0 1px 6px #1976d211; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#1976d2; font-weight:bold; transition:box-shadow 0.2s;">
+                <a href="/medico/conta/entrar" style="flex:1 1 180px; min-width:180px; max-width:220px; background:#e3f2fd; border-radius:8px; box-shadow:0 1px 6px #1976d211; padding:18px 10px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#1976d2; font-weight:bold; transition:all 0.3s;">
                     <span style="font-size:2.2em; margin-bottom:8px;">🩺</span>
                     Médico
                 </a>
             </div>
         </section>
-        <section class="usuario-section" id="home" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #4caf5022;">
-            <h2 style="font-size:1.6rem; color:#388e3c; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size:1.3em;">🏠</span> Início
+
+        <!-- Informações da conta -->
+        <section class="usuario-section" style="background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #4caf5022; padding: 25px; margin-bottom: 25px;">
+            <h2 style="color: #4caf50; margin-bottom: 20px; font-size: 1.4rem;">
+                ⚙️ Configurações da Conta
             </h2>
-            <p style="font-size:1.08rem; color:#444;">
-                Bem-vindo ao seu <strong>painel de usuário</strong>! Aqui você pode acessar e gerenciar suas informações de forma simples, segura e prática.<br>
-                <span style="color:#4CAF50;">Utilize o menu lateral para navegar entre as funcionalidades.</span>
-            </p>
-        </section>
-        <section class="usuario-section" id="about" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #4caf5022;">
-            <h2 style="font-size:1.6rem; color:#388e3c; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size:1.3em;">ℹ️</span> Sobre
-            </h2>
-            <p style="font-size:1.08rem; color:#444;">
-                Nosso sistema foi desenvolvido para facilitar o <strong>gerenciamento de usuários</strong>, proporcionando praticidade, segurança e autonomia.
-            </p>
-            <ul style="margin: 15px 0 0 20px; color:#388e3c; font-size:1.05rem; line-height:1.7;">
-                <li>Atualize seus dados pessoais facilmente</li>
-                <li>Visualize seu histórico de atividades</li>
-                <li>Receba suporte personalizado</li>
-            </ul>
-        </section>
-        <section class="usuario-section" id="services" style="margin-bottom: 32px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #4caf5022;">
-            <h2 style="font-size:1.6rem; color:#388e3c; margin-bottom: 18px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size:1.3em;">🛠️</span> Serviços
-            </h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between;">
-                <div style="flex:1 1 220px; min-width:220px; background:#f8fff8; border-radius:8px; box-shadow:0 1px 6px #4caf5011; padding:18px 14px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center;">
-                    <div style="font-size:2.1em; margin-bottom:8px;">👤</div>
-                    <h3 style="margin-bottom: 6px; color:#4CAF50; font-size:1.18rem;">Perfil</h3>
-                    <p style="margin:0; color:#555; text-align:center;">Atualize suas informações pessoais e preferências.</p>
-                </div>
-                <div style="flex:1 1 220px; min-width:220px; background:#f8fff8; border-radius:8px; box-shadow:0 1px 6px #4caf5011; padding:18px 14px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center;">
-                    <div style="font-size:2.1em; margin-bottom:8px;">📜</div>
-                    <h3 style="margin-bottom: 6px; color:#4CAF50; font-size:1.18rem;">Histórico</h3>
-                    <p style="margin:0; color:#555; text-align:center;">Consulte seu histórico de acessos e atividades.</p>
-                </div>
-                <div style="flex:1 1 220px; min-width:220px; background:#f8fff8; border-radius:8px; box-shadow:0 1px 6px #4caf5011; padding:18px 14px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center;">
-                    <div style="font-size:2.1em; margin-bottom:8px;">💬</div>
-                    <h3 style="margin-bottom: 6px; color:#4CAF50; font-size:1.18rem;">Suporte</h3>
-                    <p style="margin:0; color:#555; text-align:center;">Fale com nossa equipe para tirar dúvidas ou resolver problemas.</p>
-                </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <a href="/conta" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-decoration: none; color: #495057; border: 1px solid #dee2e6; transition: all 0.3s; text-align: center;">
+                    📝 Editar Perfil
+                </a>
+                <a href="/usuario/conta/sair" style="background: #f8d7da; padding: 15px; border-radius: 8px; text-decoration: none; color: #721c24; border: 1px solid #f5c6cb; transition: all 0.3s; text-align: center;">
+                    🚪 Sair
+                </a>
             </div>
-        </section>
-        <section class="usuario-section" id="contact" style="background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #4caf5022;">
-            <h2 style="font-size:1.6rem; color:#388e3c; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size:1.3em;">📞</span> Contato
-            </h2>
-            <p style="font-size:1.08rem; color:#444;">
-                Precisa de ajuda? Entre em contato com nossa equipe de suporte:<br>
-                <strong>Email:</strong> <a href="mailto:suporte@delimeter.com" style="color:#4CAF50; text-decoration:underline;">suporte@delimeter.com</a><br>
-                Ou utilize o formulário disponível no site.
-            </p>
         </section>
     </main>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('a[style*="background:#e0f7fa"], a[style*="background:#e8f5e9"], a[style*="background:#e3f2fd"]');
+    
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 4px 12px rgba(76,175,80,0.2)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 1px 6px #4caf5011';
+        });
+    });
+
+    // Adicionar efeito hover para botões de configuração
+    const configCards = document.querySelectorAll('a[href="/conta"], a[href="/usuario/conta/sair"]');
+    
+    configCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-1px)';
+            this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+});
+</script>

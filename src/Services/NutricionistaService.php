@@ -28,12 +28,15 @@ class NutricionistaService {
     }
 
     public function atualizarConta($nutricionista) {
-        return $this->nutricionistaRepository->update($nutricionista);
+        try {
+            return $this->nutricionistaRepository->update($nutricionista);
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
     }
 
     public function deletarConta($id_usuario) {
-        $nutricionistaRepository = new \Htdocs\Src\Models\Repository\NutricionistaRepository();
-        $nutricionistaRepository->delete($id_usuario);
+        return $this->nutricionistaRepository->delete($id_usuario);
     }
 
     public function mostrarConta($id_usuario) {

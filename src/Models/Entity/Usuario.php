@@ -8,13 +8,15 @@ class Usuario
     private string $nome_usuario;
     private string $email_usuario;
     private ?string $senha_usuario;
+    private int $status_usuario;
 
-    public function __construct(?int $id_usuario, string $nome_usuario, string $email_usuario, ?string $senha_usuario = null)
+    public function __construct(?int $id_usuario, string $nome_usuario, string $email_usuario, ?string $senha_usuario = null, int $status_usuario = 1)
     {
         $this->id_usuario = $id_usuario ?? 0;
         $this->nome_usuario = $nome_usuario;
         $this->email_usuario = $email_usuario;
         $this->senha_usuario = $senha_usuario;
+        $this->status_usuario = $status_usuario;
     }
 
     public function getId(): int
@@ -50,5 +52,15 @@ class Usuario
     public function setSenha(?string $senha_usuario): void
     {
         $this->senha_usuario = $senha_usuario;
+    }
+
+    public function getStatus(): int
+    {
+        return $this->status_usuario;
+    }
+
+    public function setStatus(int $status_usuario): void
+    {
+        $this->status_usuario = $status_usuario;
     }
 }
